@@ -1,16 +1,27 @@
-// app.js
 const express = require("express");
 const app = express();
+const cors = require("cors");
+const dotenv = require("dotenv");
+const connectToDB = require("./db/connToDB");
 const PORT = process.env.PORT || 5000;
+
+// ENV variables
+if (process.env.NODE_ENV !== "production") {
+  dotenv.config();
+}
 
 // Middleware
 app.use(express.json()); // for parsing application/json
+app.use(cors());
+connectToDB();
 
 // Routes
-const userRoutes = require("./routes/users");
+const register = require("./routes/register");
+const login = require("./routes/login");
 
 // Endpoints
-app.use("/users", userRoutes);
+app.use(register);
+app.use(login);
 
 // Root route to show a message
 app.get("/", (req, res) => {

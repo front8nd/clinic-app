@@ -4,6 +4,10 @@ import { Outlet, Navigate, useRoutes } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import LinearProgress, { linearProgressClasses } from '@mui/material/LinearProgress';
 
+// Route Protected
+import ProtectedRoute from './Protected';
+
+// Routes
 import { varAlpha } from '../theme/styles';
 import { AuthLayout } from '../layouts/auth/index';
 import { DashboardLayout } from '../layouts/dashboard/index';
@@ -11,8 +15,9 @@ import { DashboardLayout } from '../layouts/dashboard/index';
 // ----------------------------------------------------------------------
 
 export const HomePage = lazy(() => import('../pages/home'));
+export const LoginPage = lazy(() => import('../pages/login'));
+export const RegisterPage = lazy(() => import('../pages/register'));
 export const UserPage = lazy(() => import('../pages/user'));
-export const SignInPage = lazy(() => import('../pages/sign-in'));
 export const Page404 = lazy(() => import('../pages/page-not-found'));
 
 // ----------------------------------------------------------------------
@@ -41,15 +46,33 @@ export function Router() {
         </DashboardLayout>
       ),
       children: [
-        { element: <HomePage />, index: true },
-        { path: 'user', element: <UserPage /> },
+        {
+          element: (
+            <ProtectedRoute allowedRoles={['admin', 'staff', 'doctor']} component={HomePage} />
+          ),
+          index: true,
+        },
+        {
+          path: 'user',
+          element: (
+            <ProtectedRoute allowedRoles={['admin', 'staff', 'doctor']} component={UserPage} />
+          ),
+        },
       ],
     },
     {
-      path: 'sign-in',
+      path: 'login',
       element: (
         <AuthLayout>
-          <SignInPage />
+          <LoginPage />
+        </AuthLayout>
+      ),
+    },
+    {
+      path: 'register',
+      element: (
+        <AuthLayout>
+          <RegisterPage />
         </AuthLayout>
       ),
     },
