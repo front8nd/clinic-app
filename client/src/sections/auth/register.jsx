@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import Box from '@mui/material/Box';
@@ -15,14 +15,16 @@ import { register } from '../../redux/authSlice';
 import { useRouter } from '../../routes/hooks';
 
 import { Iconify } from '../../components/iconify';
+import { useSnackbar } from '../../components/snackbar/snackbar';
 
 // ----------------------------------------------------------------------
 
 export default function Register() {
   const router = useRouter();
+  const { openSnackbar } = useSnackbar();
+
   const dispatch = useDispatch();
   const authData = useSelector((state) => state.auth);
-  console.log(authData);
   const [showPassword, setShowPassword] = useState(false);
   const [data, setData] = useState({
     name: '',
@@ -40,6 +42,15 @@ export default function Register() {
     e.preventDefault();
     await dispatch(register(data));
   };
+
+  useEffect(() => {
+    if (authData.registrationSuccess) {
+      openSnackbar('Registration Successfull', 'success');
+      router.push('/');
+    } else if (authData?.registrationError) {
+      openSnackbar(`Registration failed`, 'error');
+    }
+  }, [authData.registrationSuccess, authData?.registrationError, router, openSnackbar]);
 
   const renderForm = (
     <form onSubmit={handleClick}>
@@ -90,29 +101,27 @@ export default function Register() {
         />
       </Stack>
 
-      <Stack direction="row" alignItems="center" justifyContent="flex-start" sx={{ my: 1 }}>
+      <Stack
+        direction="row"
+        alignItems="center"
+        justifyContent="flex-start"
+        sx={{ my: 1 }}
+        className="py-2 w-full flex justify-center"
+      >
         {authData?.registrationError && (
           <Typography variant="subtitle1" color="error">
+            Error:{' '}
             {authData?.registrationError?.message ?? (
               <ul>
                 {Object.values(authData?.registrationError).map((errorMessages, index) =>
-                  errorMessages.map((errorMessage, i) => <li key={i}>{errorMessage}</li>)
+                  errorMessages.map((errorMessage, i) => (
+                    <li className="list-disc" key={i}>
+                      {errorMessage}
+                    </li>
+                  ))
                 )}
               </ul>
             )}
-          </Typography>
-        )}
-        {authData?.registrationSuccess && (
-          <Typography
-            variant="subtitle2"
-            my={2}
-            sx={{
-              textAlign: 'center',
-              width: '100%',
-            }}
-            color="primary"
-          >
-            Registered Successfully, You can login Now
           </Typography>
         )}
       </Stack>

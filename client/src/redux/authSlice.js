@@ -51,6 +51,11 @@ const authSlice = createSlice({
       state.userData = null;
       localStorage.removeItem('userData');
     },
+    resetErrors(state) {
+      state.error = null;
+      state.registrationError = null;
+      state.registrationSuccess = null;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -87,5 +92,5 @@ const authSlice = createSlice({
 });
 
 // Export logout action for use in components
-export const { logout } = authSlice.actions;
+export const { logout, resetErrors } = authSlice.actions;
 export default authSlice.reducer;

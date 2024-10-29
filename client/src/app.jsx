@@ -6,6 +6,8 @@ import { useScrollToTop } from './hooks/use-scroll-to-top';
 
 import { ThemeProvider } from './theme/theme-provider';
 
+import { SnackbarProvider } from './components/snackbar/snackbar';
+
 // ----------------------------------------------------------------------
 
 export default function App() {
@@ -13,7 +15,9 @@ export default function App() {
 
   return (
     <ThemeProvider>
-      <Router />
+      <SnackbarProvider>
+        <Router />
+      </SnackbarProvider>
     </ThemeProvider>
   );
 }

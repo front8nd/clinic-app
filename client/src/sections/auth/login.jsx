@@ -13,14 +13,17 @@ import InputAdornment from '@mui/material/InputAdornment';
 
 import { useRouter } from '../../routes/hooks';
 
-import { login } from '../../redux/authSlice';
+import { login, resetErrors } from '../../redux/authSlice';
 
 import { Iconify } from '../../components/iconify';
+
+import { useSnackbar } from '../../components/snackbar/snackbar';
 
 // ----------------------------------------------------------------------
 
 export default function Login() {
   const router = useRouter();
+  const { openSnackbar } = useSnackbar();
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -41,12 +44,20 @@ export default function Login() {
   };
 
   useEffect(() => {
-    if (authData.isAuthenticated) router.push('/');
-  }, [authData.isAuthenticated, router]);
+    if (authData.isAuthenticated) {
+      openSnackbar('Login successful!', 'success');
+      router.push('/');
+    } else if (authData?.error) {
+      openSnackbar(`Login failed: ${authData?.error?.message}`, 'error');
+    }
+    return () => {
+      dispatch(resetErrors());
+    };
+  }, [authData.isAuthenticated, authData?.error, router, openSnackbar, dispatch]);
 
   const renderForm = (
     <form onSubmit={handleClick}>
-      <Stack spacing={3}>
+      <Stack spacing={3} className="mb-6">
         <TextField
           name="email"
           label="Email Address"
@@ -72,16 +83,6 @@ export default function Login() {
             ),
           }}
         />
-      </Stack>
-
-      <Stack direction="row" alignItems="center" justifyContent="flex-start" sx={{ my: 1 }}>
-        {authData?.error && (
-          <Typography variant="subtitle1" color="error">
-            <ul>
-              <li>Login Failed: {authData?.error?.error}</li>
-            </ul>
-          </Typography>
-        )}
       </Stack>
 
       <LoadingButton fullWidth size="large" type="submit" variant="contained" color="inherit">

@@ -14,11 +14,13 @@ import { useRouter, usePathname } from '../../routes/hooks';
 import { logout } from '../../redux/authSlice';
 
 import { _myAccount } from '../../_mock';
+import { useSnackbar } from '../../components/snackbar/snackbar';
 
 // ----------------------------------------------------------------------
 
 export function AccountPopover({ data = [], sx, ...other }) {
   const { userData } = useSelector((state) => state.auth);
+  const { openSnackbar } = useSnackbar();
   const dispatch = useDispatch();
   const router = useRouter();
 
@@ -36,6 +38,7 @@ export function AccountPopover({ data = [], sx, ...other }) {
 
   const LogoutHandler = () => {
     dispatch(logout());
+    openSnackbar('Logged out', 'info');
   };
 
   // const handleClickItem = useCallback(
