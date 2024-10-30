@@ -40,29 +40,65 @@ export default function UserNew() {
   const authData = useSelector((state) => state.auth);
   const [showPassword, setShowPassword] = useState(false);
   const roles = ['admin', 'staff', 'doctor'];
+  const staff = ['receptionist', 'nurse'];
+  const gender = ['male', 'female'];
+
   const [data, setData] = useState({
     name: '',
     email: '',
+    gender: 'male',
     password: '',
     c_password: '',
     role: 'admin',
+    dob: '',
+    contact: '',
+    address: '',
+    specialization: '',
+    staffRole: 'receptionist',
+    qualification: '',
+    experience: '',
+    availability: [],
   });
+
+  console.log(data);
 
   const changeHandler = (e) => {
     setData((prevData) => ({ ...prevData, [e.target.name]: e.target.value }));
   };
 
+  // Handle submit with password validation
   const handleClick = async (e) => {
     e.preventDefault();
+    if (data.password !== data.c_password) {
+      openSnackbar('Passwords do not match', 'error');
+      return;
+    }
     await dispatch(register(data));
   };
+
+  // Handling field reset logic
+  useEffect(() => {
+    if (data?.role === 'doctor') {
+      setData((prevData) => ({ ...prevData, staffRole: '' }));
+    } else if (data?.role === 'staff') {
+      setData((prevData) => ({ ...prevData, specialization: '' }));
+    } else if (data?.role === 'admin') {
+      setData((prevData) => ({ ...prevData, specialization: '', staffRole: '' }));
+    }
+  }, [data?.role]);
+
   useEffect(() => {
     if (authData.registrationSuccess) {
-      openSnackbar('Registration Successfull', 'success');
-    } else if (authData?.registrationError?.message) {
-      openSnackbar(`Registration failed: ${authData?.registrationError?.message}`, 'error');
+      openSnackbar('Registration Successful', 'success');
+    } else if (authData?.registrationError?.message || authData?.registrationError?.error) {
+      openSnackbar(
+        `Registration failed: ${authData?.registrationError?.message || authData?.registrationError?.error}`,
+        'error'
+      );
     }
   }, [authData.registrationSuccess, authData?.registrationError, router, openSnackbar]);
+
+  console.log(authData?.registrationError?.error);
   return (
     <DashboardContent>
       <Box display="flex" alignItems="center" mb={5}>
@@ -84,14 +120,20 @@ export default function UserNew() {
       <Card>
         <form onSubmit={handleClick}>
           <Grid container spacing={4} p={4}>
+            {/* Personal Information Heading */}
+            <Grid item xs={12}>
+              <Typography variant="h5" gutterBottom>
+                Personal Information
+              </Typography>
+            </Grid>
+
+            {/* Name Field */}
             <Grid item xs={12} sm={4} md={6}>
-              <Box display="flex" alignItems="center" height="100%">
-                <Label
-                  sx={{ fontSize: '0.9rem', padding: '20px', width: isMobile ? 'auto' : 'auto' }}
-                >
-                  Name
-                </Label>
-              </Box>
+              <Label
+                sx={{ fontSize: '0.9rem', padding: '20px', width: isMobile ? 'auto' : 'auto' }}
+              >
+                Name
+              </Label>
             </Grid>
             <Grid item xs={12} sm={8} md={6}>
               <TextField
@@ -101,17 +143,16 @@ export default function UserNew() {
                 onChange={changeHandler}
                 required
                 fullWidth
-                sx={{ minWidth: isMobile ? '100%' : '400px' }}
               />
             </Grid>
+
+            {/* Email Field */}
             <Grid item xs={12} sm={4} md={6}>
-              <Box display="flex" alignItems="center" height="100%">
-                <Label
-                  sx={{ fontSize: '0.9rem', padding: '20px', width: isMobile ? 'auto' : 'auto' }}
-                >
-                  Email
-                </Label>
-              </Box>
+              <Label
+                sx={{ fontSize: '0.9rem', padding: '20px', width: isMobile ? 'auto' : 'auto' }}
+              >
+                Email
+              </Label>
             </Grid>
             <Grid item xs={12} sm={8} md={6}>
               <TextField
@@ -121,17 +162,108 @@ export default function UserNew() {
                 onChange={changeHandler}
                 required
                 fullWidth
-                sx={{ minWidth: isMobile ? '100%' : '400px' }}
               />
             </Grid>
+
+            {/* Date of Birth Field */}
             <Grid item xs={12} sm={4} md={6}>
-              <Box display="flex" alignItems="center" height="100%">
-                <Label
-                  sx={{ fontSize: '0.9rem', padding: '20px', width: isMobile ? 'auto' : 'auto' }}
-                >
-                  Role
-                </Label>
-              </Box>
+              <Label
+                sx={{ fontSize: '0.9rem', padding: '20px', width: isMobile ? 'auto' : 'auto' }}
+              >
+                Date of Birth
+              </Label>
+            </Grid>
+            <Grid item xs={12} sm={8} md={6}>
+              <TextField
+                name="dob"
+                label="Date of Birth"
+                type="date"
+                value={data.dob}
+                onChange={changeHandler}
+                required
+                fullWidth
+                InputLabelProps={{
+                  shrink: true,
+                }}
+              />
+            </Grid>
+
+            {/* Gender Field */}
+            <Grid item xs={12} sm={4} md={6}>
+              <Label
+                sx={{ fontSize: '0.9rem', padding: '20px', width: isMobile ? 'auto' : 'auto' }}
+              >
+                Gender
+              </Label>
+            </Grid>
+            <Grid item xs={12} sm={8} md={6}>
+              <Select
+                name="gender"
+                value={data.gender}
+                onChange={changeHandler}
+                displayEmpty
+                fullWidth
+              >
+                {gender.map((e, index) => (
+                  <MenuItem key={index} value={e}>
+                    {e.toUpperCase()}
+                  </MenuItem>
+                ))}
+              </Select>
+            </Grid>
+
+            {/* Contact Field */}
+            <Grid item xs={12} sm={4} md={6}>
+              <Label
+                sx={{ fontSize: '0.9rem', padding: '20px', width: isMobile ? 'auto' : 'auto' }}
+              >
+                Contact
+              </Label>
+            </Grid>
+            <Grid item xs={12} sm={8} md={6}>
+              <TextField
+                name="contact"
+                label="Contact"
+                type="text"
+                value={data.contact}
+                onChange={changeHandler}
+                required
+                fullWidth
+              />
+            </Grid>
+
+            {/* Address Field */}
+            <Grid item xs={12} sm={4} md={6}>
+              <Label
+                sx={{ fontSize: '0.9rem', padding: '20px', width: isMobile ? 'auto' : 'auto' }}
+              >
+                Address
+              </Label>
+            </Grid>
+            <Grid item xs={12} sm={8} md={6}>
+              <TextField
+                name="address"
+                label="Address"
+                value={data.address}
+                onChange={changeHandler}
+                fullWidth
+              />
+            </Grid>
+
+            {/* Role Information Heading */}
+            <Grid item xs={12}>
+              <Typography variant="h5" gutterBottom>
+                Role Information
+              </Typography>
+            </Grid>
+
+            {/* Role Field */}
+            <Grid item xs={12} sm={4} md={6}>
+              <Label
+                sx={{ fontSize: '0.9rem', padding: '20px', width: isMobile ? 'auto' : 'auto' }}
+              >
+                Role
+              </Label>
             </Grid>
             <Grid item xs={12} sm={8} md={6}>
               <Select
@@ -139,14 +271,8 @@ export default function UserNew() {
                 value={data.role}
                 onChange={changeHandler}
                 displayEmpty
-                renderValue={(selected) => {
-                  if (!selected) {
-                    return <em>Select Role</em>;
-                  }
-                  const selectedRole = roles.find((e) => e === selected);
-                  return selectedRole ? selectedRole.toUpperCase() : '';
-                }}
                 fullWidth
+                onClick={changeHandler}
               >
                 {roles.map((e, index) => (
                   <MenuItem key={index} value={e}>
@@ -155,29 +281,123 @@ export default function UserNew() {
                 ))}
               </Select>
             </Grid>
+
+            {/* Conditional Fields for Doctor Role */}
+            {data.role === 'doctor' && (
+              <>
+                <Grid item xs={12} sm={4} md={6}>
+                  <Label
+                    sx={{ fontSize: '0.9rem', padding: '20px', width: isMobile ? 'auto' : 'auto' }}
+                  >
+                    Specialization
+                  </Label>
+                </Grid>
+                <Grid item xs={12} sm={8} md={6}>
+                  <TextField
+                    name="specialization"
+                    label="Specialization"
+                    value={data.specialization}
+                    onChange={changeHandler}
+                    required
+                    fullWidth
+                  />
+                </Grid>
+              </>
+            )}
+
+            {/* Conditional Fields for Staff Role */}
+            {data.role === 'staff' && (
+              <>
+                <Grid item xs={12} sm={4} md={6}>
+                  <Label
+                    sx={{ fontSize: '0.9rem', padding: '20px', width: isMobile ? 'auto' : 'auto' }}
+                  >
+                    Staff Role
+                  </Label>
+                </Grid>
+                <Grid item xs={12} sm={8} md={6}>
+                  <Select
+                    name="staffRole"
+                    value={data.staffRole}
+                    onChange={changeHandler}
+                    displayEmpty
+                    fullWidth
+                  >
+                    {staff.map((e, index) => (
+                      <MenuItem key={index} value={e}>
+                        {e.toUpperCase()}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </Grid>
+              </>
+            )}
+
             <Grid item xs={12} sm={4} md={6}>
-              <Box display="flex" alignItems="center" height="100%">
-                <Label
-                  sx={{ fontSize: '0.9rem', padding: '20px', width: isMobile ? 'auto' : 'auto' }}
-                >
-                  Password
-                </Label>
-              </Box>
+              <Label
+                sx={{ fontSize: '0.9rem', padding: '20px', width: isMobile ? 'auto' : 'auto' }}
+              >
+                Qualification
+              </Label>
+            </Grid>
+            <Grid item xs={12} sm={8} md={6}>
+              <TextField
+                name="qualification"
+                label="Qualification"
+                type="text"
+                value={data.qualification}
+                onChange={changeHandler}
+                required
+                fullWidth
+              />
             </Grid>
             <Grid item xs={12} sm={4} md={6}>
+              <Label
+                sx={{ fontSize: '0.9rem', padding: '20px', width: isMobile ? 'auto' : 'auto' }}
+              >
+                Years of Experience
+              </Label>
+            </Grid>
+            <Grid item xs={12} sm={8} md={6}>
               <TextField
+                name="experience"
+                label="Experience"
+                type="number"
+                value={data.experience}
+                onChange={changeHandler}
                 required
+                fullWidth
+              />
+            </Grid>
+
+            {/* Submit */}
+            <Grid item xs={12}>
+              <Typography variant="h5" gutterBottom>
+                Submit Details
+              </Typography>
+            </Grid>
+
+            {/* Password Fields */}
+            <Grid item xs={12} sm={4} md={6}>
+              <Label
+                sx={{ fontSize: '0.9rem', padding: '20px', width: isMobile ? 'auto' : 'auto' }}
+              >
+                Password
+              </Label>
+            </Grid>
+            <Grid item xs={12} sm={8} md={6}>
+              <TextField
                 name="password"
                 label="Password"
-                sx={{ minWidth: isMobile ? '100%' : '400px' }}
-                fullWidth
+                type={showPassword ? 'text' : 'password'}
                 value={data.password}
                 onChange={changeHandler}
-                type={showPassword ? 'text' : 'password'}
+                required
+                fullWidth
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
-                      <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                      <IconButton onClick={() => setShowPassword((prev) => !prev)}>
                         <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
                       </IconButton>
                     </InputAdornment>
@@ -185,29 +405,27 @@ export default function UserNew() {
                 }}
               />
             </Grid>
+
             <Grid item xs={12} sm={4} md={6}>
-              <Box display="flex" alignItems="center" height="100%">
-                <Label
-                  sx={{ fontSize: '0.9rem', padding: '20px', width: isMobile ? 'auto' : 'auto' }}
-                >
-                  Confirm Password
-                </Label>
-              </Box>
+              <Label
+                sx={{ fontSize: '0.9rem', padding: '20px', width: isMobile ? 'auto' : 'auto' }}
+              >
+                Confirm Password
+              </Label>
             </Grid>
-            <Grid item xs={12} sm={4} md={6}>
+            <Grid item xs={12} sm={8} md={6}>
               <TextField
-                sx={{ minWidth: isMobile ? '100%' : '400px' }}
-                fullWidth
-                required
                 name="c_password"
-                label="Password"
+                label="Confirm Password"
+                type={showPassword ? 'text' : 'password'}
                 value={data.c_password}
                 onChange={changeHandler}
-                type={showPassword ? 'text' : 'password'}
+                required
+                fullWidth
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
-                      <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                      <IconButton onClick={() => setShowPassword((prev) => !prev)}>
                         <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
                       </IconButton>
                     </InputAdornment>
@@ -215,16 +433,14 @@ export default function UserNew() {
                 }}
               />
             </Grid>
+
+            {/* Submit Button */}
             <Grid item xs={12} sm={4} md={6}>
               <Box display="flex" alignItems="center" height="100%">
-                <Label
-                  sx={{ fontSize: '0.9rem', padding: '20px', width: isMobile ? 'auto' : 'auto' }}
-                >
-                  Submit
-                </Label>
+                <Label sx={{ fontSize: '0.9rem', padding: '20px' }}>Submit</Label>
               </Box>
             </Grid>
-            <Grid item xs={12} sm={4} md={6}>
+            <Grid item xs={12} sm={8} md={6}>
               <LoadingButton
                 fullWidth
                 size="large"

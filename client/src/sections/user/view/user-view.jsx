@@ -1,4 +1,5 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -7,6 +8,7 @@ import Button from '@mui/material/Button';
 import TableBody from '@mui/material/TableBody';
 import Typography from '@mui/material/Typography';
 import TableContainer from '@mui/material/TableContainer';
+import { CircularProgress, Container } from '@mui/material';
 import TablePagination from '@mui/material/TablePagination';
 
 import { _users } from '../../../_mock';
@@ -22,6 +24,7 @@ import { TableEmptyRows } from '../table-empty-rows';
 import { TableToolbar } from '../table-toolbar';
 import { emptyRows, applyFilter, getComparator } from '../utils';
 import { useRouter } from '../../../routes/hooks';
+import { users } from '../../../redux/userSlice';
 
 // ----------------------------------------------------------------------
 
@@ -94,14 +97,20 @@ export function useTable() {
 // ----------------------------------------------------------------------
 
 export default function UserView() {
+  const dispatch = useDispatch();
+  const { data } = useSelector((state) => state.user);
   const router = useRouter();
 
   const table = useTable();
 
   const [filterName, setFilterName] = useState('');
 
+  useEffect(() => {
+    dispatch(users());
+  }, [dispatch]);
+
   const dataFiltered = applyFilter({
-    inputData: _users,
+    inputData: data?.length > 0 ? data : [],
     comparator: getComparator(table.order, table.orderBy),
     filterName,
   });
@@ -140,22 +149,21 @@ export default function UserView() {
               <CustomTableHead
                 order={table.order}
                 orderBy={table.orderBy}
-                rowCount={_users.length}
+                rowCount={data?.length}
                 numSelected={table.selected.length}
                 onSort={table.onSort}
                 onSelectAllRows={(checked) =>
                   table.onSelectAllRows(
                     checked,
-                    _users.map((user) => user.id)
+                    data?.map((user) => user._id)
                   )
                 }
                 headLabel={[
                   { id: 'name', label: 'Name' },
-                  { id: 'company', label: 'Company' },
+                  { id: 'email', label: 'Email' },
+                  { id: 'gender', label: 'Gender' },
                   { id: 'role', label: 'Role' },
-                  { id: 'isVerified', label: 'Verified', align: 'center' },
-                  { id: 'status', label: 'Status' },
-                  { id: '' },
+                  { id: 'joined', label: 'Joined' },
                 ]}
               />
               <TableBody>
@@ -166,7 +174,7 @@ export default function UserView() {
                   )
                   .map((row) => (
                     <CustomTableRow
-                      key={row.id}
+                      key={row._id}
                       row={row}
                       selected={table.selected.includes(row.id)}
                       onSelectRow={() => table.onSelectRow(row.id)}
@@ -187,7 +195,7 @@ export default function UserView() {
         <TablePagination
           component="div"
           page={table.page}
-          count={_users.length}
+          count={data?.length}
           rowsPerPage={table.rowsPerPage}
           onPageChange={table.onChangePage}
           rowsPerPageOptions={[5, 10, 25]}

@@ -26,9 +26,7 @@ export function CustomTableHead({ order, onSort, orderBy, headLabel }) {
               onClick={() => onSort(headCell.id)}
             >
               {headCell.label}
-              {orderBy === headCell.id ? (
-                <Box sx={{}}>{order === 'desc' ? 'sorted descending' : 'sorted ascending'}</Box>
-              ) : null}
+              {orderBy === headCell.id ? <Box sx={{}}>{order === 'desc' ? '' : ''}</Box> : null}
             </TableSortLabel>
           </TableCell>
         ))}

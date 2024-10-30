@@ -18,10 +18,12 @@ connectToDB();
 // Routes
 const register = require("./routes/register");
 const login = require("./routes/login");
+const users = require("./routes/users");
 
 // Endpoints
 app.use(register);
 app.use(login);
+app.use(users);
 
 // Root route to show a message
 app.get("/", (req, res) => {
