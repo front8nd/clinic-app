@@ -1,12 +1,12 @@
 import { Helmet } from 'react-helmet-async';
 
-import { CONFIG } from '../config-global';
+import { CONFIG } from '../../config-global';
 
-import { UserView } from '../sections/user/view';
+import UserView from '../../sections/user/view/user-view';
 
 // ----------------------------------------------------------------------
 
-export default function Page() {
+export default function UserPage() {
   return (
     <>
       <Helmet>

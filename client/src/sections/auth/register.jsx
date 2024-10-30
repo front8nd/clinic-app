@@ -47,14 +47,14 @@ export default function Register() {
     if (authData.registrationSuccess) {
       openSnackbar('Registration Successfull', 'success');
       router.push('/');
-    } else if (authData?.registrationError) {
-      openSnackbar(`Registration failed`, 'error');
+    } else if (authData?.registrationError?.message) {
+      openSnackbar(`Registration failed ${authData?.registrationError?.message}`, 'error');
     }
   }, [authData.registrationSuccess, authData?.registrationError, router, openSnackbar]);
 
   const renderForm = (
     <form onSubmit={handleClick}>
-      <Stack spacing={3}>
+      <Stack spacing={3} className="mb-6">
         <TextField name="name" label="Name" value={data.name} onChange={changeHandler} required />
 
         <TextField
@@ -101,31 +101,6 @@ export default function Register() {
         />
       </Stack>
 
-      <Stack
-        direction="row"
-        alignItems="center"
-        justifyContent="flex-start"
-        sx={{ my: 1 }}
-        className="py-2 w-full flex justify-center"
-      >
-        {authData?.registrationError && (
-          <Typography variant="subtitle1" color="error">
-            Error:{' '}
-            {authData?.registrationError?.message ?? (
-              <ul>
-                {Object.values(authData?.registrationError).map((errorMessages, index) =>
-                  errorMessages.map((errorMessage, i) => (
-                    <li className="list-disc" key={i}>
-                      {errorMessage}
-                    </li>
-                  ))
-                )}
-              </ul>
-            )}
-          </Typography>
-        )}
-      </Stack>
-
       <LoadingButton fullWidth size="large" type="submit" variant="contained" color="inherit">
         {authData?.loading === false ? (
           'Register'
@@ -162,7 +137,7 @@ export default function Register() {
 
       {renderForm}
 
-      <Divider sx={{ my: 3, '&::before, &::after': { borderTopStyle: 'dashed' } }}>
+      {/* <Divider sx={{ my: 3, '&::before, &::after': { borderTopStyle: 'dashed' } }}>
         <Typography
           variant="overline"
           sx={{ color: 'text.secondary', fontWeight: 'fontWeightMedium' }}
@@ -181,7 +156,7 @@ export default function Register() {
         <IconButton color="inherit">
           <Iconify icon="ri:twitter-x-fill" />
         </IconButton>
-      </Box>
+      </Box> */}
     </>
   );
 }

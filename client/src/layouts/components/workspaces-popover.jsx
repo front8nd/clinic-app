@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import { useSelector } from 'react-redux';
 
 import Box from '@mui/material/Box';
 import Popover from '@mui/material/Popover';
@@ -14,6 +15,7 @@ import { Iconify } from '../../components/iconify';
 // ----------------------------------------------------------------------
 
 export function WorkspacesPopover({ data = [], sx, ...other }) {
+  const { userData } = useSelector((state) => state.auth);
   const [workspace, setWorkspace] = useState(data[0]);
 
   const [openPopover, setOpenPopover] = useState(null);
@@ -71,50 +73,10 @@ export function WorkspacesPopover({ data = [], sx, ...other }) {
           alignItems="center"
           sx={{ typography: 'body2', fontWeight: 'fontWeightSemiBold' }}
         >
-          {workspace?.name}
-          {renderLabel(workspace?.plan)}
+          {userData?.user?.name}
+          {renderLabel(userData?.user?.role)}
         </Box>
-
-        <Iconify width={16} icon="carbon:chevron-sort" sx={{ color: 'text.disabled' }} />
       </ButtonBase>
-
-      <Popover open={!!openPopover} anchorEl={openPopover} onClose={handleClosePopover}>
-        <MenuList
-          disablePadding
-          sx={{
-            p: 0.5,
-            gap: 0.5,
-            width: 260,
-            display: 'flex',
-            flexDirection: 'column',
-            [`& .${menuItemClasses.root}`]: {
-              p: 1.5,
-              gap: 1.5,
-              borderRadius: 0.75,
-              [`&.${menuItemClasses.selected}`]: {
-                bgcolor: 'action.selected',
-                fontWeight: 'fontWeightSemiBold',
-              },
-            },
-          }}
-        >
-          {data.map((option) => (
-            <MenuItem
-              key={option.id}
-              selected={option.id === workspace?.id}
-              onClick={() => handleChangeWorkspace(option)}
-            >
-              {renderAvatar(option.name, option.logo)}
-
-              <Box component="span" sx={{ flexGrow: 1 }}>
-                {option.name}
-              </Box>
-
-              {renderLabel(option.plan)}
-            </MenuItem>
-          ))}
-        </MenuList>
-      </Popover>
     </>
   );
 }

@@ -16,11 +16,12 @@ import { Iconify } from '../../../components/iconify';
 import { Scrollbar } from '../../../components/scrollbar';
 
 import { TableNoData } from '../table-no-data';
-import { UserTableRow } from '../user-table-row';
-import { UserTableHead } from '../user-table-head';
+import { CustomTableRow } from '../table-row';
+import { CustomTableHead } from '../table-head';
 import { TableEmptyRows } from '../table-empty-rows';
-import { UserTableToolbar } from '../user-table-toolbar';
+import { TableToolbar } from '../table-toolbar';
 import { emptyRows, applyFilter, getComparator } from '../utils';
+import { useRouter } from '../../../routes/hooks';
 
 // ----------------------------------------------------------------------
 
@@ -92,7 +93,9 @@ export function useTable() {
 
 // ----------------------------------------------------------------------
 
-export function UserView() {
+export default function UserView() {
+  const router = useRouter();
+
   const table = useTable();
 
   const [filterName, setFilterName] = useState('');
@@ -112,6 +115,9 @@ export function UserView() {
           Users
         </Typography>
         <Button
+          onClick={() => {
+            router.push('/new-user');
+          }}
           variant="contained"
           color="inherit"
           startIcon={<Iconify icon="mingcute:add-line" />}
@@ -121,9 +127,7 @@ export function UserView() {
       </Box>
 
       <Card>
-        <UserTableToolbar
-          numSelected={table.selected.length}
-          filterName={filterName}
+        <TableToolbar
           onFilterName={(event) => {
             setFilterName(event.target.value);
             table.onResetPage();
@@ -133,7 +137,7 @@ export function UserView() {
         <Scrollbar>
           <TableContainer sx={{ overflow: 'unset' }}>
             <Table sx={{ minWidth: 800 }}>
-              <UserTableHead
+              <CustomTableHead
                 order={table.order}
                 orderBy={table.orderBy}
                 rowCount={_users.length}
@@ -161,7 +165,7 @@ export function UserView() {
                     table.page * table.rowsPerPage + table.rowsPerPage
                   )
                   .map((row) => (
-                    <UserTableRow
+                    <CustomTableRow
                       key={row.id}
                       row={row}
                       selected={table.selected.includes(row.id)}

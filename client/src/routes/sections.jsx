@@ -17,7 +17,8 @@ import { DashboardLayout } from '../layouts/dashboard/index';
 export const HomePage = lazy(() => import('../pages/home'));
 export const LoginPage = lazy(() => import('../pages/login'));
 export const RegisterPage = lazy(() => import('../pages/register'));
-export const UserPage = lazy(() => import('../pages/user'));
+export const UserPage = lazy(() => import('../pages/user/user'));
+export const NewUserPage = lazy(() => import('../pages/user/new'));
 export const Page404 = lazy(() => import('../pages/page-not-found'));
 
 // ----------------------------------------------------------------------
@@ -53,9 +54,15 @@ export function Router() {
           index: true,
         },
         {
-          path: 'user',
+          path: 'users',
           element: (
             <ProtectedRoute allowedRoles={['admin', 'staff', 'doctor']} component={UserPage} />
+          ),
+        },
+        {
+          path: 'new-user',
+          element: (
+            <ProtectedRoute allowedRoles={['admin', 'staff', 'doctor']} component={NewUserPage} />
           ),
         },
       ],

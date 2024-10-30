@@ -4,7 +4,6 @@ import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
 import Popover from '@mui/material/Popover';
 import TableRow from '@mui/material/TableRow';
-import Checkbox from '@mui/material/Checkbox';
 import MenuList from '@mui/material/MenuList';
 import TableCell from '@mui/material/TableCell';
 import IconButton from '@mui/material/IconButton';
@@ -15,7 +14,7 @@ import { Iconify } from '../../components/iconify';
 
 // ----------------------------------------------------------------------
 
-export function UserTableRow({ row, selected, onSelectRow }) {
+export function CustomTableRow({ row, selected }) {
   const [openPopover, setOpenPopover] = useState(null);
 
   const handleOpenPopover = useCallback((event) => {
@@ -29,10 +28,6 @@ export function UserTableRow({ row, selected, onSelectRow }) {
   return (
     <>
       <TableRow hover tabIndex={-1} role="checkbox" selected={selected}>
-        <TableCell padding="checkbox">
-          <Checkbox disableRipple checked={selected} onChange={onSelectRow} />
-        </TableCell>
-
         <TableCell component="th" scope="row">
           <Box gap={2} display="flex" alignItems="center">
             <Avatar alt={row.name} src={row.avatarUrl} />
@@ -56,14 +51,14 @@ export function UserTableRow({ row, selected, onSelectRow }) {
           <Label color={(row.status === 'banned' && 'error') || 'success'}>{row.status}</Label>
         </TableCell>
 
-        <TableCell align="right">
+        {/* <TableCell align="right">
           <IconButton onClick={handleOpenPopover}>
             <Iconify icon="eva:more-vertical-fill" />
           </IconButton>
-        </TableCell>
+        </TableCell> */}
       </TableRow>
 
-      <Popover
+      {/* <Popover
         open={!!openPopover}
         anchorEl={openPopover}
         onClose={handleClosePopover}
@@ -96,7 +91,7 @@ export function UserTableRow({ row, selected, onSelectRow }) {
             Delete
           </MenuItem>
         </MenuList>
-      </Popover>
+      </Popover> */}
     </>
   );
 }

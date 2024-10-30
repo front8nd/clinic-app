@@ -9,7 +9,7 @@ import { Iconify } from '../../components/iconify';
 
 // ----------------------------------------------------------------------
 
-export function UserTableToolbar({ numSelected, filterName, onFilterName }) {
+export function TableToolbar({ numSelected, filterName, onFilterName }) {
   return (
     <Toolbar
       sx={{
