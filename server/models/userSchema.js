@@ -8,9 +8,8 @@ const UserSchema = new mongoose.Schema({
   gender: {
     type: String,
     enum: ["male", "female"],
-    required: true,
   },
-  contact: { type: String, required: true },
+  contact: { type: String },
   address: { type: String },
   dob: { type: Date },
 

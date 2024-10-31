@@ -45,15 +45,14 @@ export default function Register() {
 
   useEffect(() => {
     if (authData.registrationSuccess) {
-      openSnackbar('Registration Successfull', 'success');
-      router.push('/');
-    } else if (authData?.registrationError?.message) {
-      openSnackbar(`Registration failed ${authData?.registrationError?.message}`, 'error');
+      openSnackbar('Registration Successful', 'success');
+    } else if (authData?.registrationError?.message || authData?.registrationError?.error) {
+      openSnackbar(
+        `${authData?.registrationError?.message || authData?.registrationError?.error}`,
+        'error'
+      );
     }
-    return () => {
-      dispatch(resetErrors());
-    };
-  }, [authData.registrationSuccess, authData?.registrationError, router, openSnackbar, dispatch]);
+  }, [authData.registrationSuccess, authData?.registrationError, router, openSnackbar]);
 
   const renderForm = (
     <form onSubmit={handleClick}>

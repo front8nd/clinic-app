@@ -30,7 +30,7 @@ import { users } from '../../../redux/userSlice';
 
 export function useTable() {
   const [page, setPage] = useState(0);
-  const [orderBy, setOrderBy] = useState('name');
+  const [orderBy, setOrderBy] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [selected, setSelected] = useState([]);
   const [order, setOrder] = useState('asc');
@@ -161,20 +161,15 @@ export default function UserView() {
                 rowCount={data?.length}
                 numSelected={table.selected.length}
                 onSort={table.onSort}
-                onSelectAllRows={(checked) =>
-                  table.onSelectAllRows(
-                    checked,
-                    data?.map((user) => user._id)
-                  )
-                }
                 headLabel={[
                   { id: 'name', label: 'Name' },
                   { id: 'email', label: 'Email' },
                   { id: 'contact', label: 'Contact' },
+                  { id: 'address', label: 'Address' },
                   { id: 'role', label: 'Role' },
                   { id: 'positon', label: 'Position' },
-                  { id: 'qualification', label: 'Qualification' },
                   { id: 'experince', label: 'EXP (Years)' },
+                  { id: 'qualification', label: 'Qualification' },
                   { id: 'joined', label: 'Joined' },
                 ]}
               />

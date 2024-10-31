@@ -34,7 +34,21 @@ export function CustomTableRow({ row, selected }) {
         >
           {row?.email || ' - '}
         </TableCell>
-        <TableCell>{row?.contact || ' - '}</TableCell>
+        <TableCell
+          sx={{
+            textWrap: 'nowrap',
+          }}
+        >
+          {row?.contact || ' - '}
+        </TableCell>
+
+        <TableCell
+          sx={{
+            textWrap: 'nowrap',
+          }}
+        >
+          {row?.address || ' - '}
+        </TableCell>
 
         <TableCell
           sx={{
@@ -69,7 +83,7 @@ export function CustomTableRow({ row, selected }) {
             textWrap: 'nowrap',
           }}
         >
-          {row?.qualification || ' - '}
+          {row?.experience || ' - '}
         </TableCell>
 
         <TableCell
@@ -77,7 +91,7 @@ export function CustomTableRow({ row, selected }) {
             textWrap: 'nowrap',
           }}
         >
-          {row?.experience || ' - '}
+          {row?.qualification || ' - '}
         </TableCell>
 
         <TableCell
