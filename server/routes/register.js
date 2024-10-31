@@ -4,7 +4,20 @@ const User = require("../models/userSchema");
 const router = express.Router();
 // Register
 router.post("/register", async (req, res) => {
-  const { name, email, password, role } = req.body;
+  const {
+    name,
+    email,
+    gender,
+    password,
+    role,
+    dob,
+    contact,
+    address,
+    specialization,
+    staffRole,
+    qualification,
+    experience,
+  } = req.body;
   try {
     const userExists = await User.findOne({ email });
     if (userExists) {
@@ -14,10 +27,18 @@ router.post("/register", async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = new User({
+      password: hashedPassword,
       name,
       email,
-      password: hashedPassword,
+      gender,
       role,
+      dob,
+      contact,
+      address,
+      specialization,
+      staffRole,
+      qualification,
+      experience,
     });
 
     await user.save();

@@ -11,7 +11,7 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import { CircularProgress, Stack } from '@mui/material';
 import InputAdornment from '@mui/material/InputAdornment';
 
-import { register } from '../../redux/authSlice';
+import { register, resetErrors } from '../../redux/authSlice';
 import { useRouter } from '../../routes/hooks';
 
 import { Iconify } from '../../components/iconify';
@@ -50,7 +50,10 @@ export default function Register() {
     } else if (authData?.registrationError?.message) {
       openSnackbar(`Registration failed ${authData?.registrationError?.message}`, 'error');
     }
-  }, [authData.registrationSuccess, authData?.registrationError, router, openSnackbar]);
+    return () => {
+      dispatch(resetErrors());
+    };
+  }, [authData.registrationSuccess, authData?.registrationError, router, openSnackbar, dispatch]);
 
   const renderForm = (
     <form onSubmit={handleClick}>

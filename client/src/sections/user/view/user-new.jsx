@@ -25,7 +25,7 @@ import { DashboardContent } from '../../../layouts/dashboard/index';
 import { Iconify } from '../../../components/iconify';
 import { useRouter } from '../../../routes/hooks';
 
-import { register } from '../../../redux/authSlice';
+import { register, resetErrors } from '../../../redux/authSlice';
 
 import { useSnackbar } from '../../../components/snackbar/snackbar';
 import { Label } from '../../../components/label';
@@ -57,7 +57,6 @@ export default function UserNew() {
     staffRole: 'receptionist',
     qualification: '',
     experience: '',
-    availability: [],
   });
 
   console.log(data);
@@ -79,20 +78,23 @@ export default function UserNew() {
   // Handling field reset logic
   useEffect(() => {
     if (data?.role === 'doctor') {
-      setData((prevData) => ({ ...prevData, staffRole: '' }));
+      setData((prevData) => ({ ...prevData, staffRole: null }));
     } else if (data?.role === 'staff') {
-      setData((prevData) => ({ ...prevData, specialization: '' }));
+      setData((prevData) => ({ ...prevData, specialization: null }));
     } else if (data?.role === 'admin') {
-      setData((prevData) => ({ ...prevData, specialization: '', staffRole: '' }));
+      setData((prevData) => ({ ...prevData, specialization: null, staffRole: null }));
     }
-  }, [data?.role]);
+    return () => {
+      dispatch(resetErrors());
+    };
+  }, [data?.role, dispatch]);
 
   useEffect(() => {
     if (authData.registrationSuccess) {
       openSnackbar('Registration Successful', 'success');
     } else if (authData?.registrationError?.message || authData?.registrationError?.error) {
       openSnackbar(
-        `Registration failed: ${authData?.registrationError?.message || authData?.registrationError?.error}`,
+        `${authData?.registrationError?.message || authData?.registrationError?.error}`,
         'error'
       );
     }
