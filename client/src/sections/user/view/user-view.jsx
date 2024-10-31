@@ -98,25 +98,32 @@ export function useTable() {
 
 export default function UserView() {
   const dispatch = useDispatch();
-  const { data } = useSelector((state) => state.user);
   const router = useRouter();
-
   const table = useTable();
 
+  const { data } = useSelector((state) => state.user);
+
   const [filterName, setFilterName] = useState('');
+  const [theRole, setRole] = useState('all');
 
   useEffect(() => {
     dispatch(users());
   }, [dispatch]);
 
+  const selectedData = data?.filter((e) => {
+    if (theRole === 'all') return data;
+    return e.role === theRole;
+  });
+
+  console.log(data);
+
   const dataFiltered = applyFilter({
-    inputData: data?.length > 0 ? data : [],
+    inputData: selectedData?.length > 0 ? selectedData : [],
     comparator: getComparator(table.order, table.orderBy),
     filterName,
   });
 
   const notFound = !dataFiltered.length && !!filterName;
-
   return (
     <DashboardContent>
       <Box display="flex" alignItems="center" mb={5}>
@@ -141,6 +148,8 @@ export default function UserView() {
             setFilterName(event.target.value);
             table.onResetPage();
           }}
+          setRole={setRole}
+          theRole={theRole}
         />
 
         <Scrollbar>
@@ -161,8 +170,11 @@ export default function UserView() {
                 headLabel={[
                   { id: 'name', label: 'Name' },
                   { id: 'email', label: 'Email' },
-                  { id: 'gender', label: 'Gender' },
+                  { id: 'contact', label: 'Contact' },
                   { id: 'role', label: 'Role' },
+                  { id: 'positon', label: 'Position' },
+                  { id: 'qualification', label: 'Qualification' },
+                  { id: 'experince', label: 'EXP (Years)' },
                   { id: 'joined', label: 'Joined' },
                 ]}
               />

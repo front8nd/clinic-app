@@ -17,7 +17,7 @@ export function CustomTableHead({ order, onSort, orderBy, headLabel }) {
             key={headCell.id}
             align={headCell.align || 'left'}
             sortDirection={orderBy === headCell.id ? order : false}
-            sx={{ width: headCell.width, minWidth: headCell.minWidth }}
+            sx={{ width: headCell.width, minWidth: headCell.minWidth, textWrap: 'nowrap' }}
           >
             <TableSortLabel
               hideSortIcon

@@ -14,17 +14,33 @@ export function CustomTableRow({ row, selected }) {
   return (
     <>
       <TableRow hover tabIndex={-1} role="checkbox" selected={selected}>
-        <TableCell component="th" scope="row">
+        <TableCell
+          sx={{
+            textWrap: 'nowrap',
+          }}
+          component="th"
+          scope="row"
+        >
           <Box gap={2} display="flex" alignItems="center">
-            <Avatar alt={row?.name || ' - '} src={row?.avatarUrl} />
+            {/* <Avatar alt={row?.name || ' - '} src={row?.avatarUrl} /> */}
             {row?.name || ' - '}
           </Box>
         </TableCell>
 
-        <TableCell>{row?.email || ' - '}</TableCell>
-        <TableCell>{row?.gender || ' - '}</TableCell>
+        <TableCell
+          sx={{
+            textWrap: 'nowrap',
+          }}
+        >
+          {row?.email || ' - '}
+        </TableCell>
+        <TableCell>{row?.contact || ' - '}</TableCell>
 
-        <TableCell>
+        <TableCell
+          sx={{
+            textWrap: 'nowrap',
+          }}
+        >
           <Label
             color={
               row?.role === 'admin'
@@ -40,7 +56,37 @@ export function CustomTableRow({ row, selected }) {
           </Label>
         </TableCell>
 
-        <TableCell>{formattedDate || ' - '}</TableCell>
+        <TableCell
+          sx={{
+            textWrap: 'nowrap',
+          }}
+        >
+          {row?.specialization?.toUpperCase() || row?.staffRole?.toUpperCase() || ' - '}
+        </TableCell>
+
+        <TableCell
+          sx={{
+            textWrap: 'nowrap',
+          }}
+        >
+          {row?.qualification || ' - '}
+        </TableCell>
+
+        <TableCell
+          sx={{
+            textWrap: 'nowrap',
+          }}
+        >
+          {row?.experience || ' - '}
+        </TableCell>
+
+        <TableCell
+          sx={{
+            textWrap: 'nowrap',
+          }}
+        >
+          {formattedDate || ' - '}
+        </TableCell>
       </TableRow>
     </>
   );

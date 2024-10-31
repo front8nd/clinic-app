@@ -21,11 +21,9 @@ import { Iconify } from '../../components/iconify';
 
 // ----------------------------------------------------------------------
 
-export function TableToolbar({ numSelected, filterName, onFilterName }) {
-  const [value, setValue] = useState('all');
-
+export function TableToolbar({ numSelected, filterName, onFilterName, setRole, theRole }) {
   const handleChange = (event) => {
-    setValue(event.target.value);
+    setRole(event.target.value);
   };
 
   const [openPopover, setOpenPopover] = useState(null);
@@ -109,28 +107,21 @@ export function TableToolbar({ numSelected, filterName, onFilterName }) {
             <RadioGroup
               aria-labelledby="demo-controlled-radio-buttons-group"
               name="controlled-radio-buttons-group"
-              value={value}
+              value={theRole}
               onChange={handleChange}
             >
-              <MenuItem>
-                <FormControlLabel
-                  onClick={handleClosePopover}
-                  value="all"
-                  control={<Radio />}
-                  label="All Users"
-                />
+              <MenuItem onClick={handleClosePopover}>
+                <FormControlLabel value="all" control={<Radio />} label="All Users" />
               </MenuItem>
-              <MenuItem>
-                <FormControlLabel
-                  onClick={handleClosePopover}
-                  value="doctor"
-                  control={<Radio />}
-                  label="Doctors"
-                />
+              <MenuItem onClick={handleClosePopover}>
+                <FormControlLabel value="admin" control={<Radio />} label="Admin" />
+              </MenuItem>
+              <MenuItem onClick={handleClosePopover}>
+                <FormControlLabel value="doctor" control={<Radio />} label="Doctor" />
               </MenuItem>
 
               <MenuItem onClick={handleClosePopover}>
-                <FormControlLabel value="staff" control={<Radio />} label="Staff Members" />
+                <FormControlLabel value="staff" control={<Radio />} label="Staff" />
               </MenuItem>
             </RadioGroup>
           </FormControl>
