@@ -37,9 +37,6 @@ const UserSchema = new mongoose.Schema({
   qualifications: { type: String },
   experience: { type: Number },
 
-  // Availability
-  availability: [{ day: String, hours: String }],
-
   // Timestamps
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
