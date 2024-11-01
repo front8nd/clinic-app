@@ -157,7 +157,7 @@ export default function UserView() {
               <CustomTableHead
                 order={table.order}
                 orderBy={table.orderBy}
-                rowCount={data?.length}
+                rowCount={dataFiltered?.length}
                 numSelected={table.selected.length}
                 onSort={table.onSort}
                 headLabel={[
@@ -182,14 +182,14 @@ export default function UserView() {
                     <CustomTableRow
                       key={row._id}
                       row={row}
-                      selected={table.selected.includes(row.id)}
-                      onSelectRow={() => table.onSelectRow(row.id)}
+                      selected={table.selected.includes(row._id)}
+                      onSelectRow={() => table.onSelectRow(row._id)}
                     />
                   ))}
 
                 <TableEmptyRows
                   height={68}
-                  emptyRows={emptyRows(table.page, table.rowsPerPage, data?.length)}
+                  emptyRows={emptyRows(table.page, table.rowsPerPage, dataFiltered?.length)}
                 />
 
                 {notFound && <TableNoData searchQuery={filterName} />}

@@ -118,7 +118,7 @@ export default function PatientView() {
     <DashboardContent>
       <Box display="flex" alignItems="center" mb={5}>
         <Typography variant="h4" flexGrow={1}>
-          Users
+          Patients
         </Typography>
         <Button
           onClick={() => {
