@@ -119,7 +119,6 @@ export function TableToolbar({ numSelected, filterName, onFilterName, setRole, t
               <MenuItem onClick={handleClosePopover}>
                 <FormControlLabel value="doctor" control={<Radio />} label="Doctor" />
               </MenuItem>
-
               <MenuItem onClick={handleClosePopover}>
                 <FormControlLabel value="staff" control={<Radio />} label="Staff" />
               </MenuItem>

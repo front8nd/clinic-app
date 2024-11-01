@@ -4,9 +4,11 @@ const router = express.Router();
 const authMiddleware = require("../middleware/auth");
 
 // Patient - Get all patients with optional date filtering and pagination
-router.get("/patients", authMiddleware, async (req, res) => {
-  const { date, page = 1, limit = 10 } = req.query; // Default to page 1 and limit to 10
 
+//  ?date=2024-10-31&page=1&limit=10
+
+router.get("/patients", authMiddleware, async (req, res) => {
+  const { date, page = 1, limit } = req.query; // Default to page 1 and limit to 10
   try {
     // Build filter for date if provided
     const filter = {};

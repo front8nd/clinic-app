@@ -19,11 +19,15 @@ connectToDB();
 const register = require("./routes/register");
 const login = require("./routes/login");
 const users = require("./routes/users");
+const patients = require("./routes/patients");
+const newPatientProfile = require("./routes/newPatientProfile");
 
 // Endpoints
 app.use(register);
 app.use(login);
 app.use(users);
+app.use(patients);
+app.use(newPatientProfile);
 
 // Root route to show a message
 app.get("/", (req, res) => {

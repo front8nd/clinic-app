@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import Box from '@mui/material/Box';
@@ -10,9 +10,7 @@ import Typography from '@mui/material/Typography';
 import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
 
-import { _users } from '../../../_mock';
 import { DashboardContent } from '../../../layouts/dashboard/index';
-
 import { Iconify } from '../../../components/iconify';
 import { Scrollbar } from '../../../components/scrollbar';
 
@@ -23,14 +21,14 @@ import { TableEmptyRows } from '../table-empty-rows';
 import { TableToolbar } from '../table-toolbar';
 import { emptyRows, applyFilter, getComparator } from '../utils';
 import { useRouter } from '../../../routes/hooks';
-import { users } from '../../../redux/userSlice';
+import { patients } from '../../../redux/patientSlice';
 
 // ----------------------------------------------------------------------
 
 export function useTable() {
   const [page, setPage] = useState(0);
   const [orderBy, setOrderBy] = useState('');
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [selected, setSelected] = useState([]);
   const [order, setOrder] = useState('asc');
 
@@ -95,34 +93,27 @@ export function useTable() {
 
 // ----------------------------------------------------------------------
 
-export default function UserView() {
+export default function PatientView() {
   const dispatch = useDispatch();
   const router = useRouter();
   const table = useTable();
 
-  const { data } = useSelector((state) => state.user);
-
+  const [dataByDate, setDataByDate] = useState();
+  const { patientsList } = useSelector((state) => state.patient);
   const [filterName, setFilterName] = useState('');
-  const [theRole, setRole] = useState('all');
 
   useEffect(() => {
-    dispatch(users());
-  }, [dispatch]);
-
-  const selectedData = data?.filter((e) => {
-    if (theRole === 'all') return data;
-    return e.role === theRole;
-  });
-
-  console.log(data);
+    dispatch(patients({ page: table.page + 1, limit: table.rowsPerPage, date: dataByDate }));
+  }, [dispatch, table.page, table.rowsPerPage, dataByDate]);
 
   const dataFiltered = applyFilter({
-    inputData: selectedData?.length > 0 ? selectedData : [],
+    inputData: patientsList?.patients || [],
     comparator: getComparator(table.order, table.orderBy),
     filterName,
   });
 
-  const notFound = !dataFiltered.length && !!filterName;
+  const notFound = !dataFiltered?.length && !!filterName;
+
   return (
     <DashboardContent>
       <Box display="flex" alignItems="center" mb={5}>
@@ -131,24 +122,24 @@ export default function UserView() {
         </Typography>
         <Button
           onClick={() => {
-            router.push('/new-user');
+            router.push('/new-patient');
           }}
           variant="contained"
           color="inherit"
           startIcon={<Iconify icon="mingcute:add-line" />}
         >
-          New user
+          New Patient
         </Button>
       </Box>
 
       <Card>
         <TableToolbar
+          dataByDate={dataByDate}
+          setDataByDate={setDataByDate}
           onFilterName={(event) => {
             setFilterName(event.target.value);
             table.onResetPage();
           }}
-          setRole={setRole}
-          theRole={theRole}
         />
 
         <Scrollbar>
@@ -157,39 +148,32 @@ export default function UserView() {
               <CustomTableHead
                 order={table.order}
                 orderBy={table.orderBy}
-                rowCount={data?.length}
+                rowCount={dataFiltered?.length}
                 numSelected={table.selected.length}
                 onSort={table.onSort}
                 headLabel={[
                   { id: 'name', label: 'Name' },
-                  { id: 'email', label: 'Email' },
-                  { id: 'contact', label: 'Contact' },
+                  { id: 'gender', label: 'Gender' },
+                  { id: 'age', label: 'Age' },
+                  { id: 'weight', label: 'Weight' },
+                  { id: 'bp', label: 'BP' },
                   { id: 'address', label: 'Address' },
-                  { id: 'role', label: 'Role' },
-                  { id: 'positon', label: 'Position' },
-                  { id: 'experince', label: 'EXP (Years)' },
-                  { id: 'qualification', label: 'Qualification' },
-                  { id: 'joined', label: 'Joined' },
+                  { id: 'contact', label: 'Contact Number' },
                 ]}
               />
               <TableBody>
-                {dataFiltered
-                  .slice(
-                    table.page * table.rowsPerPage,
-                    table.page * table.rowsPerPage + table.rowsPerPage
-                  )
-                  .map((row) => (
-                    <CustomTableRow
-                      key={row._id}
-                      row={row}
-                      selected={table.selected.includes(row.id)}
-                      onSelectRow={() => table.onSelectRow(row.id)}
-                    />
-                  ))}
+                {dataFiltered.map((row) => (
+                  <CustomTableRow
+                    key={row._id}
+                    row={row}
+                    selected={table.selected.includes(row._id)}
+                    onSelectRow={() => table.onSelectRow(row._id)}
+                  />
+                ))}
 
                 <TableEmptyRows
                   height={68}
-                  emptyRows={emptyRows(table.page, table.rowsPerPage, data?.length)}
+                  emptyRows={emptyRows(table.page, table.rowsPerPage, patientsList?.totalPatients)}
                 />
 
                 {notFound && <TableNoData searchQuery={filterName} />}
@@ -201,10 +185,10 @@ export default function UserView() {
         <TablePagination
           component="div"
           page={table.page}
-          count={data?.length}
+          count={patientsList?.totalPatients || 0}
           rowsPerPage={table.rowsPerPage}
           onPageChange={table.onChangePage}
-          rowsPerPageOptions={[5, 10, 25]}
+          rowsPerPageOptions={[1, 5, 10]}
           onRowsPerPageChange={table.onChangeRowsPerPage}
         />
       </Card>

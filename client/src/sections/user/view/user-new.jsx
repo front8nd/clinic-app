@@ -84,10 +84,7 @@ export default function UserNew() {
     } else if (data?.role === 'admin') {
       setData((prevData) => ({ ...prevData, specialization: null, staffRole: null }));
     }
-    return () => {
-      dispatch(resetErrors());
-    };
-  }, [data?.role, dispatch]);
+  }, [data?.role]);
 
   useEffect(() => {
     if (authData.registrationSuccess) {
@@ -98,9 +95,11 @@ export default function UserNew() {
         'error'
       );
     }
-  }, [authData.registrationSuccess, authData?.registrationError, router, openSnackbar]);
+    return () => {
+      dispatch(resetErrors());
+    };
+  }, [authData.registrationSuccess, authData?.registrationError, router, openSnackbar, dispatch]);
 
-  console.log(authData?.registrationError?.error);
   return (
     <DashboardContent>
       <Box display="flex" alignItems="center" mb={5}>

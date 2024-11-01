@@ -4,7 +4,7 @@ const router = express.Router();
 const authMiddleware = require("../middleware/auth");
 
 // POST /patients - Create a new patient profile
-router.post("/createPatientProfile", authMiddleware, async (req, res) => {
+router.post("/newPatientProfile", authMiddleware, async (req, res) => {
   try {
     const newPatient = new Patient(req.body);
     const savedPatient = await newPatient.save();
@@ -13,3 +13,5 @@ router.post("/createPatientProfile", authMiddleware, async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 });
+
+module.exports = router;

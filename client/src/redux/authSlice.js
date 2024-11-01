@@ -79,8 +79,8 @@ const authSlice = createSlice({
         state.registrationSuccess = null;
       })
       .addCase(register.fulfilled, (state, action) => {
-        state.registrationSuccess = true;
         state.loading = false;
+        state.registrationSuccess = true;
       })
       .addCase(register.rejected, (state, action) => {
         state.loading = false;

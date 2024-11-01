@@ -19,6 +19,8 @@ export const LoginPage = lazy(() => import('../pages/login'));
 export const RegisterPage = lazy(() => import('../pages/register'));
 export const UserPage = lazy(() => import('../pages/user/user'));
 export const NewUserPage = lazy(() => import('../pages/user/new'));
+export const PatientPage = lazy(() => import('../pages/patient/patient'));
+export const NewPatientPage = lazy(() => import('../pages/patient/new'));
 export const Page404 = lazy(() => import('../pages/page-not-found'));
 
 // ----------------------------------------------------------------------
@@ -63,6 +65,21 @@ export function Router() {
           path: 'new-user',
           element: (
             <ProtectedRoute allowedRoles={['admin', 'staff', 'doctor']} component={NewUserPage} />
+          ),
+        },
+        {
+          path: 'patients',
+          element: (
+            <ProtectedRoute allowedRoles={['admin', 'staff', 'doctor']} component={PatientPage} />
+          ),
+        },
+        {
+          path: 'new-patient',
+          element: (
+            <ProtectedRoute
+              allowedRoles={['admin', 'staff', 'doctor']}
+              component={NewPatientPage}
+            />
           ),
         },
       ],
