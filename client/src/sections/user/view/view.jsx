@@ -1,16 +1,19 @@
-import { useState, useCallback, useEffect, useMemo } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Table from '@mui/material/Table';
 import Button from '@mui/material/Button';
+import { TableCell } from '@mui/material';
 import TableBody from '@mui/material/TableBody';
 import Typography from '@mui/material/Typography';
 import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
 
+import { _users } from '../../../_mock';
 import { DashboardContent } from '../../../layouts/dashboard/index';
+
 import { Iconify } from '../../../components/iconify';
 import { Scrollbar } from '../../../components/scrollbar';
 
@@ -21,14 +24,14 @@ import { TableEmptyRows } from '../table-empty-rows';
 import { TableToolbar } from '../table-toolbar';
 import { emptyRows, applyFilter, getComparator } from '../utils';
 import { useRouter } from '../../../routes/hooks';
-import { patients } from '../../../redux/patientSlice';
+import { users } from '../../../redux/userSlice';
 
 // ----------------------------------------------------------------------
 
 export function useTable() {
   const [page, setPage] = useState(0);
   const [orderBy, setOrderBy] = useState('');
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
   const [selected, setSelected] = useState([]);
   const [order, setOrder] = useState('asc');
 
@@ -93,53 +96,58 @@ export function useTable() {
 
 // ----------------------------------------------------------------------
 
-export default function PatientView() {
+export default function UserView() {
   const dispatch = useDispatch();
   const router = useRouter();
   const table = useTable();
 
-  const [dataByDate, setDataByDate] = useState();
-  const { patientsList } = useSelector((state) => state.patient);
+  const { data } = useSelector((state) => state.user);
+
   const [filterName, setFilterName] = useState('');
+  const [theRole, setRole] = useState('all');
 
   useEffect(() => {
-    dispatch(patients({ page: table.page + 1, limit: table.rowsPerPage, date: dataByDate }));
-  }, [dispatch, table.page, table.rowsPerPage, dataByDate]);
+    dispatch(users());
+  }, [dispatch]);
+
+  const selectedData = data?.filter((e) => {
+    if (theRole === 'all') return data;
+    return e.role === theRole;
+  });
 
   const dataFiltered = applyFilter({
-    inputData: patientsList?.patients || [],
+    inputData: selectedData?.length > 0 ? selectedData : [],
     comparator: getComparator(table.order, table.orderBy),
     filterName,
   });
 
-  const notFound = !dataFiltered?.length && !!filterName;
-
+  const notFound = !dataFiltered.length && !!filterName;
   return (
     <DashboardContent>
       <Box display="flex" alignItems="center" mb={5}>
         <Typography variant="h4" flexGrow={1}>
-          Patients
+          Users
         </Typography>
         <Button
           onClick={() => {
-            router.push('/new-patient');
+            router.push('/new-user');
           }}
           variant="contained"
           color="inherit"
           startIcon={<Iconify icon="mingcute:add-line" />}
         >
-          New Patient
+          New user
         </Button>
       </Box>
 
       <Card>
         <TableToolbar
-          dataByDate={dataByDate}
-          setDataByDate={setDataByDate}
           onFilterName={(event) => {
             setFilterName(event.target.value);
             table.onResetPage();
           }}
+          setRole={setRole}
+          theRole={theRole}
         />
 
         <Scrollbar>
@@ -153,27 +161,51 @@ export default function PatientView() {
                 onSort={table.onSort}
                 headLabel={[
                   { id: 'name', label: 'Name' },
-                  { id: 'gender', label: 'Gender' },
-                  { id: 'age', label: 'Age' },
-                  { id: 'weight', label: 'Weight' },
-                  { id: 'bp', label: 'BP' },
+                  { id: 'email', label: 'Email' },
+                  { id: 'contact', label: 'Contact' },
                   { id: 'address', label: 'Address' },
-                  { id: 'contact', label: 'Contact Number' },
+                  { id: 'role', label: 'Role' },
+                  { id: 'positon', label: 'Position' },
+                  { id: 'experince', label: 'EXP (Years)' },
+                  { id: 'qualification', label: 'Qualification' },
+                  { id: 'joined', label: 'Joined' },
                 ]}
               />
               <TableBody>
-                {dataFiltered.map((row) => (
-                  <CustomTableRow
-                    key={row._id}
-                    row={row}
-                    selected={table.selected.includes(row._id)}
-                    onSelectRow={() => table.onSelectRow(row._id)}
-                  />
-                ))}
+                {dataFiltered
+                  .slice(
+                    table.page * table.rowsPerPage,
+                    table.page * table.rowsPerPage + table.rowsPerPage
+                  )
+                  .map((row) => (
+                    <CustomTableRow
+                      key={row._id}
+                      row={row}
+                      selected={table.selected.includes(row._id)}
+                      onSelectRow={() => table.onSelectRow(row._id)}
+                    />
+                  ))}
+
+                {dataFiltered?.length === 0 ? (
+                  <TableCell
+                    colSpan={9}
+                    sx={{
+                      fontSize: '16px',
+                      fontWeight: 'bold',
+                      color: 'red',
+                      textAlign: 'center',
+                      textWrap: 'nowrap',
+                    }}
+                  >
+                    No Records Exists
+                  </TableCell>
+                ) : (
+                  ''
+                )}
 
                 <TableEmptyRows
                   height={68}
-                  emptyRows={emptyRows(table.page, table.rowsPerPage, patientsList?.totalPatients)}
+                  emptyRows={emptyRows(table.page, table.rowsPerPage, dataFiltered?.length)}
                 />
 
                 {notFound && <TableNoData searchQuery={filterName} />}
@@ -185,10 +217,10 @@ export default function PatientView() {
         <TablePagination
           component="div"
           page={table.page}
-          count={patientsList?.totalPatients || 0}
+          count={data?.length}
           rowsPerPage={table.rowsPerPage}
           onPageChange={table.onChangePage}
-          rowsPerPageOptions={[1, 5, 10]}
+          rowsPerPageOptions={[5, 10, 25]}
           onRowsPerPageChange={table.onChangeRowsPerPage}
         />
       </Card>

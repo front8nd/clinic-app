@@ -2,18 +2,18 @@ import { Helmet } from 'react-helmet-async';
 
 import { CONFIG } from '../../config-global';
 
-import NewUser from '../../sections/user/view/user-new';
+import New from '../../sections/user/view/new';
 
 // ----------------------------------------------------------------------
 
-export default function NewUserPage() {
+export default function Page() {
   return (
     <>
       <Helmet>
         <title> {`New User - ${CONFIG.appName}`}</title>
       </Helmet>
 
-      <NewUser />
+      <New />
     </>
   );
 }

@@ -5,16 +5,16 @@ const authMiddleware = require("../middleware/auth");
 
 // Patient - Get all patients with optional date filtering and pagination
 
-//  ?date=2024-10-31&page=1&limit=10
-
 router.get("/patients", authMiddleware, async (req, res) => {
-  const { date, page = 1, limit } = req.query; // Default to page 1 and limit to 10
+  const { date } = req.query;
+  const page = Number(req.query.page) || 1;
+  const limit = Number(req.query.limit) || 10;
+
   try {
     // Build filter for date if provided
     const filter = {};
     if (date) {
       const selectedDate = new Date(date);
-      // Set the filter to find patients created on the specified date
       filter.createdAt = {
         $gte: new Date(selectedDate.setHours(0, 0, 0, 0)), // Start of the day
         $lt: new Date(selectedDate.setHours(23, 59, 59, 999)), // End of the day
@@ -23,22 +23,21 @@ router.get("/patients", authMiddleware, async (req, res) => {
 
     // Calculate total count for pagination
     const totalPatients = await Patient.countDocuments(filter);
-    const totalPages = Math.ceil(totalPatients / limit);
+    const totalPages = limit ? Math.ceil(totalPatients / limit) : 1;
     const skip = (page - 1) * limit;
 
     // Retrieve patients with filtering and pagination
-    const patientList = await Patient.find(filter)
-      .skip(skip)
-      .limit(Number(limit)); // Convert limit to number
+    const patientList = await Patient.find(filter).skip(skip).limit(limit);
 
     if (patientList.length === 0) {
       return res.status(404).json({ message: "No Patients found." });
     }
 
     res.status(200).json({
+      message: "Patients retrieved successfully.",
       totalPatients,
       totalPages,
-      currentPage: Number(page),
+      currentPage: page,
       patients: patientList,
     });
   } catch (error) {

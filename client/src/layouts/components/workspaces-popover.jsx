@@ -11,6 +11,7 @@ import { varAlpha } from '../../theme/styles';
 
 import { Label } from '../../components/label';
 import { Iconify } from '../../components/iconify';
+import DocSVG from '../../../public/assets/icons/doctor.svg';
 
 // ----------------------------------------------------------------------
 
@@ -64,7 +65,7 @@ export function WorkspacesPopover({ data = [], sx, ...other }) {
         }}
         {...other}
       >
-        {renderAvatar(workspace?.name, workspace?.logo)}
+        {renderAvatar(workspace?.name, DocSVG)}
 
         <Box
           gap={1}

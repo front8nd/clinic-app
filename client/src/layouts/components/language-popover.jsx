@@ -79,16 +79,14 @@ export function LanguagePopover({ data = [], sx, ...other }) {
             },
           }}
         >
-          {data.map((option) => (
-            <MenuItem
-              key={option.value}
-              selected={option.value === currentLang?.value}
-              onClick={() => handleChangeLang(option.value)}
-            >
-              {renderFlag(option.label, option.icon)}
-              {option.label}
-            </MenuItem>
-          ))}
+          <MenuItem
+            key={data[0].value}
+            selected={data[0].value === currentLang?.value}
+            onClick={() => handleChangeLang(data[0].value)}
+          >
+            {renderFlag(data[0].label, data[0].icon)}
+            {data[0].label}
+          </MenuItem>
         </MenuList>
       </Popover>
     </>

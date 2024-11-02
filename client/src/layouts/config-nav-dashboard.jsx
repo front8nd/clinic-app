@@ -22,4 +22,9 @@ export const navData = [
     path: '/patients',
     icon: icon('ic-patient'),
   },
+  {
+    title: 'Visit',
+    path: '/visits',
+    icon: icon('ic-visit'),
+  },
 ];

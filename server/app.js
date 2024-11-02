@@ -21,6 +21,7 @@ const login = require("./routes/login");
 const users = require("./routes/users");
 const patients = require("./routes/patients");
 const newPatientProfile = require("./routes/newPatientProfile");
+const visits = require("./routes/visits");
 
 // Endpoints
 app.use(register);
@@ -28,6 +29,7 @@ app.use(login);
 app.use(users);
 app.use(patients);
 app.use(newPatientProfile);
+app.use(visits);
 
 // Root route to show a message
 app.get("/", (req, res) => {

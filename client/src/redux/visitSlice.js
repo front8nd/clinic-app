@@ -4,13 +4,13 @@ import axios from 'axios';
 // ENV Variables
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
-export const patients = createAsyncThunk(
-  'patient/patients',
+export const visits = createAsyncThunk(
+  'visit/visits',
   async ({ page, limit, date }, { rejectWithValue, getState }) => {
     const { userData } = getState().auth;
     try {
       const response = await axios.get(
-        `${API_BASE_URL}/patients?page=${page}&limit=${limit}&date=${date}`,
+        `${API_BASE_URL}/visits?page=${page}&limit=${limit}&date=${date}`,
         {
           headers: {
             Authorization: `Bearer ${userData.token}`,
@@ -19,25 +19,25 @@ export const patients = createAsyncThunk(
       );
       return response.data;
     } catch (error) {
-      console.error('Retriving patients list failed: ', error);
+      console.error('Retriving visitors list failed: ', error);
       return rejectWithValue(error.response?.data || 'Request failed due to an unexpected error.');
     }
   }
 );
 
-export const newPatientProfile = createAsyncThunk(
-  'patient/newPatientProfile',
+export const newPatientVisit = createAsyncThunk(
+  'visit/newPatientVisit',
   async (data, { rejectWithValue, getState }) => {
     const { userData } = getState().auth;
     try {
-      const response = await axios.post(`${API_BASE_URL}/newPatientProfile`, data, {
+      const response = await axios.post(`${API_BASE_URL}/newPatientVisit`, data, {
         headers: {
           Authorization: `Bearer ${userData.token}`,
         },
       });
       return response.data;
     } catch (error) {
-      console.error('Cannot create new patient profile: ', error);
+      console.error('Cannot create new patient visit: ', error);
       return rejectWithValue(error.response?.data || 'Request failed due to an unexpected error.');
     }
   }
@@ -49,12 +49,12 @@ const initialState = {
   error: null,
   registrationSuccess: null,
   registrationError: null,
-  patientsList: [],
-  patient: null,
+  visitList: [],
+  visit: null,
 };
 
-const patientSlice = createSlice({
-  name: 'patient',
+const visitSlice = createSlice({
+  name: 'visit',
   initialState,
   reducers: {
     resetErrors(state) {
@@ -65,30 +65,30 @@ const patientSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(patients.pending, (state) => {
+      .addCase(visits.pending, (state) => {
         state.loading = true;
         state.error = null;
-        state.patientsList = null;
+        state.visitList = null;
       })
-      .addCase(patients.fulfilled, (state, action) => {
+      .addCase(visits.fulfilled, (state, action) => {
         state.loading = false;
-        state.patientsList = action.payload;
+        state.visitList = action.payload;
       })
-      .addCase(patients.rejected, (state, action) => {
+      .addCase(visits.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || action.error.message;
       })
-      .addCase(newPatientProfile.pending, (state) => {
+      .addCase(newPatientVisit.pending, (state) => {
         state.loading = true;
         state.registrationError = null;
         state.registrationSuccess = null;
       })
-      .addCase(newPatientProfile.fulfilled, (state, action) => {
+      .addCase(newPatientVisit.fulfilled, (state, action) => {
         state.loading = false;
         state.data = action.payload;
         state.registrationSuccess = true;
       })
-      .addCase(newPatientProfile.rejected, (state, action) => {
+      .addCase(newPatientVisit.rejected, (state, action) => {
         state.loading = false;
         state.registrationSuccess = false;
         state.registrationError = action.payload || action.error.message;
@@ -97,6 +97,6 @@ const patientSlice = createSlice({
 });
 
 // Export logout action for use in components
-export const { resetErrors } = patientSlice.actions;
+export const { resetErrors } = visitSlice.actions;
 
-export default patientSlice.reducer;
+export default visitSlice.reducer;

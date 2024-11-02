@@ -17,10 +17,12 @@ import { DashboardLayout } from '../layouts/dashboard/index';
 export const HomePage = lazy(() => import('../pages/home'));
 export const LoginPage = lazy(() => import('../pages/login'));
 export const RegisterPage = lazy(() => import('../pages/register'));
-export const UserPage = lazy(() => import('../pages/user/user'));
+export const UserPage = lazy(() => import('../pages/user/view'));
 export const NewUserPage = lazy(() => import('../pages/user/new'));
-export const PatientPage = lazy(() => import('../pages/patient/patient'));
+export const PatientPage = lazy(() => import('../pages/patient/view'));
 export const NewPatientPage = lazy(() => import('../pages/patient/new'));
+export const VisitPage = lazy(() => import('../pages/visit/view'));
+export const NewVisitPage = lazy(() => import('../pages/visit/new'));
 export const Page404 = lazy(() => import('../pages/page-not-found'));
 
 // ----------------------------------------------------------------------
@@ -80,6 +82,18 @@ export function Router() {
               allowedRoles={['admin', 'staff', 'doctor']}
               component={NewPatientPage}
             />
+          ),
+        },
+        {
+          path: 'visits',
+          element: (
+            <ProtectedRoute allowedRoles={['admin', 'staff', 'doctor']} component={VisitPage} />
+          ),
+        },
+        {
+          path: 'new-visit',
+          element: (
+            <ProtectedRoute allowedRoles={['admin', 'staff', 'doctor']} component={NewVisitPage} />
           ),
         },
       ],

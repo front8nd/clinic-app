@@ -5,14 +5,13 @@ import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Table from '@mui/material/Table';
 import Button from '@mui/material/Button';
+import { TableCell } from '@mui/material';
 import TableBody from '@mui/material/TableBody';
 import Typography from '@mui/material/Typography';
 import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
 
-import { _users } from '../../../_mock';
 import { DashboardContent } from '../../../layouts/dashboard/index';
-
 import { Iconify } from '../../../components/iconify';
 import { Scrollbar } from '../../../components/scrollbar';
 
@@ -23,14 +22,14 @@ import { TableEmptyRows } from '../table-empty-rows';
 import { TableToolbar } from '../table-toolbar';
 import { emptyRows, applyFilter, getComparator } from '../utils';
 import { useRouter } from '../../../routes/hooks';
-import { users } from '../../../redux/userSlice';
+import { visits } from '../../../redux/visitSlice';
 
 // ----------------------------------------------------------------------
 
 export function useTable() {
   const [page, setPage] = useState(0);
   const [orderBy, setOrderBy] = useState('');
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [selected, setSelected] = useState([]);
   const [order, setOrder] = useState('asc');
 
@@ -95,60 +94,53 @@ export function useTable() {
 
 // ----------------------------------------------------------------------
 
-export default function UserView() {
+export default function PatientView() {
   const dispatch = useDispatch();
   const router = useRouter();
   const table = useTable();
 
-  const { data } = useSelector((state) => state.user);
-
+  const [dataByDate, setDataByDate] = useState();
+  const { visitList } = useSelector((state) => state.patient);
   const [filterName, setFilterName] = useState('');
-  const [theRole, setRole] = useState('all');
 
   useEffect(() => {
-    dispatch(users());
-  }, [dispatch]);
-
-  const selectedData = data?.filter((e) => {
-    if (theRole === 'all') return data;
-    return e.role === theRole;
-  });
-
-  console.log(data);
+    dispatch(visits({ page: table.page + 1, limit: table.rowsPerPage, date: dataByDate }));
+  }, [dispatch, table.page, table.rowsPerPage, dataByDate]);
 
   const dataFiltered = applyFilter({
-    inputData: selectedData?.length > 0 ? selectedData : [],
+    inputData: visitList?.patients || [],
     comparator: getComparator(table.order, table.orderBy),
     filterName,
   });
 
-  const notFound = !dataFiltered.length && !!filterName;
+  const notFound = !dataFiltered?.length && !!filterName;
+
   return (
     <DashboardContent>
       <Box display="flex" alignItems="center" mb={5}>
         <Typography variant="h4" flexGrow={1}>
-          Users
+          Patient Visits
         </Typography>
         <Button
           onClick={() => {
-            router.push('/new-user');
+            router.push('/new-visit');
           }}
           variant="contained"
           color="inherit"
           startIcon={<Iconify icon="mingcute:add-line" />}
         >
-          New user
+          New Patient Visit
         </Button>
       </Box>
 
       <Card>
         <TableToolbar
+          dataByDate={dataByDate}
+          setDataByDate={setDataByDate}
           onFilterName={(event) => {
             setFilterName(event.target.value);
             table.onResetPage();
           }}
-          setRole={setRole}
-          theRole={theRole}
         />
 
         <Scrollbar>
@@ -162,34 +154,44 @@ export default function UserView() {
                 onSort={table.onSort}
                 headLabel={[
                   { id: 'name', label: 'Name' },
-                  { id: 'email', label: 'Email' },
-                  { id: 'contact', label: 'Contact' },
+                  { id: 'gender', label: 'Gender' },
+                  { id: 'age', label: 'Age' },
+                  { id: 'weight', label: 'Weight' },
+                  { id: 'bp', label: 'BP' },
                   { id: 'address', label: 'Address' },
-                  { id: 'role', label: 'Role' },
-                  { id: 'positon', label: 'Position' },
-                  { id: 'experince', label: 'EXP (Years)' },
-                  { id: 'qualification', label: 'Qualification' },
-                  { id: 'joined', label: 'Joined' },
+                  { id: 'contact', label: 'Contact Number' },
                 ]}
               />
               <TableBody>
-                {dataFiltered
-                  .slice(
-                    table.page * table.rowsPerPage,
-                    table.page * table.rowsPerPage + table.rowsPerPage
-                  )
-                  .map((row) => (
-                    <CustomTableRow
-                      key={row._id}
-                      row={row}
-                      selected={table.selected.includes(row._id)}
-                      onSelectRow={() => table.onSelectRow(row._id)}
-                    />
-                  ))}
+                {dataFiltered.map((row) => (
+                  <CustomTableRow
+                    key={row._id}
+                    row={row}
+                    selected={table.selected.includes(row._id)}
+                    onSelectRow={() => table.onSelectRow(row._id)}
+                  />
+                ))}
+
+                {dataFiltered?.length === 0 ? (
+                  <TableCell
+                    colSpan={9}
+                    sx={{
+                      fontSize: '16px',
+                      fontWeight: 'bold',
+                      color: 'red',
+                      textAlign: 'center',
+                      textWrap: 'nowrap',
+                    }}
+                  >
+                    No Records Exists
+                  </TableCell>
+                ) : (
+                  ''
+                )}
 
                 <TableEmptyRows
                   height={68}
-                  emptyRows={emptyRows(table.page, table.rowsPerPage, dataFiltered?.length)}
+                  emptyRows={emptyRows(table.page, table.rowsPerPage, visitList?.totalVisits)}
                 />
 
                 {notFound && <TableNoData searchQuery={filterName} />}
@@ -201,10 +203,10 @@ export default function UserView() {
         <TablePagination
           component="div"
           page={table.page}
-          count={data?.length}
+          count={visitList?.totalVisits || 0}
           rowsPerPage={table.rowsPerPage}
           onPageChange={table.onChangePage}
-          rowsPerPageOptions={[5, 10, 25]}
+          rowsPerPageOptions={[1, 5, 10]}
           onRowsPerPageChange={table.onChangeRowsPerPage}
         />
       </Card>

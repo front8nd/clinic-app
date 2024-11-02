@@ -7,8 +7,8 @@ const authMiddleware = require("../middleware/auth");
 
 const router = express.Router();
 
-// POST /patients/:patientId/visits - Create a new visit for a patient
-router.post("/patients/:patientId/visits", authMiddleware, async (req, res) => {
+//  Create a new visit for a patient
+router.post("/newPatientVisit/:patientId", authMiddleware, async (req, res) => {
   const { patientId } = req.params;
   const {
     doctorId,

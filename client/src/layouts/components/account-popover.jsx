@@ -16,6 +16,8 @@ import { logout } from '../../redux/authSlice';
 import { _myAccount } from '../../_mock';
 import { useSnackbar } from '../../components/snackbar/snackbar';
 
+import DocSVG from '../../../public/assets/icons/doctor.svg';
+
 // ----------------------------------------------------------------------
 
 export function AccountPopover({ data = [], sx, ...other }) {
@@ -63,7 +65,7 @@ export function AccountPopover({ data = [], sx, ...other }) {
         }}
         {...other}
       >
-        <Avatar src={_myAccount.photoURL} alt={userData?.user?.name} sx={{ width: 1, height: 1 }}>
+        <Avatar src={DocSVG} alt={userData?.user?.name} sx={{ width: 1, height: 1 }}>
           {userData?.user?.name?.charAt(0).toUpperCase()}
         </Avatar>
       </IconButton>

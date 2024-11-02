@@ -2,18 +2,18 @@ import { Helmet } from 'react-helmet-async';
 
 import { CONFIG } from '../../config-global';
 
-import PatientView from '../../sections/patient/view/patient-view';
+import View from '../../sections/visit/view/new';
 
 // ----------------------------------------------------------------------
 
-export default function UserPage() {
+export default function Page() {
   return (
     <>
       <Helmet>
-        <title> {`Patients - ${CONFIG.appName}`}</title>
+        <title> {`New Patient Visit - ${CONFIG.appName}`}</title>
       </Helmet>
 
-      <PatientView />
+      <View />
     </>
   );
 }
