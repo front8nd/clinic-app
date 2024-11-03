@@ -46,7 +46,7 @@ export default function Login() {
   useEffect(() => {
     if (authData.isAuthenticated) {
       openSnackbar('Login successful!', 'success');
-      router.push('/');
+      router.push('/users');
     } else if (authData?.error) {
       openSnackbar(`Login failed: ${authData?.error?.message}`, 'error');
     }
