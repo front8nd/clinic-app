@@ -22,6 +22,7 @@ export const NewUserPage = lazy(() => import('../pages/user/new'));
 export const PatientProfile = lazy(() => import('../pages/patient/profile'));
 export const PatientPage = lazy(() => import('../pages/patient/view'));
 export const NewPatientPage = lazy(() => import('../pages/patient/new'));
+export const NewMedicalRecord = lazy(() => import('../pages/patient/medical'));
 export const VisitPage = lazy(() => import('../pages/visit/view'));
 export const NewVisitPage = lazy(() => import('../pages/visit/new'));
 export const Page404 = lazy(() => import('../pages/page-not-found'));
@@ -102,9 +103,18 @@ export function Router() {
           ),
         },
         {
-          path: 'new-visit',
+          path: 'new-visit/:patientId',
           element: (
             <ProtectedRoute allowedRoles={['admin', 'staff', 'doctor']} component={NewVisitPage} />
+          ),
+        },
+        {
+          path: 'new-medical-record/:patientId',
+          element: (
+            <ProtectedRoute
+              allowedRoles={['admin', 'staff', 'doctor']}
+              component={NewMedicalRecord}
+            />
           ),
         },
       ],

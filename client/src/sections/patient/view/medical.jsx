@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -11,29 +12,20 @@ import { DashboardContent } from '../../../layouts/dashboard/index';
 import { Iconify } from '../../../components/iconify';
 import { useRouter } from '../../../routes/hooks';
 import { useSnackbar } from '../../../components/snackbar/snackbar';
-import { newPatientProfile, resetErrors } from '../../../redux/patientSlice';
+import { newPatientMedicalInfo, resetErrors } from '../../../redux/medicalRecordSlice';
 
-export default function PatientNew() {
+export default function MedicalNew() {
   const router = useRouter();
+  const { patientId } = useParams();
   const { openSnackbar } = useSnackbar();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const dispatch = useDispatch();
-  const { loading, registrationSuccess, registrationError } = useSelector((state) => state.patient);
+  const { loading, error, newMedicalInfo } = useSelector((state) => state.medicalRecord);
   const { userData } = useSelector((state) => state.auth);
 
-  const genderOptions = ['male', 'female'];
-
   const [data, setData] = useState({
-    // Personal Information
-    name: '',
-    age: '',
-    gender: '',
-    contact: '',
-    address: '',
-
-    // Medical Information
     weight: '',
     height: '',
     pulse_rate: '',
@@ -43,8 +35,6 @@ export default function PatientNew() {
     rbs: '',
     blood_pressure_sys: '',
     blood_pressure_dia: '',
-    allergies: '',
-    chronicConditions: '',
   });
 
   const changeHandler = (e) => {
@@ -53,24 +43,6 @@ export default function PatientNew() {
 
   const handleClick = async (e) => {
     e.preventDefault();
-
-    // Separate the data into personal and medical info
-    const personalInfo = {
-      name: data.name,
-      age: data.age,
-      gender: data.gender,
-      contact: data.contact,
-      address: data.address,
-      patientId: null,
-      allergies: data.allergies,
-      chronicConditions: data.chronicConditions,
-      assistedBy: {
-        id: userData?.user?._id,
-        name: userData?.user?.name,
-        email: userData?.user?.email,
-        role: userData?.user?.role,
-      },
-    };
 
     const medicalInfo = {
       weight: data.weight,
@@ -84,6 +56,7 @@ export default function PatientNew() {
         sys: data.blood_pressure_sys,
         dia: data.blood_pressure_dia,
       },
+
       assistedBy: {
         id: userData?.user?._id,
         name: userData?.user?.name,
@@ -93,29 +66,28 @@ export default function PatientNew() {
     };
 
     const additionalData = {
-      personalInfo,
       medicalInfo,
+      patientId,
     };
-    console.log(additionalData);
-    await dispatch(newPatientProfile(additionalData));
+    await dispatch(newPatientMedicalInfo(additionalData));
   };
 
   useEffect(() => {
-    if (registrationSuccess) {
-      openSnackbar('Patient Added Successfully', 'success');
-    } else if (registrationError?.message || registrationError?.error) {
-      openSnackbar(`${registrationError?.message || registrationError?.error}`, 'error');
+    if (newMedicalInfo) {
+      openSnackbar('Patient Medical Record Added Successfully', 'success');
+    } else if (error?.message || error?.error) {
+      openSnackbar(`${error?.message || error?.error}`, 'error');
     }
     return () => {
       dispatch(resetErrors());
     };
-  }, [registrationSuccess, registrationError, router, openSnackbar, dispatch]);
+  }, [newMedicalInfo, error?.message, error?.error, router, openSnackbar, dispatch]);
 
   return (
     <DashboardContent>
       <Box display="flex" alignItems="center" mb={5}>
         <Typography variant="h4" flexGrow={1}>
-          Add New Patient
+          Add New Patient Medical Record
         </Typography>
         <Button
           variant="contained"
@@ -130,72 +102,6 @@ export default function PatientNew() {
       <Card>
         <form onSubmit={handleClick}>
           <Grid container spacing={4} p={4}>
-            {/* Personal Information Section */}
-            <Grid item xs={12}>
-              <Typography variant="h5" gutterBottom>
-                Personal Information
-              </Typography>
-            </Grid>
-
-            {/* Personal Information Fields */}
-            <Grid item xs={12} sm={6} md={4}>
-              <TextField
-                name="name"
-                label="Name"
-                value={data.name}
-                onChange={changeHandler}
-                required
-                fullWidth
-              />
-            </Grid>
-            <Grid item xs={12} sm={6} md={4}>
-              <TextField
-                name="age"
-                label="Age"
-                type="number"
-                value={data.age}
-                onChange={changeHandler}
-                required
-                fullWidth
-              />
-            </Grid>
-            <Grid item xs={12} sm={6} md={4}>
-              <Select
-                name="gender"
-                value={data.gender}
-                onChange={changeHandler}
-                displayEmpty
-                fullWidth
-                required
-                renderValue={(selected) => selected?.toUpperCase() || <em>Select Gender</em>}
-              >
-                {genderOptions.map((option) => (
-                  <MenuItem key={option} value={option}>
-                    {option.toUpperCase()}
-                  </MenuItem>
-                ))}
-              </Select>
-            </Grid>
-            <Grid item xs={12} sm={6} md={4}>
-              <TextField
-                name="contact"
-                label="Contact Number"
-                value={data.contact}
-                onChange={changeHandler}
-                type="tel"
-                fullWidth
-              />
-            </Grid>
-            <Grid item xs={12} sm={6} md={4}>
-              <TextField
-                name="address"
-                label="Address"
-                value={data.address}
-                onChange={changeHandler}
-                fullWidth
-              />
-            </Grid>
-
             {/* Fees Information Section */}
             <Grid item xs={12}>
               <Typography variant="h5" gutterBottom>
@@ -308,24 +214,6 @@ export default function PatientNew() {
                 required
               />
             </Grid>
-            <Grid item xs={12} sm={6} md={4}>
-              <TextField
-                name="allergies"
-                label="Allergies"
-                value={data.allergies}
-                onChange={changeHandler}
-                fullWidth
-              />
-            </Grid>
-            <Grid item xs={12} sm={6} md={4}>
-              <TextField
-                name="chronicConditions"
-                label="chronic Conditions"
-                value={data.chronicConditions}
-                onChange={changeHandler}
-                fullWidth
-              />
-            </Grid>
 
             {/* Submit Button */}
             <Grid item xs={12}>
@@ -338,7 +226,7 @@ export default function PatientNew() {
                   loading={loading}
                   loadingIndicator={<CircularProgress size={24} color="inherit" />}
                 >
-                  Create Profile
+                  Add New Medical Record
                 </LoadingButton>
               </Box>
             </Grid>

@@ -1,7 +1,6 @@
 const express = require("express");
 const VisitModel = require("../models/visitSchema");
 const Patient = require("../models/patientSchema");
-const User = require("../models/userSchema");
 const authMiddleware = require("../middleware/auth");
 
 const router = express.Router();
@@ -9,28 +8,11 @@ const router = express.Router();
 // Create a new visit for a patient
 router.post("/newPatientVisit/:patientId", authMiddleware, async (req, res) => {
   const { patientId } = req.params; // Use patientId as a String
-  const {
-    doctorId,
-    visitType,
-    diagnosis,
-    prescription,
-    complaints,
-    assessments,
-    investigations,
-    instructions,
-    followUp,
-    referral,
-    notes,
-  } = req.body;
 
   try {
     // Validate that the patient exists using patientId as a String
     const patient = await Patient.findOne({ patientId });
     if (!patient) return res.status(404).json({ message: "Patient not found" });
-
-    // Validate that the doctor exists
-    const doctor = await User.findById(doctorId);
-    if (!doctor) return res.status(404).json({ message: "Doctor not found" });
 
     // Find the last visit for the patient to determine the visit number
     const lastVisit = await VisitModel.findOne({ patientId }).sort({
@@ -41,18 +23,8 @@ router.post("/newPatientVisit/:patientId", authMiddleware, async (req, res) => {
     // Create a new visit record
     const newVisit = new VisitModel({
       patientId,
-      doctorId,
       visitNumber,
-      visitType,
-      diagnosis,
-      prescription,
-      complaints,
-      assessments,
-      investigations,
-      instructions,
-      followUp,
-      referral,
-      notes,
+      ...req.body,
     });
 
     // Save the visit to the database

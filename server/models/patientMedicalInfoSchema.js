@@ -17,15 +17,6 @@ const patientMedicalInfoSchema = new mongoose.Schema({
     id: { type: String, required: true },
   },
 
-  fees: {
-    full: {
-      type: Boolean,
-      required: true,
-    },
-    custom: {
-      type: String,
-    },
-  },
   weight: { type: String, required: true },
   height: { type: String },
   pulse_rate: { type: String, required: true },

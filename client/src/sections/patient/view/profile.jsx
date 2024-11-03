@@ -43,6 +43,8 @@ export default function Profile() {
     };
   }, [patientProfile, error?.message, error?.error, router, openSnackbar, dispatch]);
 
+  console.log(patientProfile);
+
   return (
     <DashboardContent>
       <Box display="flex" alignItems="center" mb={5}>
@@ -86,6 +88,7 @@ export default function Profile() {
                 type="submit"
                 variant="contained"
                 color="primary"
+                loadingIndicator={<CircularProgress size={24} color="inherit" />}
                 loading={loading}
               >
                 Get Patient Details
@@ -100,7 +103,7 @@ export default function Profile() {
                     color="primary"
                     startIcon={<Iconify icon="fa-solid:file-medical" />}
                     onClick={() => {
-                      router.push('new-medical-record');
+                      router.push(`/new-medical-record/${patientProfile?.patient?.patientId}`);
                     }}
                   >
                     New Medical Record (for Counter)
@@ -111,7 +114,7 @@ export default function Profile() {
                     color="success"
                     startIcon={<Iconify icon="fa-solid:notes-medical" />}
                     onClick={() => {
-                      router.push('new-medical-record');
+                      router.push(`/new-visit/${patientProfile?.patient?.patientId}`);
                     }}
                   >
                     New Visit Record (for Doctor)
@@ -153,9 +156,6 @@ export default function Profile() {
               </Grid>
               <Grid item xs={12} md={6}>
                 <Typography variant="subtitle1">
-                  <strong>Allergies:</strong> {patientProfile?.patient?.allergies}
-                </Typography>
-                <Typography variant="subtitle1">
                   <strong>Patient ID:</strong> {patientProfile?.patient?.patientId}
                 </Typography>
                 <Typography variant="subtitle1">
@@ -165,6 +165,12 @@ export default function Profile() {
                 <Typography variant="subtitle1">
                   <strong>Assisted By:</strong> {patientProfile?.patient?.assistedBy.name} (
                   {patientProfile?.patient?.assistedBy.role.toUpperCase()})
+                </Typography>
+                <Typography variant="subtitle1">
+                  <strong>Allergies:</strong> {patientProfile?.patient?.allergies}
+                </Typography>
+                <Typography variant="subtitle1">
+                  <strong>Chronic Conditions:</strong> {patientProfile?.patient?.chronicConditions}
                 </Typography>
               </Grid>
             </Grid>

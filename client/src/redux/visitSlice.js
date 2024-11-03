@@ -25,19 +25,23 @@ export const visits = createAsyncThunk(
   }
 );
 
-export const newPatientVisit = createAsyncThunk(
-  'visit/newPatientVisit',
+export const newVisit = createAsyncThunk(
+  'visit/newVisit',
   async (data, { rejectWithValue, getState }) => {
     const { userData } = getState().auth;
     try {
-      const response = await axios.post(`${API_BASE_URL}/newPatientVisit`, data, {
-        headers: {
-          Authorization: `Bearer ${userData.token}`,
-        },
-      });
+      const response = await axios.post(
+        `${API_BASE_URL}/newPatientVisit/${data?.patientId}`,
+        data?.visitInfo,
+        {
+          headers: {
+            Authorization: `Bearer ${userData.token}`,
+          },
+        }
+      );
       return response.data;
     } catch (error) {
-      console.error('Cannot create new patient visit: ', error);
+      console.error('Failed to create new medical record: ', error);
       return rejectWithValue(error.response?.data || 'Request failed due to an unexpected error.');
     }
   }
@@ -47,10 +51,8 @@ const initialState = {
   data: null,
   loading: false,
   error: null,
-  registrationSuccess: null,
-  registrationError: null,
   visitList: [],
-  visit: null,
+  newPatientVisit: null,
 };
 
 const visitSlice = createSlice({
@@ -59,8 +61,6 @@ const visitSlice = createSlice({
   reducers: {
     resetErrors(state) {
       state.error = null;
-      state.registrationError = null;
-      state.registrationSuccess = null;
     },
   },
   extraReducers: (builder) => {
@@ -78,20 +78,17 @@ const visitSlice = createSlice({
         state.loading = false;
         state.error = action.payload || action.error.message;
       })
-      .addCase(newPatientVisit.pending, (state) => {
+      .addCase(newVisit.pending, (state) => {
         state.loading = true;
-        state.registrationError = null;
-        state.registrationSuccess = null;
+        state.newPatientVisit = null;
       })
-      .addCase(newPatientVisit.fulfilled, (state, action) => {
+      .addCase(newVisit.fulfilled, (state, action) => {
         state.loading = false;
-        state.data = action.payload;
-        state.registrationSuccess = true;
+        state.newPatientVisit = action.payload;
       })
-      .addCase(newPatientVisit.rejected, (state, action) => {
+      .addCase(newVisit.rejected, (state, action) => {
         state.loading = false;
-        state.registrationSuccess = false;
-        state.registrationError = action.payload || action.error.message;
+        state.error = action.payload || action.error.message;
       });
   },
 });

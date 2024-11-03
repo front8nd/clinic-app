@@ -65,7 +65,7 @@ export function WorkspacesPopover({ data = [], sx, ...other }) {
         }}
         {...other}
       >
-        {renderAvatar(workspace?.name, '../../../public/assets/icons/doctor.svg')}
+        {renderAvatar(workspace?.name, '/assets/icons/doctor.svg')}
 
         <Box
           gap={1}

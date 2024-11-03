@@ -7,10 +7,11 @@ const VisitSchema = new mongoose.Schema({
     ref: "Patient",
     required: true,
   },
-  doctorId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-    required: true,
+  doctor: {
+    id: { type: String, required: true },
+    name: { type: String, required: true },
+    email: { type: String, required: true },
+    role: { type: String, required: true },
   },
 
   // Visit details

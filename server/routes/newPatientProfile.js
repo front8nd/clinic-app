@@ -31,6 +31,7 @@ router.post("/newPatientProfile", authMiddleware, async (req, res) => {
     // Create new medical information using the generated patient ID
     const newMedicalInfo = new PatientMedicalInfo({
       patientId,
+      visitDate: new Date(),
       visitNumber: 1, // First visit
       ...req.body.medicalInfo,
     });
