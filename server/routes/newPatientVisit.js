@@ -1,28 +1,31 @@
-// routes/visitRoutes.js
 const express = require("express");
-const Visit = require("../models/visitSchema");
+const VisitModel = require("../models/visitSchema");
 const Patient = require("../models/patientSchema");
 const User = require("../models/userSchema");
 const authMiddleware = require("../middleware/auth");
 
 const router = express.Router();
 
-//  Create a new visit for a patient
+// Create a new visit for a patient
 router.post("/newPatientVisit/:patientId", authMiddleware, async (req, res) => {
-  const { patientId } = req.params;
+  const { patientId } = req.params; // Use patientId as a String
   const {
     doctorId,
     visitType,
     diagnosis,
-    vitalSigns,
     prescription,
+    complaints,
+    assessments,
+    investigations,
+    instructions,
+    followUp,
+    referral,
     notes,
-    followUpDate,
   } = req.body;
 
   try {
-    // Validate that the patient exists
-    const patient = await Patient.findById(patientId);
+    // Validate that the patient exists using patientId as a String
+    const patient = await Patient.findOne({ patientId });
     if (!patient) return res.status(404).json({ message: "Patient not found" });
 
     // Validate that the doctor exists
@@ -30,7 +33,7 @@ router.post("/newPatientVisit/:patientId", authMiddleware, async (req, res) => {
     if (!doctor) return res.status(404).json({ message: "Doctor not found" });
 
     // Find the last visit for the patient to determine the visit number
-    const lastVisit = await Visit.findOne({ patientId }).sort({
+    const lastVisit = await VisitModel.findOne({ patientId }).sort({
       visitNumber: -1,
     });
     const visitNumber = lastVisit ? lastVisit.visitNumber + 1 : 1; // Increment or set to 1
@@ -42,10 +45,14 @@ router.post("/newPatientVisit/:patientId", authMiddleware, async (req, res) => {
       visitNumber,
       visitType,
       diagnosis,
-      vitalSigns,
       prescription,
+      complaints,
+      assessments,
+      investigations,
+      instructions,
+      followUp,
+      referral,
       notes,
-      followUpDate,
     });
 
     // Save the visit to the database

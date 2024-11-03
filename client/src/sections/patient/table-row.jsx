@@ -50,22 +50,6 @@ export function CustomTableRow({ row, selected }) {
             textWrap: 'nowrap',
           }}
         >
-          {row?.weight || ' - '}
-        </TableCell>
-
-        <TableCell
-          sx={{
-            textWrap: 'nowrap',
-          }}
-        >
-          {row?.blood_pressure || ' - '}
-        </TableCell>
-
-        <TableCell
-          sx={{
-            textWrap: 'nowrap',
-          }}
-        >
           {row?.address || ' - '}
         </TableCell>
 

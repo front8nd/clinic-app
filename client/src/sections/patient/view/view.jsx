@@ -115,6 +115,8 @@ export default function PatientView() {
 
   const notFound = !dataFiltered?.length && !!filterName;
 
+  console.log(patientsList);
+
   return (
     <DashboardContent>
       <Box display="flex" alignItems="center" mb={5}>
@@ -157,8 +159,6 @@ export default function PatientView() {
                   { id: 'name', label: 'Name' },
                   { id: 'gender', label: 'Gender' },
                   { id: 'age', label: 'Age' },
-                  { id: 'weight', label: 'Weight' },
-                  { id: 'bp', label: 'BP' },
                   { id: 'address', label: 'Address' },
                   { id: 'contact', label: 'Contact Number' },
                 ]}

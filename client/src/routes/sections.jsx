@@ -19,6 +19,7 @@ export const LoginPage = lazy(() => import('../pages/login'));
 export const RegisterPage = lazy(() => import('../pages/register'));
 export const UserPage = lazy(() => import('../pages/user/view'));
 export const NewUserPage = lazy(() => import('../pages/user/new'));
+export const PatientProfile = lazy(() => import('../pages/patient/profile'));
 export const PatientPage = lazy(() => import('../pages/patient/view'));
 export const NewPatientPage = lazy(() => import('../pages/patient/new'));
 export const VisitPage = lazy(() => import('../pages/visit/view'));
@@ -67,6 +68,16 @@ export function Router() {
           path: 'new-user',
           element: (
             <ProtectedRoute allowedRoles={['admin', 'staff', 'doctor']} component={NewUserPage} />
+          ),
+        },
+
+        {
+          path: 'patient-profile',
+          element: (
+            <ProtectedRoute
+              allowedRoles={['admin', 'staff', 'doctor']}
+              component={PatientProfile}
+            />
           ),
         },
         {

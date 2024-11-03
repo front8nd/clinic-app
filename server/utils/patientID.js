@@ -1,11 +1,11 @@
 const Counter = require("../models/patientIDSchema");
 
 async function getNextPatientID() {
-  // Get current date in format YYMM
+  // Get current date in format DDYY
   const date = new Date();
-  const year = date.getFullYear().toString().slice(-2);
-  const month = (date.getMonth() + 1).toString().padStart(2, "0");
-  const prefix = `${month}${year}`;
+  const day = date.getDate().toString().padStart(2, "0"); // Day with leading zero if needed
+  const year = date.getFullYear().toString().slice(-2); // Last two digits of year
+  const prefix = `${day}${year}`; // Combine day and year as DDYY
 
   // Find and increment the sequence value atomically
   const counter = await Counter.findOneAndUpdate(

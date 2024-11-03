@@ -1,9 +1,9 @@
 const mongoose = require("mongoose");
 
-// Updated Visit Schema
+// Updated Visit Schema with improvements
 const VisitSchema = new mongoose.Schema({
   patientId: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: String,
     ref: "Patient",
     required: true,
   },
@@ -12,14 +12,24 @@ const VisitSchema = new mongoose.Schema({
     ref: "User",
     required: true,
   },
-  visitNumber: { type: Number },
-  visitType: { type: String, enum: ["initial", "follow-up", "emergency"] },
+
+  // Visit details
+  visitNumber: { type: Number, required: true },
+  visitType: {
+    type: String,
+    enum: ["initial", "follow-up", "emergency"],
+    required: true,
+  },
   date: { type: Date, default: Date.now },
+
+  // Diagnosis
   diagnosis: {
-    primary: { type: String },
+    primary: { type: String, required: true },
     secondary: { type: String },
     notes: { type: String },
   },
+
+  // Prescription
   prescription: [
     {
       medicationName: { type: String, required: true },
@@ -29,44 +39,59 @@ const VisitSchema = new mongoose.Schema({
       additionalInstructions: { type: String },
     },
   ],
+
+  // Complaints
   complaints: {
-    cc: [{ type: String }],
-    kc: [{ type: String }],
-    ac: [{ type: String }],
+    chiefComplaint: [{ type: String }], // cc
+    knownComplaint: [{ type: String }], // kc
+    additionalComplaint: [{ type: String }], // ac
   },
+
+  // Assessments - can expand to add specific validations if needed
   assessments: {
-    heenth: [{ type: String }],
-    resp: [{ type: String }],
-    gi: [{ type: String }],
-    gu: [{ type: String }],
-    mskl: [{ type: String }],
+    heent: [{ type: String }],
+    respiratory: [{ type: String }],
+    gastrointestinal: [{ type: String }],
+    genitourinary: [{ type: String }],
+    musculoskeletal: [{ type: String }],
     cns: [{ type: String }],
   },
+
+  // Investigations
   investigations: [
     {
-      reportPicture: [{ type: String }],
-      notes: [{ type: String }], // mulitiple
+      reportPicture: [{ type: String }], // Array of picture URLs or paths
+      notes: [{ type: String }],
     },
   ],
+
+  // Instructions
   instructions: {
-    notes: [{ type: String }], // mulitiple
+    notes: [{ type: String }],
   },
+
+  // Follow-up information
   followUp: [
     {
       followUpDate: { type: Date },
-      consulationVia: { type: String, enum: ["online", "offline"] },
+      consultationVia: { type: String, enum: ["online", "offline"] },
       plan: { type: String },
     },
   ],
-  rafrel: [
+
+  // Referrals
+  referral: [
     {
-      speciality: { type: String, required: true },
+      specialty: { type: String, required: true },
       doctor: { type: String, required: true },
       hospital: { type: String, required: true },
     },
   ],
+
+  // Additional notes
   notes: { type: String },
 });
 
+// Create Visit model
 const VisitModel = mongoose.model("Visit", VisitSchema);
-module.exports = { VisitModel };
+module.exports = VisitModel;

@@ -1,38 +1,27 @@
 const mongoose = require("mongoose");
 
-// Updated Patient Schema
 const PatientSchema = new mongoose.Schema({
   // Personal Information
   patientId: { type: String, unique: true }, // Unique patient identifier
   name: { type: String, required: true },
   age: { type: Number, required: true },
-  gender: { type: String, enum: ["male", "female"] },
+  gender: { type: String, enum: ["male", "female"], required: true },
   contact: { type: String },
   address: { type: String },
 
-  // Medical Information
-
-  changable_profile: [
-    {
-      fees: [
-        { type: number, required: true, enum: ["first", "2nd", "dicounted"] },
-      ],
-      weight: { type: String, required: true },
-      height: { type: String },
-      pulse_rate: { type: String, required: true },
-      resp_rate: { type: String, required: true },
-      spo2: { type: String, required: true },
-      temp: { type: String, required: true },
-      rbs: { type: String, required: true },
-      blood_pressure: { type: String },
-    },
-  ],
+  // Additional Information
   allergies: { type: String },
   chronicConditions: { type: String },
-  assistedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+  assistedBy: {
+    name: { type: String, required: true },
+    email: { type: String, required: true },
+    role: { type: String, required: true },
+    id: { type: String, required: true },
+  },
+
   createdAt: { type: Date, default: Date.now },
 });
 
-const patientModel = mongoose.model("Patient", PatientSchema);
+const Patient = mongoose.model("Patient", PatientSchema);
 
-module.exports = patientModel;
+module.exports = Patient;

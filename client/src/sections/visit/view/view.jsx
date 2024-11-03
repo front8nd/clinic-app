@@ -94,7 +94,7 @@ export function useTable() {
 
 // ----------------------------------------------------------------------
 
-export default function PatientView() {
+export default function VisitView() {
   const dispatch = useDispatch();
   const router = useRouter();
   const table = useTable();
@@ -123,7 +123,7 @@ export default function PatientView() {
         </Typography>
         <Button
           onClick={() => {
-            router.push('/new-visit');
+            router.push('/patient-profile');
           }}
           variant="contained"
           color="inherit"
