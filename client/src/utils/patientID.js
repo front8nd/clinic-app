@@ -9,7 +9,7 @@ export default function generatePatientID() {
   const prefix = `${month}${year}`; // Combine year and month as YYMM
 
   // Generate a random 3 or 4-digit number
-  const randomNumber = Math.floor(1000 + Math.random() * 9000); // Random 4-digit number between 1000 and 9999
+  const randomNumber = Math.floor(1 + Math.random() * 9999); // Random 4-digit number between 1 and 9999
 
   // Generate the ID in format YYMM-RANDOM (e.g., 2411-5734)
   return `${prefix}-${randomNumber}`;

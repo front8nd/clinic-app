@@ -49,7 +49,7 @@ export default function PatientNew() {
     const additionalData = {
       ...data,
       assistedBy: userData?.user?._id,
-      patientId: generatePatientID(),
+      patientId: null,
     };
 
     await dispatch(newPatientProfile(additionalData));

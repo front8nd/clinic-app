@@ -23,7 +23,7 @@ export const navData = [
     icon: icon('ic-patient'),
   },
   {
-    title: 'Visit',
+    title: 'Visits',
     path: '/visits',
     icon: icon('ic-visit'),
   },

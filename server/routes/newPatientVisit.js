@@ -1,8 +1,8 @@
 // routes/visitRoutes.js
 const express = require("express");
-const { VisitModel } = require("../models/visitSchema");
-const { PatientModel } = require("../models/patientSchema");
-const { UserModel } = require("../models/userSchema"); // Assuming you have a User model for doctors
+const Visit = require("../models/visitSchema");
+const Patient = require("../models/patientSchema");
+const User = require("../models/userSchema");
 const authMiddleware = require("../middleware/auth");
 
 const router = express.Router();
@@ -22,15 +22,15 @@ router.post("/newPatientVisit/:patientId", authMiddleware, async (req, res) => {
 
   try {
     // Validate that the patient exists
-    const patient = await PatientModel.findById(patientId);
+    const patient = await Patient.findById(patientId);
     if (!patient) return res.status(404).json({ message: "Patient not found" });
 
     // Validate that the doctor exists
-    const doctor = await UserModel.findById(doctorId);
+    const doctor = await User.findById(doctorId);
     if (!doctor) return res.status(404).json({ message: "Doctor not found" });
 
     // Find the last visit for the patient to determine the visit number
-    const lastVisit = await VisitModel.findOne({ patientId }).sort({
+    const lastVisit = await Visit.findOne({ patientId }).sort({
       visitNumber: -1,
     });
     const visitNumber = lastVisit ? lastVisit.visitNumber + 1 : 1; // Increment or set to 1

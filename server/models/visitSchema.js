@@ -12,20 +12,13 @@ const VisitSchema = new mongoose.Schema({
     ref: "User",
     required: true,
   },
-  visitNumber: { type: Number }, // Tracks the number of visits
-  visitType: { type: String, enum: ["initial", "follow-up", "emergency"] }, // Type of visit
+  visitNumber: { type: Number },
+  visitType: { type: String, enum: ["initial", "follow-up", "emergency"] },
   date: { type: Date, default: Date.now },
   diagnosis: {
     primary: { type: String },
     secondary: { type: String },
     notes: { type: String },
-  },
-  vitalSigns: {
-    // Capture patient vital signs
-    bloodPressure: { type: String },
-    heartRate: { type: Number },
-    temperature: { type: Number },
-    respiratoryRate: { type: Number },
   },
   prescription: [
     {
@@ -33,13 +26,46 @@ const VisitSchema = new mongoose.Schema({
       dosage: { type: String, required: true },
       frequency: { type: String, required: true },
       duration: { type: String, required: true },
-      startDate: { type: Date }, // When the medication starts
-      endDate: { type: Date }, // When the medication ends
       additionalInstructions: { type: String },
     },
   ],
+  complaints: {
+    cc: [{ type: String }],
+    kc: [{ type: String }],
+    ac: [{ type: String }],
+  },
+  assessments: {
+    heenth: [{ type: String }],
+    resp: [{ type: String }],
+    gi: [{ type: String }],
+    gu: [{ type: String }],
+    mskl: [{ type: String }],
+    cns: [{ type: String }],
+  },
+  investigations: [
+    {
+      reportPicture: [{ type: String }],
+      notes: [{ type: String }], // mulitiple
+    },
+  ],
+  instructions: {
+    notes: [{ type: String }], // mulitiple
+  },
+  followUp: [
+    {
+      followUpDate: { type: Date },
+      consulationVia: { type: String, enum: ["online", "offline"] },
+      plan: { type: String },
+    },
+  ],
+  rafrel: [
+    {
+      speciality: { type: String, required: true },
+      doctor: { type: String, required: true },
+      hospital: { type: String, required: true },
+    },
+  ],
   notes: { type: String },
-  followUpDate: { type: Date },
 });
 
 const VisitModel = mongoose.model("Visit", VisitSchema);

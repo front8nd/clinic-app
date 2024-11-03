@@ -12,15 +12,23 @@ const PatientSchema = new mongoose.Schema({
 
   // Medical Information
 
-  bloodType: {
-    type: String,
-    enum: ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"],
-  },
-  weight: { type: String, required: true },
-  blood_pressure: { type: String },
+  changable_profile: [
+    {
+      fees: [
+        { type: number, required: true, enum: ["first", "2nd", "dicounted"] },
+      ],
+      weight: { type: String, required: true },
+      height: { type: String },
+      pulse_rate: { type: String, required: true },
+      resp_rate: { type: String, required: true },
+      spo2: { type: String, required: true },
+      temp: { type: String, required: true },
+      rbs: { type: String, required: true },
+      blood_pressure: { type: String },
+    },
+  ],
   allergies: { type: String },
   chronicConditions: { type: String },
-
   assistedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
   createdAt: { type: Date, default: Date.now },
 });
