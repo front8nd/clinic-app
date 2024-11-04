@@ -7,7 +7,7 @@ const patientMedicalInfoSchema = new mongoose.Schema({
     required: true,
   },
 
-  visitDate: { type: Date, default: Date.now },
+  visitDate: { type: Date, default: Date.now, required: true },
   visitNumber: { type: Number, required: true },
 
   assistedBy: {
@@ -18,7 +18,7 @@ const patientMedicalInfoSchema = new mongoose.Schema({
   },
 
   weight: { type: String, required: true },
-  height: { type: String },
+  height: { type: String, required: true },
   pulse_rate: { type: String, required: true },
   resp_rate: { type: String, required: true },
   spo2: { type: String, required: true },
