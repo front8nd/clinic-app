@@ -6,7 +6,20 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import LoadingButton from '@mui/lab/LoadingButton';
-import { CircularProgress, Grid, Stack, useMediaQuery, useTheme } from '@mui/material';
+import {
+  CircularProgress,
+  Avatar,
+  Divider,
+  Grid,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableRow,
+  useMediaQuery,
+  useTheme,
+} from '@mui/material';
+
 import { useRouter } from '../../../routes/hooks';
 import { useSnackbar } from '../../../components/snackbar/snackbar';
 import { patientCompleteProfile, reset } from '../../../redux/patientProfileSlice';
@@ -133,112 +146,218 @@ export default function Profile() {
 
       {/* Display Patient Profile and Medical Info */}
       {patientProfile && (
-        <Card sx={{ padding: 3 }}>
+        <Card sx={{ padding: 0 }}>
           {/* Patient Details Section */}
-          <Box
-            sx={{ backgroundColor: theme.palette.grey[200], padding: 3, borderRadius: 1, mb: 3 }}
-          >
-            <Typography variant="h5" gutterBottom>
-              Patient Profile
-            </Typography>
-            <Grid container spacing={3}>
-              <Grid item xs={12} md={6}>
-                <Typography variant="subtitle1">
-                  <strong>Name:</strong> {patientProfile?.patient?.name}
-                </Typography>
-                <Typography variant="subtitle1">
-                  <strong>Age:</strong> {age}
-                </Typography>
-                <Typography variant="subtitle1">
-                  <strong>Gender:</strong> {patientProfile?.patient?.gender?.toUpperCase()}
-                </Typography>
-                <Typography variant="subtitle1">
-                  <strong>Contact:</strong> {patientProfile?.patient?.contact}
-                </Typography>
-                <Typography variant="subtitle1">
-                  <strong>Address:</strong> {patientProfile?.patient?.address}
-                </Typography>
+
+          <Box sx={{ position: 'relative', padding: 3 }}>
+            {/* Header with Basic Information */}
+            <Card
+              sx={{
+                backgroundColor: theme.palette.primary.main,
+                color: 'white',
+                padding: 3,
+                borderRadius: '10px 10px 0px 0px',
+                position: 'relative',
+                zIndex: 2,
+              }}
+            >
+              <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} alignItems="center">
+                <Avatar sx={{ bgcolor: theme.palette.secondary.light, width: 64, height: 64 }}>
+                  {/* <AccountCircleIcon fontSize="large" /> */}
+                </Avatar>
+                <Box flex={1}>
+                  <Typography variant="h5" gutterBottom>
+                    {patientProfile?.patient?.name}
+                  </Typography>
+                  <Typography variant="subtitle1" color="inherit">
+                    Age: {age} | Gender: {patientProfile?.patient?.gender?.toUpperCase()}
+                  </Typography>
+                </Box>
+                {/* Basic Information on the Right Side */}
+                <Box sx={{ textAlign: { xs: 'left', md: 'right' } }}>
+                  <Typography variant="subtitle1" color="inherit">
+                    <strong>Contact:</strong> {patientProfile?.patient?.contact}
+                  </Typography>
+                  <Typography variant="subtitle1" color="inherit">
+                    <strong>Address:</strong> {patientProfile?.patient?.address}
+                  </Typography>
+                </Box>
+              </Stack>
+            </Card>
+
+            {/* Medical Details Section */}
+            <Box
+              sx={{
+                backgroundColor: '#fbfbfb',
+                color: 'black',
+                padding: 3,
+                borderRadius: '0 0 10px 10px',
+                position: 'relative',
+                zIndex: 2,
+              }}
+            >
+              <Typography variant="h6" gutterBottom>
+                <Stack direction="row" alignItems="center" spacing={1}>
+                  Basic Details
+                </Stack>
+              </Typography>
+              <Divider sx={{ mb: 2 }} />
+
+              {/* Medical Details in a Two-Column Layout */}
+              <Grid container spacing={3}>
+                <Grid item xs={12} md={6}>
+                  <Typography variant="subtitle1" sx={{ mb: 1 }}>
+                    <strong style={{ color: '#4a4a4a', fontWeight: 'bold' }}>Patient ID:</strong>{' '}
+                    <span style={{ color: '#4f4f4f', fontWeight: 'normal' }}>
+                      {patientProfile?.patient?.patientId}
+                    </span>
+                  </Typography>
+                  <Typography variant="subtitle1" sx={{ mb: 1 }}>
+                    <strong style={{ color: '#4a4a4a', fontWeight: 'bold' }}>
+                      Registration Date:
+                    </strong>{' '}
+                    <span style={{ color: '#4f4f4f', fontWeight: 'normal' }}>
+                      {new Date(patientProfile?.patient?.createdAt).toLocaleDateString()}
+                    </span>
+                  </Typography>
+                </Grid>
+
+                <Grid item xs={12} md={6}>
+                  <Typography variant="subtitle1" sx={{ mb: 1 }}>
+                    <strong style={{ color: '#4a4a4a', fontWeight: 'bold' }}>Assisted By:</strong>{' '}
+                    <span style={{ color: '#4f4f4f', fontWeight: 'normal' }}>
+                      {patientProfile?.patient?.assistedBy.name} (
+                      {patientProfile?.patient?.assistedBy.role.toUpperCase()})
+                    </span>
+                  </Typography>
+                  <Typography variant="subtitle1" sx={{ mb: 1 }}>
+                    <strong style={{ color: '#4a4a4a', fontWeight: 'bold' }}>Allergies:</strong>{' '}
+                    <span style={{ color: '#4f4f4f', fontWeight: 'normal' }}>
+                      {patientProfile?.patient?.allergies || 'None'}
+                    </span>
+                  </Typography>
+                  <Typography variant="subtitle1" sx={{ mb: 1 }}>
+                    <strong style={{ color: '#4a4a4a', fontWeight: 'bold' }}>
+                      Chronic Conditions:
+                    </strong>{' '}
+                    <span style={{ color: '#4f4f4f', fontWeight: 'normal' }}>
+                      {patientProfile?.patient?.chronicConditions || 'None'}
+                    </span>
+                  </Typography>
+                </Grid>
               </Grid>
-              <Grid item xs={12} md={6}>
-                <Typography variant="subtitle1">
-                  <strong>Patient ID:</strong> {patientProfile?.patient?.patientId}
-                </Typography>
-                <Typography variant="subtitle1">
-                  <strong>Registration Date:</strong>{' '}
-                  {new Date(patientProfile?.patient?.createdAt).toLocaleDateString()}
-                </Typography>
-                <Typography variant="subtitle1">
-                  <strong>Assisted By:</strong> {patientProfile?.patient?.assistedBy.name} (
-                  {patientProfile?.patient?.assistedBy.role.toUpperCase()})
-                </Typography>
-                <Typography variant="subtitle1">
-                  <strong>Allergies:</strong> {patientProfile?.patient?.allergies}
-                </Typography>
-                <Typography variant="subtitle1">
-                  <strong>Chronic Conditions:</strong> {patientProfile?.patient?.chronicConditions}
-                </Typography>
-              </Grid>
-            </Grid>
+            </Box>
           </Box>
 
-          {/* Medical Info Section */}
-          <Typography variant="h6" gutterBottom>
-            Medical Information
-          </Typography>
-          {patientProfile.medicalInfo && patientProfile.medicalInfo.length > 0 ? (
-            patientProfile.medicalInfo.map((info, index) => (
-              <Card
-                key={info._id}
-                sx={{ padding: 2, marginBottom: 2, backgroundColor: theme.palette.grey[100] }}
-              >
-                <Typography variant="h6">Medical Report #{index + 1}</Typography>
-                <Typography variant="subtitle1">
-                  <strong>Visit Number:</strong> {info.visitNumber}
-                </Typography>
-                <Typography variant="subtitle1">
-                  <strong>Visit Date:</strong> {new Date(info.visitDate).toLocaleDateString()}
-                </Typography>
-                <Typography variant="subtitle1">
-                  <strong>Assisted By:</strong> {info.assistedBy.name} (
-                  {info.assistedBy.role.toUpperCase()})
-                </Typography>
-                <Typography variant="subtitle1">
-                  <strong>Fees Charged:</strong> {info.fees.final} Rs
-                </Typography>
-                <Typography variant="subtitle1">
-                  <strong>Weight:</strong> {info.weight} kg
-                </Typography>
-                <Typography variant="subtitle1">
-                  <strong>Height:</strong> {info.height} cm
-                </Typography>
-                <Typography variant="subtitle1">
-                  <strong>Pulse Rate:</strong> {info.pulse_rate} bpm
-                </Typography>
-                <Typography variant="subtitle1">
-                  <strong>Resp Rate:</strong> {info.resp_rate} bpm
-                </Typography>
-                <Typography variant="subtitle1">
-                  <strong>SPO2:</strong> {info.spo2}%
-                </Typography>
-                <Typography variant="subtitle1">
-                  <strong>Temperature:</strong> {info.temp} °C
-                </Typography>
-                <Typography variant="subtitle1">
-                  <strong>RBS:</strong> {info.rbs} mg/dL
-                </Typography>
-                <Typography variant="subtitle1">
-                  <strong>Blood Pressure:</strong> {info.blood_pressure.sys}/
-                  {info.blood_pressure.dia} mmHg
+          {/* Medical Information */}
+
+          <Box sx={{ position: 'relative', padding: 3 }}>
+            <Typography
+              variant="h6"
+              sx={{
+                borderLeft: '5px solid #0d2f55',
+
+                padding: '10px 15px',
+                color: ' #0d2f55',
+                marginBottom: '20px',
+                width: 'fit-content',
+                borderRadius: '4px',
+              }}
+            >
+              Medical Information
+            </Typography>
+            {patientProfile.medicalInfo && patientProfile.medicalInfo.length > 0 ? (
+              patientProfile.medicalInfo.map((info, index) => (
+                <Card
+                  key={info._id}
+                  sx={{
+                    padding: 3,
+                    marginBottom: 3,
+                    backgroundColor: theme.palette.grey[100],
+                    borderRadius: 2,
+                    boxShadow: 2,
+                  }}
+                >
+                  <Grid container spacing={3}>
+                    {/* Visit Details Section */}
+                    <Grid item xs={12} md={4}>
+                      <Typography variant="h6" gutterBottom>
+                        Medical Report #{info.visitNumber}
+                      </Typography>
+                      <Divider sx={{ marginBottom: 2 }} />
+                      <Typography variant="subtitle1">
+                        <strong>Visit Date:</strong> {new Date(info.visitDate).toLocaleDateString()}
+                      </Typography>
+                      <Typography variant="subtitle1">
+                        <strong>Assisted By:</strong> {info.assistedBy.name} (
+                        {info.assistedBy.role.toUpperCase()})
+                      </Typography>
+                      <Typography variant="subtitle1">
+                        <strong>Fees Charged:</strong> {info.fees.final} Rs (Discount:{' '}
+                        {info.fees.discount})
+                      </Typography>
+                    </Grid>
+
+                    {/* Vital Signs Section */}
+                    <Grid item xs={12} md={8}>
+                      <Table size="small" aria-label="vital signs table">
+                        <TableBody>
+                          <TableRow>
+                            <TableCell>
+                              <strong>Weight</strong>
+                            </TableCell>
+                            <TableCell align="right">{info.weight} kg</TableCell>
+                            <TableCell>
+                              <strong>Height</strong>
+                            </TableCell>
+                            <TableCell align="right">{info.height} cm</TableCell>
+                          </TableRow>
+                          <TableRow>
+                            <TableCell>
+                              <strong>Pulse Rate</strong>
+                            </TableCell>
+                            <TableCell align="right">{info.pulse_rate} bpm</TableCell>
+                            <TableCell>
+                              <strong>Resp Rate</strong>
+                            </TableCell>
+                            <TableCell align="right">{info.resp_rate} bpm</TableCell>
+                          </TableRow>
+                          <TableRow>
+                            <TableCell>
+                              <strong>SPO2</strong>
+                            </TableCell>
+                            <TableCell align="right">{info.spo2}%</TableCell>
+                            <TableCell>
+                              <strong>Temperature</strong>
+                            </TableCell>
+                            <TableCell align="right">{info.temp} °C</TableCell>
+                          </TableRow>
+                          <TableRow>
+                            <TableCell>
+                              <strong>RBS</strong>
+                            </TableCell>
+                            <TableCell align="right">{info.rbs} mg/dL</TableCell>
+                            <TableCell>
+                              <strong>Blood Pressure</strong>
+                            </TableCell>
+                            <TableCell align="right">
+                              {info.blood_pressure.sys}/{info.blood_pressure.dia} mmHg
+                            </TableCell>
+                          </TableRow>
+                        </TableBody>
+                      </Table>
+                    </Grid>
+                  </Grid>
+                </Card>
+              ))
+            ) : (
+              <Card sx={{ padding: 2, marginTop: 2, backgroundColor: theme.palette.warning.light }}>
+                <Typography variant="subtitle1" color="InfoText" align="center">
+                  No Medical Records
                 </Typography>
               </Card>
-            ))
-          ) : (
-            <Card sx={{ padding: 2, marginTop: 2, backgroundColor: theme.palette.warning.light }}>
-              <Typography variant="subtitle1" color="InfoText" align="center">
-                No Medical Records
-              </Typography>
-            </Card>
-          )}
+            )}
+          </Box>
 
           {/* Visits Section */}
           <Typography variant="h6" gutterBottom sx={{ mt: 4 }}>
