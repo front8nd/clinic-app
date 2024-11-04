@@ -12,6 +12,7 @@ import { useSnackbar } from '../../../components/snackbar/snackbar';
 import { patientCompleteProfile, resetErrors } from '../../../redux/patientProfileSlice';
 import { Iconify } from '../../../components/iconify';
 import { DashboardContent } from '../../../layouts/dashboard/index';
+import { calculateAge } from '../../../utils/calculateAge';
 
 export default function Profile() {
   const theme = useTheme();
@@ -42,8 +43,8 @@ export default function Profile() {
       dispatch(resetErrors());
     };
   }, [patientProfile, error?.message, error?.error, router, openSnackbar, dispatch]);
-
-  console.log(patientProfile);
+  const age = calculateAge(patientProfile?.patient?.birthYear);
+  console.log(age);
 
   return (
     <DashboardContent>
@@ -142,7 +143,7 @@ export default function Profile() {
                   <strong>Name:</strong> {patientProfile?.patient?.name}
                 </Typography>
                 <Typography variant="subtitle1">
-                  <strong>Age:</strong> {patientProfile?.patient?.age}
+                  <strong>Age:</strong> {age}
                 </Typography>
                 <Typography variant="subtitle1">
                   <strong>Gender:</strong> {patientProfile?.patient?.gender?.toUpperCase()}
