@@ -18,7 +18,6 @@ router.post("/newPatientProfile", authMiddleware, async (req, res) => {
         .status(409)
         .json({ message: "Patient ID conflict. Please try again." });
     }
-
     // Create new patient data with the generated patient ID
     const newPatient = new Patient({
       ...req.body.personalInfo, // Use personal info from request body

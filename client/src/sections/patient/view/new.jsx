@@ -130,7 +130,7 @@ export default function PatientNew() {
     // Separate the data into personal and medical info
     const personalInfo = {
       name: data.name,
-      age: data.age,
+      birthYear: data.birthYear,
       gender: data.gender,
       contact: data.contact,
       address: data.address,
@@ -224,10 +224,10 @@ export default function PatientNew() {
             </Grid>
             <Grid item xs={12} sm={6} md={4}>
               <TextField
-                name="age"
-                label="Age"
+                name="birthYear"
+                label="Year of Birth"
                 type="number"
-                value={data.age}
+                value={data.birthYear}
                 onChange={changeHandler}
                 required
                 fullWidth

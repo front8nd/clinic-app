@@ -204,7 +204,7 @@ export default function PatientView() {
           count={patientsList?.totalPatients || 0}
           rowsPerPage={table.rowsPerPage}
           onPageChange={table.onChangePage}
-          rowsPerPageOptions={[1, 5, 10]}
+          rowsPerPageOptions={[10, 15, 50]}
           onRowsPerPageChange={table.onChangeRowsPerPage}
         />
       </Card>

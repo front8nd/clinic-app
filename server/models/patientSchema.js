@@ -4,7 +4,7 @@ const PatientSchema = new mongoose.Schema({
   // Personal Information
   patientId: { type: String, unique: true }, // Unique patient identifier
   name: { type: String, required: true },
-  age: { type: Number, required: true },
+  birthYear: { type: Number, required: true },
   gender: { type: String, enum: ["male", "female"], required: true },
   contact: { type: String },
   address: { type: String },

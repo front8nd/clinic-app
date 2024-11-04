@@ -11,7 +11,7 @@ const UserSchema = new mongoose.Schema({
   },
   contact: { type: String },
   address: { type: String },
-  dob: { type: Date },
+  birthYear: { type: String, required: true },
 
   // Role Information
   role: {

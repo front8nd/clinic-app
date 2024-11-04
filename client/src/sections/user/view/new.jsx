@@ -50,7 +50,7 @@ export default function UserNew() {
     password: '',
     c_password: '',
     role: 'admin',
-    dob: '',
+    birthYear: 0,
     contact: '',
     address: '',
     specialization: '',
@@ -176,16 +176,13 @@ export default function UserNew() {
             </Grid>
             <Grid item xs={12} sm={8} md={6}>
               <TextField
-                name="dob"
-                label="Date of Birth"
-                type="date"
-                value={data.dob}
+                name="birthYear"
+                label="Year of Birth"
+                type="number"
+                value={data.birthYear}
                 onChange={changeHandler}
                 required
                 fullWidth
-                InputLabelProps={{
-                  shrink: true,
-                }}
               />
             </Grid>
 

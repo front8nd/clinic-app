@@ -2,10 +2,12 @@ import dayjs from 'dayjs';
 import Box from '@mui/material/Box';
 import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
+import { calculateAge } from '../../utils/calculateAge';
 
 // ----------------------------------------------------------------------
 
 export function CustomTableRow({ row, selected }) {
+  const age = calculateAge(row?.birthYear);
   return (
     <>
       <TableRow hover tabIndex={-1} role="checkbox" selected={selected}>
@@ -42,7 +44,7 @@ export function CustomTableRow({ row, selected }) {
             textWrap: 'nowrap',
           }}
         >
-          {row?.age || ' - '}
+          {age || ' - '}
         </TableCell>
 
         <TableCell
