@@ -19,7 +19,7 @@ import { DashboardContent } from '../../../layouts/dashboard/index';
 import { Iconify } from '../../../components/iconify';
 import { useRouter } from '../../../routes/hooks';
 import { useSnackbar } from '../../../components/snackbar/snackbar';
-import { newPatientProfile, resetErrors } from '../../../redux/patientSlice';
+import { newPatientProfile, reset } from '../../../redux/patientSlice';
 
 export default function PatientNew() {
   const router = useRouter();
@@ -28,7 +28,7 @@ export default function PatientNew() {
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const dispatch = useDispatch();
-  const { loading, registrationSuccess, registrationError } = useSelector((state) => state.patient);
+  const { loading, isSuccess, isFailed } = useSelector((state) => state.patient);
   const { userData } = useSelector((state) => state.auth);
 
   const genderOptions = ['male', 'female'];
@@ -175,15 +175,15 @@ export default function PatientNew() {
   };
 
   useEffect(() => {
-    if (registrationSuccess) {
+    if (isSuccess) {
       openSnackbar('Patient Added Successfully', 'success');
-    } else if (registrationError?.message || registrationError?.error) {
-      openSnackbar(`${registrationError?.message || registrationError?.error}`, 'error');
+    } else if (isFailed?.message || isFailed?.error || isFailed) {
+      openSnackbar(`${isFailed?.message || isFailed?.error || isFailed}`, 'error');
     }
     return () => {
-      dispatch(resetErrors());
+      dispatch(reset());
     };
-  }, [registrationSuccess, registrationError, router, openSnackbar, dispatch]);
+  }, [isSuccess, isFailed, router, openSnackbar, dispatch]);
 
   return (
     <DashboardContent>

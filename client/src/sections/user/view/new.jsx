@@ -25,7 +25,7 @@ import { DashboardContent } from '../../../layouts/dashboard/index';
 import { Iconify } from '../../../components/iconify';
 import { useRouter } from '../../../routes/hooks';
 
-import { register, resetErrors } from '../../../redux/authSlice';
+import { register, reset } from '../../../redux/authSlice';
 
 import { useSnackbar } from '../../../components/snackbar/snackbar';
 import { Label } from '../../../components/label';
@@ -37,7 +37,7 @@ export default function UserNew() {
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const dispatch = useDispatch();
-  const authData = useSelector((state) => state.auth);
+  const { userData, isSuccess, isFailed, loading } = useSelector((state) => state.auth);
   const [showPassword, setShowPassword] = useState(false);
   const roles = ['admin', 'staff', 'doctor'];
   const staff = ['receptionist', 'nurse'];
@@ -87,18 +87,15 @@ export default function UserNew() {
   }, [data?.role]);
 
   useEffect(() => {
-    if (authData.registrationSuccess) {
+    if (isSuccess) {
       openSnackbar('Registration Successful', 'success');
-    } else if (authData?.registrationError?.message || authData?.registrationError?.error) {
-      openSnackbar(
-        `${authData?.registrationError?.message || authData?.registrationError?.error}`,
-        'error'
-      );
+    } else if (isFailed?.message || isFailed?.error || isFailed) {
+      openSnackbar(`${isFailed?.message || isFailed?.error || isFailed}`, 'error');
     }
     return () => {
-      dispatch(resetErrors());
+      dispatch(reset());
     };
-  }, [authData.registrationSuccess, authData?.registrationError, router, openSnackbar, dispatch]);
+  }, [isSuccess, isFailed, router, openSnackbar, dispatch]);
 
   return (
     <DashboardContent>
@@ -446,7 +443,7 @@ export default function UserNew() {
                 variant="contained"
                 color="inherit"
               >
-                {authData?.loading === false ? (
+                {loading === false ? (
                   'Register'
                 ) : (
                   <CircularProgress

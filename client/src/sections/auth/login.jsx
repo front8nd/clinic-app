@@ -13,7 +13,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 
 import { useRouter } from '../../routes/hooks';
 
-import { login, resetErrors } from '../../redux/authSlice';
+import { login, reset } from '../../redux/authSlice';
 
 import { Iconify } from '../../components/iconify';
 
@@ -28,7 +28,7 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
 
   const dispatch = useDispatch();
-  const authData = useSelector((state) => state.auth);
+  const { isAuthenticated, loading, error } = useSelector((state) => state.auth);
 
   const [data, setData] = useState({
     email: '',
@@ -44,16 +44,16 @@ export default function Login() {
   };
 
   useEffect(() => {
-    if (authData.isAuthenticated) {
-      openSnackbar('Login successful!', 'success');
+    if (isAuthenticated) {
+      openSnackbar('Login Successful', 'success');
       router.push('/users');
-    } else if (authData?.error) {
-      openSnackbar(`Login failed: ${authData?.error?.message}`, 'error');
+    } else if (error?.message || error?.error || error) {
+      openSnackbar(`${error?.message || error?.error || error}`, 'error');
     }
     return () => {
-      dispatch(resetErrors());
+      dispatch(reset());
     };
-  }, [authData.isAuthenticated, authData?.error, router, openSnackbar, dispatch]);
+  }, [isAuthenticated, error, router, openSnackbar, dispatch]);
 
   const renderForm = (
     <form onSubmit={handleClick}>
@@ -86,7 +86,7 @@ export default function Login() {
       </Stack>
 
       <LoadingButton fullWidth size="large" type="submit" variant="contained" color="inherit">
-        {authData?.loading === false ? (
+        {loading === false ? (
           'Login'
         ) : (
           <CircularProgress

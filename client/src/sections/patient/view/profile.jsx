@@ -9,7 +9,7 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import { CircularProgress, Grid, Stack, useMediaQuery, useTheme } from '@mui/material';
 import { useRouter } from '../../../routes/hooks';
 import { useSnackbar } from '../../../components/snackbar/snackbar';
-import { patientCompleteProfile, resetErrors } from '../../../redux/patientProfileSlice';
+import { patientCompleteProfile, reset } from '../../../redux/patientProfileSlice';
 import { Iconify } from '../../../components/iconify';
 import { DashboardContent } from '../../../layouts/dashboard/index';
 import { calculateAge } from '../../../utils/calculateAge';
@@ -21,7 +21,9 @@ export default function Profile() {
   const { openSnackbar } = useSnackbar();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-  const { patientProfile, loading, error } = useSelector((state) => state.patientProfile);
+  const { patientProfile, loading, error, isSuccess } = useSelector(
+    (state) => state.patientProfile
+  );
   const [data, setData] = useState('');
 
   console.log(patientProfile);
@@ -36,15 +38,15 @@ export default function Profile() {
   };
 
   useEffect(() => {
-    if (patientProfile) {
+    if (isSuccess) {
       openSnackbar('Record Fetched Successfully', 'success');
-    } else if (error?.message || error?.error) {
-      openSnackbar(`${error?.message || error?.error}`, 'error');
+    } else if (error?.message || error?.error || error) {
+      openSnackbar(`${error?.message || error?.error || error}`, 'error');
     }
     return () => {
-      dispatch(resetErrors());
+      dispatch(reset());
     };
-  }, [patientProfile, error?.message, error?.error, router, openSnackbar, dispatch]);
+  }, [isSuccess, error, router, openSnackbar, dispatch]);
 
   const age = calculateAge(patientProfile?.patient?.birthYear);
 

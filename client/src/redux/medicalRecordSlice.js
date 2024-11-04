@@ -32,6 +32,7 @@ const initialState = {
   loading: false,
   error: null,
   newMedicalInfo: null,
+  isSuccess: null,
 };
 
 const medicalRecordSlice = createSlice({
@@ -40,6 +41,7 @@ const medicalRecordSlice = createSlice({
   reducers: {
     resetErrors(state) {
       state.error = null;
+      state.isSuccess = null;
     },
   },
   extraReducers: (builder) => {
@@ -47,10 +49,11 @@ const medicalRecordSlice = createSlice({
       .addCase(newPatientMedicalInfo.pending, (state) => {
         state.loading = true;
         state.error = null;
-        state.newMedicalInfo = null;
+        state.isSuccess = null;
       })
       .addCase(newPatientMedicalInfo.fulfilled, (state, action) => {
         state.loading = false;
+        state.isSuccess = true;
         state.newMedicalInfo = action.payload;
       })
       .addCase(newPatientMedicalInfo.rejected, (state, action) => {

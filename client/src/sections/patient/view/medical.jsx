@@ -30,7 +30,7 @@ export default function MedicalNew() {
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const dispatch = useDispatch();
-  const { loading, error, newMedicalInfo } = useSelector((state) => state.medicalRecord);
+  const { loading, error, isSuccess } = useSelector((state) => state.medicalRecord);
   const { patientProfile } = useSelector((state) => state.patientProfile);
   const { userData } = useSelector((state) => state.auth);
 
@@ -182,15 +182,15 @@ export default function MedicalNew() {
   };
 
   useEffect(() => {
-    if (newMedicalInfo) {
+    if (isSuccess) {
       openSnackbar('Patient Medical Record Added Successfully', 'success');
-    } else if (error?.message || error?.error) {
-      openSnackbar(`${error?.message || error?.error}`, 'error');
+    } else if (error?.message || error?.error || error) {
+      openSnackbar(`${error?.message || error?.error || error}`, 'error');
     }
     return () => {
       dispatch(resetErrors());
     };
-  }, [newMedicalInfo, error?.message, error?.error, router, openSnackbar, dispatch]);
+  }, [isSuccess, error, router, openSnackbar, dispatch]);
 
   return (
     <DashboardContent>

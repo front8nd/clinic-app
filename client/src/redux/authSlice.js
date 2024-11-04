@@ -38,8 +38,8 @@ const initialState = {
   userData: parsedUserData,
   loading: false,
   error: null,
-  registrationSuccess: null,
-  registrationError: null,
+  isSuccess: null,
+  isFailed: null,
 };
 
 const authSlice = createSlice({
@@ -51,10 +51,10 @@ const authSlice = createSlice({
       state.userData = null;
       localStorage.removeItem('userData');
     },
-    resetErrors(state) {
+    reset(state) {
       state.error = null;
-      state.registrationError = null;
-      state.registrationSuccess = null;
+      state.isFailed = null;
+      state.isSuccess = null;
     },
   },
   extraReducers: (builder) => {
@@ -75,21 +75,21 @@ const authSlice = createSlice({
       })
       .addCase(register.pending, (state) => {
         state.loading = true;
-        state.registrationError = null;
-        state.registrationSuccess = null;
+        state.isFailed = null;
+        state.isSuccess = null;
       })
       .addCase(register.fulfilled, (state, action) => {
         state.loading = false;
-        state.registrationSuccess = true;
+        state.isSuccess = true;
       })
       .addCase(register.rejected, (state, action) => {
         state.loading = false;
-        state.registrationSuccess = false;
-        state.registrationError = action.payload || action.error.message;
+        state.isFailed = action.payload || action.error.message;
+        console.log('x', state.isFailed);
       });
   },
 });
 
 // Export logout action for use in components
-export const { logout, resetErrors } = authSlice.actions;
+export const { logout, reset } = authSlice.actions;
 export default authSlice.reducer;

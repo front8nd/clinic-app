@@ -12,7 +12,7 @@ import { DashboardContent } from '../../../layouts/dashboard/index';
 import { Iconify } from '../../../components/iconify';
 import { useRouter } from '../../../routes/hooks';
 import { useSnackbar } from '../../../components/snackbar/snackbar';
-import { newVisit, resetErrors } from '../../../redux/visitSlice';
+import { newVisit, reset } from '../../../redux/visitSlice';
 
 export default function VisitNew() {
   const router = useRouter();
@@ -22,7 +22,7 @@ export default function VisitNew() {
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const dispatch = useDispatch();
-  const { loading, error, newPatientVisit } = useSelector((state) => state.visit);
+  const { loading, error, isSuccess, isFailed } = useSelector((state) => state.visit);
   const { userData } = useSelector((state) => state.auth);
 
   const [data, setData] = useState({
@@ -155,15 +155,15 @@ export default function VisitNew() {
   };
 
   useEffect(() => {
-    if (newPatientVisit) {
+    if (isSuccess) {
       openSnackbar('Patient Visit Record Added Successfully', 'success');
-    } else if (error?.message || error?.error) {
-      openSnackbar(`${error?.message || error?.error}`, 'error');
+    } else if (isFailed?.message || isFailed?.error || isFailed) {
+      openSnackbar(`${isFailed?.message || isFailed?.error || isFailed}`, 'error');
     }
     return () => {
-      dispatch(resetErrors());
+      dispatch(reset());
     };
-  }, [newPatientVisit, error?.message, error?.error, router, openSnackbar, dispatch]);
+  }, [isSuccess, isFailed, router, openSnackbar, dispatch]);
 
   return (
     <DashboardContent>

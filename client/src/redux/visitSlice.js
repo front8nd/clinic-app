@@ -53,23 +53,26 @@ const initialState = {
   loading: false,
   error: null,
   visitList: [],
-  noVisits: false,
   newPatientVisit: null,
+  isSuccess: null,
+  isFailed: null,
 };
 
 const visitSlice = createSlice({
   name: 'visit',
   initialState,
   reducers: {
-    resetErrors(state) {
+    reset(state) {
       state.error = null;
+      state.isSuccess = null;
+      state.isFailed = null;
     },
   },
   extraReducers: (builder) => {
     builder
       .addCase(visits.pending, (state) => {
         state.loading = true;
-        state.noVisits = null;
+        state.error = null;
         state.visitList = null;
       })
       .addCase(visits.fulfilled, (state, action) => {
@@ -78,24 +81,26 @@ const visitSlice = createSlice({
       })
       .addCase(visits.rejected, (state, action) => {
         state.loading = false;
-        state.noVisits = action.payload || action.error.message;
+        state.error = action.payload || action.error.message;
       })
       .addCase(newVisit.pending, (state) => {
         state.loading = true;
-        state.newPatientVisit = null;
+        state.isSuccess = null;
+        state.isFailed = null;
       })
       .addCase(newVisit.fulfilled, (state, action) => {
         state.loading = false;
+        state.isSuccess = true;
         state.newPatientVisit = action.payload;
       })
       .addCase(newVisit.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload || action.error.message;
+        state.isFailed = action.payload || action.error.message;
       });
   },
 });
 
 // Export logout action for use in components
-export const { resetErrors } = visitSlice.actions;
+export const { reset } = visitSlice.actions;
 
 export default visitSlice.reducer;

@@ -11,7 +11,7 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import { CircularProgress, Stack } from '@mui/material';
 import InputAdornment from '@mui/material/InputAdornment';
 
-import { register, resetErrors } from '../../redux/authSlice';
+import { register, reset } from '../../redux/authSlice';
 import { useRouter } from '../../routes/hooks';
 
 import { Iconify } from '../../components/iconify';
@@ -24,7 +24,7 @@ export default function Register() {
   const { openSnackbar } = useSnackbar();
 
   const dispatch = useDispatch();
-  const authData = useSelector((state) => state.auth);
+  const { userData, loading, isSuccess, isFailed } = useSelector((state) => state.auth);
   const [showPassword, setShowPassword] = useState(false);
   const [data, setData] = useState({
     name: '',
@@ -44,15 +44,15 @@ export default function Register() {
   };
 
   useEffect(() => {
-    if (authData.registrationSuccess) {
+    if (isSuccess) {
       openSnackbar('Registration Successful', 'success');
-    } else if (authData?.registrationError?.message || authData?.registrationError?.error) {
-      openSnackbar(
-        `${authData?.registrationError?.message || authData?.registrationError?.error}`,
-        'error'
-      );
+    } else if (isFailed?.message || isFailed?.error || isFailed) {
+      openSnackbar(`${isFailed?.message || isFailed?.error || isFailed}`, 'error');
     }
-  }, [authData.registrationSuccess, authData?.registrationError, router, openSnackbar]);
+    return () => {
+      dispatch(reset());
+    };
+  }, [dispatch, isSuccess, isFailed, router, openSnackbar]);
 
   const renderForm = (
     <form onSubmit={handleClick}>
@@ -104,7 +104,7 @@ export default function Register() {
       </Stack>
 
       <LoadingButton fullWidth size="large" type="submit" variant="contained" color="inherit">
-        {authData?.loading === false ? (
+        {loading === false ? (
           'Register'
         ) : (
           <CircularProgress

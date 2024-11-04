@@ -47,8 +47,8 @@ const initialState = {
   data: null,
   loading: false,
   error: null,
-  registrationSuccess: null,
-  registrationError: null,
+  isSuccess: null,
+  isFailed: null,
   patientsList: [],
   patient: null,
 };
@@ -57,10 +57,10 @@ const patientSlice = createSlice({
   name: 'patient',
   initialState,
   reducers: {
-    resetErrors(state) {
+    reset(state) {
       state.error = null;
-      state.registrationError = null;
-      state.registrationSuccess = null;
+      state.isSuccess = null;
+      state.isFailed = null;
     },
   },
   extraReducers: (builder) => {
@@ -80,23 +80,22 @@ const patientSlice = createSlice({
       })
       .addCase(newPatientProfile.pending, (state) => {
         state.loading = true;
-        state.registrationError = null;
-        state.registrationSuccess = null;
+        state.isFailed = null;
+        state.isSuccess = null;
       })
       .addCase(newPatientProfile.fulfilled, (state, action) => {
         state.loading = false;
         state.data = action.payload;
-        state.registrationSuccess = true;
+        state.isSuccess = true;
       })
       .addCase(newPatientProfile.rejected, (state, action) => {
         state.loading = false;
-        state.registrationSuccess = false;
-        state.registrationError = action.payload || action.error.message;
+        state.isFailed = action.payload || action.error.message;
       });
   },
 });
 
 // Export logout action for use in components
-export const { resetErrors } = patientSlice.actions;
+export const { reset } = patientSlice.actions;
 
 export default patientSlice.reducer;
