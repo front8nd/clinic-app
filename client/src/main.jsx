@@ -12,15 +12,13 @@ import store from './redux/store';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
 root.render(
-  <StrictMode>
-    <HelmetProvider>
-      <BrowserRouter>
-        <Suspense>
-          <Provider store={store}>
-            <App />
-          </Provider>
-        </Suspense>
-      </BrowserRouter>
-    </HelmetProvider>
-  </StrictMode>
+  <HelmetProvider>
+    <BrowserRouter>
+      <Suspense>
+        <Provider store={store}>
+          <App />
+        </Provider>
+      </Suspense>
+    </BrowserRouter>
+  </HelmetProvider>
 );
