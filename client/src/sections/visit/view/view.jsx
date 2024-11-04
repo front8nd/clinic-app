@@ -99,7 +99,9 @@ export default function VisitView() {
   const router = useRouter();
   const table = useTable();
 
-  const [dataByDate, setDataByDate] = useState();
+  // Initialize today's date for `dataByDate`
+  const today = new Date().toISOString().split('T')[0];
+  const [dataByDate, setDataByDate] = useState(today);
   const { visitList, loading } = useSelector((state) => state.visit);
   const [filterName, setFilterName] = useState('');
 

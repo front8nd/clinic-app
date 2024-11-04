@@ -99,6 +99,8 @@ export default function PatientView() {
   const router = useRouter();
   const table = useTable();
 
+  // Initialize today's date for `dataByDate`
+  const today = new Date().toISOString().split('T')[0];
   const [dataByDate, setDataByDate] = useState();
   const { patientsList, loading } = useSelector((state) => state.patient);
   const [filterName, setFilterName] = useState('');

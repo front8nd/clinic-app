@@ -11,16 +11,6 @@ import { Iconify } from '../../components/iconify';
 // ----------------------------------------------------------------------
 
 export function TableToolbar({ numSelected, filterName, onFilterName, setDataByDate, dataByDate }) {
-  useEffect(() => {
-    const today = new Date();
-    const formattedDate = today.toISOString().split('T')[0];
-    setDataByDate(formattedDate);
-  }, [setDataByDate]);
-
-  const handleDateReset = () => {
-    setDataByDate('');
-  };
-
   const changeHandler = (e) => {
     e.preventDefault();
     setDataByDate(e.target.value);
