@@ -100,7 +100,7 @@ export default function VisitView() {
   const table = useTable();
 
   const [dataByDate, setDataByDate] = useState();
-  const { visitList } = useSelector((state) => state.patient);
+  const { visitList } = useSelector((state) => state.visit);
   const [filterName, setFilterName] = useState('');
 
   useEffect(() => {
@@ -108,10 +108,12 @@ export default function VisitView() {
   }, [dispatch, table.page, table.rowsPerPage, dataByDate]);
 
   const dataFiltered = applyFilter({
-    inputData: visitList?.patients || [],
+    inputData: visitList?.visits || [],
     comparator: getComparator(table.order, table.orderBy),
     filterName,
   });
+
+  console.log(visitList);
 
   const notFound = !dataFiltered?.length && !!filterName;
 
@@ -153,13 +155,11 @@ export default function VisitView() {
                 numSelected={table.selected.length}
                 onSort={table.onSort}
                 headLabel={[
+                  { id: 'patientId', label: 'PatientID' },
                   { id: 'name', label: 'Name' },
-                  { id: 'gender', label: 'Gender' },
-                  { id: 'age', label: 'Age' },
-                  { id: 'weight', label: 'Weight' },
-                  { id: 'bp', label: 'BP' },
-                  { id: 'address', label: 'Address' },
-                  { id: 'contact', label: 'Contact Number' },
+                  { id: 'doctor', label: 'Doctor' },
+                  { id: 'diagnosis', label: 'Diagnosis' },
+                  { id: 'chiefComplaint', label: 'Chief Complaint' },
                 ]}
               />
               <TableBody>
@@ -206,7 +206,7 @@ export default function VisitView() {
           count={visitList?.totalVisits || 0}
           rowsPerPage={table.rowsPerPage}
           onPageChange={table.onChangePage}
-          rowsPerPageOptions={[1, 5, 10]}
+          rowsPerPageOptions={[10, 20, 50]}
           onRowsPerPageChange={table.onChangeRowsPerPage}
         />
       </Card>

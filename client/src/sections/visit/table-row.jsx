@@ -1,19 +1,23 @@
 import dayjs from 'dayjs';
 import Box from '@mui/material/Box';
-import Avatar from '@mui/material/Avatar';
 import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
-
-import { Label } from '../../components/label';
+import { calculateAge } from '../../utils/calculateAge';
 
 // ----------------------------------------------------------------------
 
 export function CustomTableRow({ row, selected }) {
-  const formattedDate = dayjs(row?.createdAt).format('DD/MM/YYYY');
-
   return (
     <>
       <TableRow hover tabIndex={-1} role="checkbox" selected={selected}>
+        <TableCell
+          sx={{
+            textWrap: 'nowrap',
+          }}
+        >
+          {row?.patientId || ' - '}
+        </TableCell>
+
         <TableCell
           sx={{
             textWrap: 'nowrap',
@@ -23,7 +27,7 @@ export function CustomTableRow({ row, selected }) {
         >
           <Box gap={2} display="flex" alignItems="center">
             {/* <Avatar alt={row?.name || ' - '} src={row?.avatarUrl} /> */}
-            {row?.name || ' - '}
+            {row?.patient?.name || ' - '}
           </Box>
         </TableCell>
 
@@ -32,22 +36,14 @@ export function CustomTableRow({ row, selected }) {
             textWrap: 'nowrap',
           }}
         >
-          {row?.gender?.toUpperCase() || ' - '}
+          {row?.doctor?.name || ' - '}
         </TableCell>
         <TableCell
           sx={{
             textWrap: 'nowrap',
           }}
         >
-          {row?.age || ' - '}
-        </TableCell>
-
-        <TableCell
-          sx={{
-            textWrap: 'nowrap',
-          }}
-        >
-          {row?.weight || ' - '}
+          {row?.complaints?.chiefComplaint || ' - '}
         </TableCell>
 
         <TableCell
@@ -55,23 +51,7 @@ export function CustomTableRow({ row, selected }) {
             textWrap: 'nowrap',
           }}
         >
-          {row?.blood_pressure || ' - '}
-        </TableCell>
-
-        <TableCell
-          sx={{
-            textWrap: 'nowrap',
-          }}
-        >
-          {row?.address || ' - '}
-        </TableCell>
-
-        <TableCell
-          sx={{
-            textWrap: 'nowrap',
-          }}
-        >
-          {row?.contact || ' - '}
+          {row?.diagnosis?.primary || ' - '}
         </TableCell>
       </TableRow>
     </>

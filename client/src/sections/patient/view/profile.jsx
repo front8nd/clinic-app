@@ -24,6 +24,8 @@ export default function Profile() {
   const { patientProfile, loading, error } = useSelector((state) => state.patientProfile);
   const [data, setData] = useState('');
 
+  console.log(patientProfile);
+
   const changeHandler = (e) => {
     setData(e.target.value);
   };
@@ -43,8 +45,8 @@ export default function Profile() {
       dispatch(resetErrors());
     };
   }, [patientProfile, error?.message, error?.error, router, openSnackbar, dispatch]);
+
   const age = calculateAge(patientProfile?.patient?.birthYear);
-  console.log(age);
 
   return (
     <DashboardContent>
@@ -232,6 +234,118 @@ export default function Profile() {
             <Card sx={{ padding: 2, marginTop: 2, backgroundColor: theme.palette.warning.light }}>
               <Typography variant="subtitle1" color="InfoText" align="center">
                 No Medical Records
+              </Typography>
+            </Card>
+          )}
+
+          {/* Visits Section */}
+          <Typography variant="h6" gutterBottom sx={{ mt: 4 }}>
+            Visit Records
+          </Typography>
+          {patientProfile.visits && patientProfile.visits.length > 0 ? (
+            patientProfile.visits.map((visit, index) => (
+              <Card
+                key={visit._id}
+                sx={{ padding: 2, marginBottom: 2, backgroundColor: theme.palette.grey[100] }}
+              >
+                <Typography variant="h6">Visit Record #{visit.visitNumber}</Typography>
+                <Typography variant="subtitle1">
+                  <strong>Date:</strong> {new Date(visit.visitDate).toLocaleDateString()}
+                </Typography>
+                <Typography variant="subtitle1">
+                  <strong>Doctor:</strong> {visit.doctor.name} ({visit.doctor.role.toUpperCase()})
+                </Typography>
+                <Typography variant="subtitle1">
+                  <strong>Chief Complaint:</strong> {visit.complaints.chiefComplaint}
+                </Typography>
+                <Typography variant="subtitle1">
+                  <strong>Known Complaint:</strong> {visit.complaints.knownComplaint}
+                </Typography>
+                <Typography variant="subtitle1">
+                  <strong>Additional Complaint:</strong> {visit.complaints.additionalComplaint}
+                </Typography>
+                <Typography variant="subtitle1">
+                  <strong>Primary Diagnosis:</strong> {visit.diagnosis.primary}
+                </Typography>
+                <Typography variant="subtitle1">
+                  <strong>Secondary Diagnosis:</strong> {visit.diagnosis.secondary}
+                </Typography>
+                <Typography variant="subtitle1">
+                  <strong>Assessment - HEENT:</strong> {visit.assessments.heent}
+                </Typography>
+                <Typography variant="subtitle1">
+                  <strong>Assessment - Respiratory:</strong> {visit.assessments.respiratory}
+                </Typography>
+                <Typography variant="subtitle1">
+                  <strong>Assessment - Gastrointestinal:</strong>{' '}
+                  {visit.assessments.gastrointestinal}
+                </Typography>
+                <Typography variant="subtitle1">
+                  <strong>Assessment - Genitourinary:</strong> {visit.assessments.genitourinary}
+                </Typography>
+                <Typography variant="subtitle1">
+                  <strong>Assessment - Musculoskeletal:</strong> {visit.assessments.musculoskeletal}
+                </Typography>
+                <Typography variant="subtitle1">
+                  <strong>Assessment - CNS:</strong> {visit.assessments.cns}
+                </Typography>
+                <Typography variant="subtitle1">
+                  <strong>Instructions:</strong> {visit.instructions.notes}
+                </Typography>
+                <Typography variant="subtitle1">
+                  <strong>Follow-Up:</strong>{' '}
+                  {visit.followUp.length > 0
+                    ? visit.followUp.map((followUp, fIndex) => (
+                        <span key={followUp._id}>
+                          {followUp.plan} on {new Date(followUp.followUpDate).toLocaleDateString()}{' '}
+                          (via {followUp.consultationVia})
+                          {fIndex < visit.followUp.length - 1 ? ', ' : ''}
+                        </span>
+                      ))
+                    : 'No follow-up required'}
+                </Typography>
+                <Typography variant="subtitle1">
+                  <strong>Referral:</strong>{' '}
+                  {visit.referral.length > 0
+                    ? visit.referral.map((ref, rIndex) => (
+                        <span key={ref._id}>
+                          {ref.specialty} to {ref.doctor} at {ref.hospital}
+                          {rIndex < visit.referral.length - 1 ? ', ' : ''}
+                        </span>
+                      ))
+                    : 'No referrals made'}
+                </Typography>
+                <Typography variant="subtitle1">
+                  <strong>Notes:</strong> {visit.notes}
+                </Typography>
+                <Typography variant="subtitle1">
+                  <strong>Prescriptions:</strong>{' '}
+                  {visit.prescription.length > 0
+                    ? visit.prescription.map((med, mIndex) => (
+                        <span key={med._id}>
+                          {med.medicationName} ({med.dosage}, {med.frequency})
+                          {mIndex < visit.prescription.length - 1 ? ', ' : ''}
+                        </span>
+                      ))
+                    : 'No prescriptions issued'}
+                </Typography>
+                <Typography variant="subtitle1">
+                  <strong>Investigations:</strong>{' '}
+                  {visit.investigations.length > 0
+                    ? visit.investigations.map((investigation, iIndex) => (
+                        <span key={investigation._id}>
+                          {investigation.notes} ({investigation.reportPicture})
+                          {iIndex < visit.investigations.length - 1 ? ', ' : ''}
+                        </span>
+                      ))
+                    : 'No investigations performed'}
+                </Typography>
+              </Card>
+            ))
+          ) : (
+            <Card sx={{ padding: 2, marginTop: 2, backgroundColor: theme.palette.warning.light }}>
+              <Typography variant="subtitle1" color="InfoText" align="center">
+                No Visit Records
               </Typography>
             </Card>
           )}

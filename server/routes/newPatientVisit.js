@@ -8,11 +8,12 @@ const router = express.Router();
 // Create a new visit for a patient
 router.post("/newPatientVisit/:patientId", authMiddleware, async (req, res) => {
   const { patientId } = req.params; // Use patientId as a String
-
   try {
     // Validate that the patient exists using patientId as a String
     const patient = await Patient.findOne({ patientId });
-    if (!patient) return res.status(404).json({ message: "Patient not found" });
+    if (!patient) {
+      return res.status(404).json({ message: "Patient not found" });
+    }
 
     // Find the last visit for the patient to determine the visit number
     const lastVisit = await VisitModel.findOne({ patientId }).sort({

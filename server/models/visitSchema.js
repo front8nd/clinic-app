@@ -21,7 +21,6 @@ const VisitSchema = new mongoose.Schema({
     enum: ["initial", "follow-up", "emergency"],
     required: true,
   },
-  date: { type: Date, default: Date.now },
 
   // Diagnosis
   diagnosis: {
@@ -43,32 +42,32 @@ const VisitSchema = new mongoose.Schema({
 
   // Complaints
   complaints: {
-    chiefComplaint: [{ type: String }], // cc
-    knownComplaint: [{ type: String }], // kc
-    additionalComplaint: [{ type: String }], // ac
+    chiefComplaint: { type: String }, // cc
+    knownComplaint: { type: String }, // kc
+    additionalComplaint: { type: String }, // ac
   },
 
   // Assessments - can expand to add specific validations if needed
   assessments: {
-    heent: [{ type: String }],
-    respiratory: [{ type: String }],
-    gastrointestinal: [{ type: String }],
-    genitourinary: [{ type: String }],
-    musculoskeletal: [{ type: String }],
-    cns: [{ type: String }],
+    heent: { type: String },
+    respiratory: { type: String },
+    gastrointestinal: { type: String },
+    genitourinary: { type: String },
+    musculoskeletal: { type: String },
+    cns: { type: String },
   },
 
   // Investigations
   investigations: [
     {
-      reportPicture: [{ type: String }], // Array of picture URLs or paths
-      notes: [{ type: String }],
+      reportPicture: { type: String }, // Array of picture URLs or paths
+      notes: { type: String },
     },
   ],
 
   // Instructions
   instructions: {
-    notes: [{ type: String }],
+    notes: { type: String },
   },
 
   // Follow-up information
@@ -91,6 +90,8 @@ const VisitSchema = new mongoose.Schema({
 
   // Additional notes
   notes: { type: String },
+
+  visitDate: { type: Date, default: Date.now, required: true },
 });
 
 // Create Visit model

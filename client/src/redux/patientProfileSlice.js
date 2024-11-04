@@ -42,7 +42,6 @@ const patientProfileSlice = createSlice({
       .addCase(patientCompleteProfile.pending, (state) => {
         state.loading = true;
         state.error = null;
-        state.patientProfile = null;
       })
       .addCase(patientCompleteProfile.fulfilled, (state, action) => {
         state.loading = false;

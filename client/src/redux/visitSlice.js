@@ -8,6 +8,7 @@ export const visits = createAsyncThunk(
   'visit/visits',
   async ({ page, limit, date }, { rejectWithValue, getState }) => {
     const { userData } = getState().auth;
+    console.log(`${API_BASE_URL}/visits?page=${page}&limit=${limit}&date=${date}`);
     try {
       const response = await axios.get(
         `${API_BASE_URL}/visits?page=${page}&limit=${limit}&date=${date}`,
@@ -41,7 +42,7 @@ export const newVisit = createAsyncThunk(
       );
       return response.data;
     } catch (error) {
-      console.error('Failed to create new medical record: ', error);
+      console.error('Failed to create new visit record: ', error);
       return rejectWithValue(error.response?.data || 'Request failed due to an unexpected error.');
     }
   }
@@ -52,6 +53,7 @@ const initialState = {
   loading: false,
   error: null,
   visitList: [],
+  noVisits: false,
   newPatientVisit: null,
 };
 
@@ -67,7 +69,7 @@ const visitSlice = createSlice({
     builder
       .addCase(visits.pending, (state) => {
         state.loading = true;
-        state.error = null;
+        state.noVisits = null;
         state.visitList = null;
       })
       .addCase(visits.fulfilled, (state, action) => {
@@ -76,7 +78,7 @@ const visitSlice = createSlice({
       })
       .addCase(visits.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload || action.error.message;
+        state.noVisits = action.payload || action.error.message;
       })
       .addCase(newVisit.pending, (state) => {
         state.loading = true;

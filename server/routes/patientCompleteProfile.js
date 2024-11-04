@@ -19,10 +19,7 @@ router.get(
       }
 
       // Retrieve all visits associated with the patient using the unique patientId
-      const visits = await Visit.find({ patientId }).populate(
-        "doctorId",
-        "name"
-      );
+      const visits = await Visit.find({ patientId });
 
       // Retrieve all medical information associated with the patient
       const medicalInfo = await PatientMedicalInfo.find({ patientId }).sort({
