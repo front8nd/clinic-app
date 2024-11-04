@@ -198,6 +198,9 @@ export default function Profile() {
                   {info.assistedBy.role.toUpperCase()})
                 </Typography>
                 <Typography variant="subtitle1">
+                  <strong>Fees Charged:</strong> {info.fees.final} Rs
+                </Typography>
+                <Typography variant="subtitle1">
                   <strong>Weight:</strong> {info.weight} kg
                 </Typography>
                 <Typography variant="subtitle1">

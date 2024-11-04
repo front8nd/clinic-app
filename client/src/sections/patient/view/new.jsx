@@ -6,7 +6,15 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import LoadingButton from '@mui/lab/LoadingButton';
-import { CircularProgress, Grid, MenuItem, Select, useMediaQuery, useTheme } from '@mui/material';
+import {
+  CircularProgress,
+  Grid,
+  MenuItem,
+  Select,
+  Stack,
+  useMediaQuery,
+  useTheme,
+} from '@mui/material';
 import { DashboardContent } from '../../../layouts/dashboard/index';
 import { Iconify } from '../../../components/iconify';
 import { useRouter } from '../../../routes/hooks';
@@ -46,6 +54,71 @@ export default function PatientNew() {
     allergies: '',
     chronicConditions: '',
   });
+
+  // Define fee options with string keys for compatibility
+  const feeOptions = {
+    full: 600,
+    discount: 600,
+  };
+
+  // Initialize state variables for fee type and fees data
+  const [feesType, setFeesType] = useState(''); // full/discount
+  const [feesData, setFeesData] = useState({
+    amount: 600,
+    discount: 0,
+    final: 600,
+    visitedOn5D: false,
+  });
+  const [discounted, setDiscounted] = useState(0); // Discount amount entered by the user
+
+  // Handle fees type selection
+  const handleFeesType = (e) => {
+    const selectedFeeType = e.target.value;
+    setFeesType(selectedFeeType); // Update selected fee type
+
+    if (selectedFeeType === 'full') {
+      setFeesData({
+        amount: feeOptions.full,
+        discount: 0,
+        final: feeOptions.full,
+        visitedOn5D: false,
+      });
+    } else {
+      // When discount is selected, calculate based on discounted amount
+      const discountAmount = discounted;
+      setFeesData({
+        amount: feeOptions.full,
+        discount: discountAmount,
+        final: feeOptions.full - discountAmount,
+        visitedOn5D: false,
+      });
+    }
+  };
+
+  // Handle discount input change
+  const handleFeesDiscount = (e) => {
+    let discountValue = parseInt(e.target.value, 10) || 0; // Convert input to integer
+
+    // Ensure discount does not exceed the full fee
+    if (discountValue > feeOptions.full) {
+      discountValue = feeOptions.full; // Set discount to maximum allowable value
+    }
+
+    setDiscounted(discountValue); // Update discounted amount
+  };
+
+  // Update feesData when discount changes and discount option is selected
+  useEffect(() => {
+    if (feesType === 'discount') {
+      setFeesData((prevData) => ({
+        ...prevData,
+        discount: discounted,
+        final: feeOptions.full - discounted,
+      }));
+    }
+  }, [discounted, feesType, feeOptions.full]);
+
+  console.log(feesData);
 
   const changeHandler = (e) => {
     setData((prevData) => ({ ...prevData, [e.target.name]: e.target.value }));
@@ -90,6 +163,7 @@ export default function PatientNew() {
         email: userData?.user?.email,
         role: userData?.user?.role,
       },
+      fees: feesData,
     };
 
     const additionalData = {
@@ -201,6 +275,51 @@ export default function PatientNew() {
               <Typography variant="h5" gutterBottom>
                 Fees
               </Typography>
+            </Grid>
+
+            <Grid item xs={12} sm={6} md={4}>
+              <Select
+                value={feesType}
+                onChange={handleFeesType}
+                displayEmpty
+                fullWidth
+                required
+                renderValue={(selected) =>
+                  selected ? selected.toUpperCase() : <em>Select Fees</em>
+                }
+              >
+                {Object.keys(feeOptions).map((option) => (
+                  <MenuItem key={option} value={option}>
+                    {option.toUpperCase()}
+                  </MenuItem>
+                ))}
+              </Select>
+            </Grid>
+            {feesType === 'discount' ? (
+              <Grid item xs={12} sm={6} md={4}>
+                <TextField
+                  name="discount Fees"
+                  label="Discount Fees"
+                  value={discounted}
+                  onChange={handleFeesDiscount}
+                  fullWidth
+                />
+              </Grid>
+            ) : (
+              ''
+            )}
+            <Grid item xs={12} sm={6} md={4}>
+              <Stack>
+                <Typography variant="caption" gutterBottom>
+                  - Full Fees: Rs. {feesData.amount}
+                </Typography>
+                <Typography variant="caption" gutterBottom>
+                  - Discount: Rs. {feesData.discount}
+                </Typography>
+                <Typography variant="caption" gutterBottom>
+                  - Final Amount: Rs. {feesData.final}
+                </Typography>
+              </Stack>
             </Grid>
 
             {/* Medical Information Section */}

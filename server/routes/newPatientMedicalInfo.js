@@ -10,8 +10,7 @@ router.post(
   authMiddleware,
   async (req, res) => {
     const { patientId } = req.params;
-    const { fees, assistedBy, ...medicalParams } = req.body;
-
+    const { assistedBy, ...medicalParams } = req.body;
     try {
       // Find the patient and check if they exist
       const patient = await Patient.findOne({ patientId });
