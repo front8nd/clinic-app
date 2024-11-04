@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Table from '@mui/material/Table';
-import { TableCell } from '@mui/material';
+import { TableCell, TableRow } from '@mui/material';
 import Button from '@mui/material/Button';
 import TableBody from '@mui/material/TableBody';
 import Typography from '@mui/material/Typography';
@@ -100,7 +100,7 @@ export default function PatientView() {
   const table = useTable();
 
   const [dataByDate, setDataByDate] = useState();
-  const { patientsList } = useSelector((state) => state.patient);
+  const { patientsList, loading } = useSelector((state) => state.patient);
   const [filterName, setFilterName] = useState('');
 
   useEffect(() => {
@@ -114,6 +114,7 @@ export default function PatientView() {
   });
 
   const notFound = !dataFiltered?.length && !!filterName;
+  const noData = !loading && dataFiltered.length === 0;
 
   console.log(patientsList);
 
@@ -164,29 +165,43 @@ export default function PatientView() {
                 ]}
               />
               <TableBody>
-                {dataFiltered.map((row) => (
-                  <CustomTableRow
-                    key={row._id}
-                    row={row}
-                    selected={table.selected.includes(row._id)}
-                    onSelectRow={() => table.onSelectRow(row._id)}
-                  />
-                ))}
-                {dataFiltered?.length === 0 ? (
-                  <TableCell
-                    colSpan={9}
-                    sx={{
-                      fontSize: '16px',
-                      fontWeight: 'bold',
-                      color: 'red',
-                      textAlign: 'center',
-                      textWrap: 'nowrap',
-                    }}
-                  >
-                    No Records Exists
-                  </TableCell>
+                {loading ? (
+                  <TableRow>
+                    <TableCell
+                      colSpan={9}
+                      sx={{
+                        fontSize: '16px',
+                        fontWeight: 'bold',
+                        color: 'inherit',
+                        textAlign: 'center',
+                      }}
+                    >
+                      Please Wait...
+                    </TableCell>
+                  </TableRow>
+                ) : noData ? (
+                  <TableRow>
+                    <TableCell
+                      colSpan={9}
+                      sx={{
+                        fontSize: '16px',
+                        fontWeight: 'bold',
+                        color: 'red',
+                        textAlign: 'center',
+                      }}
+                    >
+                      No Records Exist
+                    </TableCell>
+                  </TableRow>
                 ) : (
-                  ''
+                  dataFiltered.map((row) => (
+                    <CustomTableRow
+                      key={row._id}
+                      row={row}
+                      selected={table.selected.includes(row._id)}
+                      onSelectRow={() => table.onSelectRow(row._id)}
+                    />
+                  ))
                 )}
                 <TableEmptyRows
                   height={68}

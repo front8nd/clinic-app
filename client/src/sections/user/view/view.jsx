@@ -5,7 +5,7 @@ import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Table from '@mui/material/Table';
 import Button from '@mui/material/Button';
-import { TableCell } from '@mui/material';
+import { TableCell, TableRow } from '@mui/material';
 import TableBody from '@mui/material/TableBody';
 import Typography from '@mui/material/Typography';
 import TableContainer from '@mui/material/TableContainer';
@@ -101,7 +101,7 @@ export default function UserView() {
   const router = useRouter();
   const table = useTable();
 
-  const { data } = useSelector((state) => state.user);
+  const { data, loading } = useSelector((state) => state.user);
 
   const [filterName, setFilterName] = useState('');
   const [theRole, setRole] = useState('all');
@@ -122,6 +122,8 @@ export default function UserView() {
   });
 
   const notFound = !dataFiltered.length && !!filterName;
+  const noData = !loading && dataFiltered.length === 0;
+
   return (
     <DashboardContent>
       <Box display="flex" alignItems="center" mb={5}>
@@ -172,35 +174,50 @@ export default function UserView() {
                 ]}
               />
               <TableBody>
-                {dataFiltered
-                  .slice(
-                    table.page * table.rowsPerPage,
-                    table.page * table.rowsPerPage + table.rowsPerPage
-                  )
-                  .map((row) => (
-                    <CustomTableRow
-                      key={row._id}
-                      row={row}
-                      selected={table.selected.includes(row._id)}
-                      onSelectRow={() => table.onSelectRow(row._id)}
-                    />
-                  ))}
+                {}
 
-                {dataFiltered?.length === 0 ? (
-                  <TableCell
-                    colSpan={9}
-                    sx={{
-                      fontSize: '16px',
-                      fontWeight: 'bold',
-                      color: 'red',
-                      textAlign: 'center',
-                      textWrap: 'nowrap',
-                    }}
-                  >
-                    No Records Exists
-                  </TableCell>
+                {loading ? (
+                  <TableRow>
+                    <TableCell
+                      colSpan={9}
+                      sx={{
+                        fontSize: '16px',
+                        fontWeight: 'bold',
+                        color: 'inherit',
+                        textAlign: 'center',
+                      }}
+                    >
+                      Please Wait...
+                    </TableCell>
+                  </TableRow>
+                ) : noData ? (
+                  <TableRow>
+                    <TableCell
+                      colSpan={9}
+                      sx={{
+                        fontSize: '16px',
+                        fontWeight: 'bold',
+                        color: 'red',
+                        textAlign: 'center',
+                      }}
+                    >
+                      No Records Exist
+                    </TableCell>
+                  </TableRow>
                 ) : (
-                  ''
+                  dataFiltered
+                    .slice(
+                      table.page * table.rowsPerPage,
+                      table.page * table.rowsPerPage + table.rowsPerPage
+                    )
+                    .map((row) => (
+                      <CustomTableRow
+                        key={row._id}
+                        row={row}
+                        selected={table.selected.includes(row._id)}
+                        onSelectRow={() => table.onSelectRow(row._id)}
+                      />
+                    ))
                 )}
 
                 <TableEmptyRows
