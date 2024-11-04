@@ -101,7 +101,7 @@ export default function PatientView() {
 
   // Initialize today's date for `dataByDate`
   const today = new Date().toISOString().split('T')[0];
-  const [dataByDate, setDataByDate] = useState();
+  const [dataByDate, setDataByDate] = useState(today);
   const { patientsList, loading } = useSelector((state) => state.patient);
   const [filterName, setFilterName] = useState('');
 

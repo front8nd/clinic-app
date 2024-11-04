@@ -234,7 +234,7 @@ export default function UserView() {
         <TablePagination
           component="div"
           page={table.page}
-          count={data?.length}
+          count={dataFiltered?.length}
           rowsPerPage={table.rowsPerPage}
           onPageChange={table.onChangePage}
           rowsPerPageOptions={[5, 10, 25]}
