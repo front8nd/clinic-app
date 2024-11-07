@@ -171,7 +171,8 @@ export default function Profile() {
               }}
             >
               <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} alignItems="center">
-                <Avatar sx={{ bgcolor: theme.palette.secondary.light, width: 64, height: 64 }}>
+                <Avatar sx={{ bgcolor: theme.palette.primary.ligher, width: 64, height: 64 }}>
+                  {/* <Iconify icon="carbon:user-avatar-filled" /> */}
                   {/* <AccountCircleIcon fontSize="large" /> */}
                 </Avatar>
                 <Box flex={1}>
