@@ -18,6 +18,8 @@ import {
   TableRow,
   useMediaQuery,
   useTheme,
+  Container,
+  TableHead,
 } from '@mui/material';
 
 import { useRouter } from '../../../routes/hooks';
@@ -62,6 +64,10 @@ export default function Profile() {
   }, [isSuccess, error, router, openSnackbar, dispatch]);
 
   const age = calculateAge(patientProfile?.patient?.birthYear);
+
+  // Helper function to find the visit record based on visitNumber
+  const getVisitByVisitNumber = (visitNumber) =>
+    patientProfile.visits.find((visit) => visit.visitNumber === visitNumber);
 
   return (
     <DashboardContent>
@@ -146,7 +152,7 @@ export default function Profile() {
 
       {/* Display Patient Profile and Medical Info */}
       {patientProfile && (
-        <Card sx={{ padding: 0 }}>
+        <Card sx={{ padding: 3 }}>
           {/* Patient Details Section */}
 
           <Box sx={{ position: 'relative', padding: 3 }}>
@@ -249,224 +255,270 @@ export default function Profile() {
             </Box>
           </Box>
 
-          {/* Medical Information */}
+          {/* Loop through medicalInfo and visit records */}
+          {patientProfile.medicalInfo && patientProfile.medicalInfo.length > 0 ? (
+            patientProfile.medicalInfo.map((info) => {
+              const correspondingVisit = getVisitByVisitNumber(info.visitNumber);
 
-          <Box sx={{ position: 'relative', padding: 3 }}>
-            <Typography
-              variant="h6"
-              sx={{
-                borderLeft: '5px solid #0d2f55',
-
-                padding: '10px 15px',
-                color: ' #0d2f55',
-                marginBottom: '20px',
-                width: 'fit-content',
-                borderRadius: '4px',
-              }}
-            >
-              Medical Information
-            </Typography>
-            {patientProfile.medicalInfo && patientProfile.medicalInfo.length > 0 ? (
-              patientProfile.medicalInfo.map((info, index) => (
+              return (
                 <Card
                   key={info._id}
                   sx={{
-                    padding: 3,
-                    marginBottom: 3,
-                    backgroundColor: theme.palette.grey[100],
+                    padding: 4,
+                    marginBottom: 4,
+                    backgroundColor: theme.palette.background.paper,
                     borderRadius: 2,
-                    boxShadow: 2,
+                    boxShadow: 3,
                   }}
                 >
-                  <Grid container spacing={3}>
-                    {/* Visit Details Section */}
-                    <Grid item xs={12} md={4}>
-                      <Typography variant="h6" gutterBottom>
-                        Medical Report #{info.visitNumber}
-                      </Typography>
-                      <Divider sx={{ marginBottom: 2 }} />
-                      <Typography variant="subtitle1">
-                        <strong>Visit Date:</strong> {new Date(info.visitDate).toLocaleDateString()}
-                      </Typography>
-                      <Typography variant="subtitle1">
-                        <strong>Assisted By:</strong> {info.assistedBy.name} (
-                        {info.assistedBy.role.toUpperCase()})
-                      </Typography>
-                      <Typography variant="subtitle1">
-                        <strong>Fees Charged:</strong> {info.fees.final} Rs (Discount:{' '}
-                        {info.fees.discount})
-                      </Typography>
+                  <Grid container spacing={0}>
+                    {/* Medical Record Section */}
+                    <Grid container spacing={2}>
+                      {/* Visit Details Section */}
+                      <Grid item xs={12} md={4}>
+                        <Typography
+                          variant="h6"
+                          gutterBottom
+                          sx={{
+                            borderLeft: '5px solid #0d2f55',
+                            padding: '10px 15px',
+                            color: ' #0d2f55',
+                            marginBottom: '20px',
+                            width: 'fit-content',
+                            borderRadius: '4px',
+                          }}
+                        >
+                          Medical Report #{info.visitNumber}
+                        </Typography>
+                        <Divider sx={{ marginBottom: 2 }} />
+                        <Typography variant="subtitle1" sx={{ marginBottom: 1 }}>
+                          <strong>Visit Date:</strong>{' '}
+                          {new Date(info.visitDate).toLocaleDateString()}
+                        </Typography>
+                        <Typography variant="subtitle1" sx={{ marginBottom: 1 }}>
+                          <strong>Assisted By:</strong> {info.assistedBy.name} (
+                          {info.assistedBy.role.toUpperCase()})
+                        </Typography>
+                        <Typography variant="subtitle1" sx={{ marginBottom: 1 }}>
+                          <strong>Fees Charged:</strong> {info.fees.final} Rs (Discount:{' '}
+                          {info.fees.discount})
+                        </Typography>
+                      </Grid>
+
+                      {/* Vital Signs Section */}
+                      <Grid item xs={12} md={8}>
+                        <Table size="small" aria-label="vital signs table">
+                          <TableBody>
+                            <TableRow>
+                              <TableCell>
+                                <strong>Weight</strong>
+                              </TableCell>
+                              <TableCell align="right">{info.weight} kg</TableCell>
+                              <TableCell>
+                                <strong>Height</strong>
+                              </TableCell>
+                              <TableCell align="right">{info.height} cm</TableCell>
+                            </TableRow>
+                            <TableRow>
+                              <TableCell>
+                                <strong>Pulse Rate</strong>
+                              </TableCell>
+                              <TableCell align="right">{info.pulse_rate} bpm</TableCell>
+                              <TableCell>
+                                <strong>Resp Rate</strong>
+                              </TableCell>
+                              <TableCell align="right">{info.resp_rate} bpm</TableCell>
+                            </TableRow>
+                            <TableRow>
+                              <TableCell>
+                                <strong>SPO2</strong>
+                              </TableCell>
+                              <TableCell align="right">{info.spo2}%</TableCell>
+                              <TableCell>
+                                <strong>Temperature</strong>
+                              </TableCell>
+                              <TableCell align="right">{info.temp} °C</TableCell>
+                            </TableRow>
+                            <TableRow>
+                              <TableCell>
+                                <strong>RBS</strong>
+                              </TableCell>
+                              <TableCell align="right">{info.rbs} mg/dL</TableCell>
+                              <TableCell>
+                                <strong>Blood Pressure</strong>
+                              </TableCell>
+                              <TableCell align="right">
+                                {info.blood_pressure.sys}/{info.blood_pressure.dia} mmHg
+                              </TableCell>
+                            </TableRow>
+                          </TableBody>
+                        </Table>
+                      </Grid>
                     </Grid>
 
-                    {/* Vital Signs Section */}
-                    <Grid item xs={12} md={8}>
-                      <Table size="small" aria-label="vital signs table">
-                        <TableBody>
-                          <TableRow>
-                            <TableCell>
-                              <strong>Weight</strong>
-                            </TableCell>
-                            <TableCell align="right">{info.weight} kg</TableCell>
-                            <TableCell>
-                              <strong>Height</strong>
-                            </TableCell>
-                            <TableCell align="right">{info.height} cm</TableCell>
-                          </TableRow>
-                          <TableRow>
-                            <TableCell>
-                              <strong>Pulse Rate</strong>
-                            </TableCell>
-                            <TableCell align="right">{info.pulse_rate} bpm</TableCell>
-                            <TableCell>
-                              <strong>Resp Rate</strong>
-                            </TableCell>
-                            <TableCell align="right">{info.resp_rate} bpm</TableCell>
-                          </TableRow>
-                          <TableRow>
-                            <TableCell>
-                              <strong>SPO2</strong>
-                            </TableCell>
-                            <TableCell align="right">{info.spo2}%</TableCell>
-                            <TableCell>
-                              <strong>Temperature</strong>
-                            </TableCell>
-                            <TableCell align="right">{info.temp} °C</TableCell>
-                          </TableRow>
-                          <TableRow>
-                            <TableCell>
-                              <strong>RBS</strong>
-                            </TableCell>
-                            <TableCell align="right">{info.rbs} mg/dL</TableCell>
-                            <TableCell>
-                              <strong>Blood Pressure</strong>
-                            </TableCell>
-                            <TableCell align="right">
-                              {info.blood_pressure.sys}/{info.blood_pressure.dia} mmHg
-                            </TableCell>
-                          </TableRow>
-                        </TableBody>
-                      </Table>
-                    </Grid>
+                    {/* Visit Record Section */}
+                    {correspondingVisit ? (
+                      <Grid container spacing={2} sx={{ marginTop: 3 }}>
+                        {/* Visit Information Section */}
+                        <Grid item xs={12} md={6}>
+                          <Typography variant="h6" gutterBottom>
+                            Basic Details
+                            {/* Visit Record #{correspondingVisit.visitNumber} */}
+                          </Typography>
+                          <Divider sx={{ marginBottom: 2 }} />
+                          <Typography variant="subtitle1" sx={{ marginBottom: 1 }}>
+                            <strong>Date:</strong>{' '}
+                            {new Date(correspondingVisit.visitDate).toLocaleDateString()}
+                          </Typography>
+                          <Typography variant="subtitle1" sx={{ marginBottom: 1 }}>
+                            <strong>Doctor:</strong> {correspondingVisit.doctor.name} (
+                            {correspondingVisit.doctor.role.toUpperCase()})
+                          </Typography>
+                          <Typography variant="subtitle1" sx={{ marginBottom: 1 }}>
+                            <strong>Chief Complaint:</strong>{' '}
+                            {correspondingVisit.complaints.chiefComplaint}
+                          </Typography>
+                          <Typography variant="subtitle1" sx={{ marginBottom: 1 }}>
+                            <strong>Known Complaint:</strong>{' '}
+                            {correspondingVisit.complaints.knownComplaint}
+                          </Typography>
+                          <Typography variant="subtitle1" sx={{ marginBottom: 1 }}>
+                            <strong>Additional Complaint:</strong>{' '}
+                            {correspondingVisit.complaints.additionalComplaint}
+                          </Typography>
+                          <Typography variant="subtitle1" sx={{ marginBottom: 1 }}>
+                            <strong>Diagnosis Notes:</strong> {correspondingVisit.diagnosis.notes}
+                          </Typography>
+                        </Grid>
+
+                        {/* Investigations Section */}
+                        <Grid item xs={12} md={6}>
+                          <Typography variant="h6" gutterBottom>
+                            Investigations
+                          </Typography>
+                          <Divider sx={{ marginBottom: 2 }} />
+                          {correspondingVisit.investigations.map((inv) => (
+                            <Typography key={inv._id} variant="subtitle1" sx={{ marginBottom: 1 }}>
+                              <strong>Report:</strong> {inv.reportPicture}
+                              <br />
+                              <em>Notes:</em> {inv.notes}
+                            </Typography>
+                          ))}
+                        </Grid>
+
+                        {/* Prescriptions Section */}
+                        <Grid item xs={12} md={12}>
+                          <Typography variant="h6" gutterBottom>
+                            Prescriptions
+                          </Typography>
+                          <Divider sx={{ marginBottom: 2 }} />
+                          <Box sx={{ overflowX: 'auto', overflowY: 'auto', maxHeight: 300 }}>
+                            <Table size="small" aria-label="prescriptions table">
+                              <TableHead>
+                                <TableRow>
+                                  <TableCell>
+                                    <strong>#</strong>
+                                  </TableCell>
+                                  <TableCell>
+                                    <strong>Medication Name</strong>
+                                  </TableCell>
+                                  <TableCell>
+                                    <strong>Dosage</strong>
+                                  </TableCell>
+                                  <TableCell>
+                                    <strong>Frequency</strong>
+                                  </TableCell>
+                                  <TableCell>
+                                    <strong>Duration</strong>
+                                  </TableCell>
+                                  <TableCell>
+                                    <strong>Instructions</strong>
+                                  </TableCell>
+                                </TableRow>
+                              </TableHead>
+                              <TableBody>
+                                {correspondingVisit.prescription.map((med, index) => (
+                                  <TableRow key={med._id}>
+                                    {/* Display the index, adding 1 to make it 1-based instead of 0-based */}
+                                    <TableCell>{index + 1}</TableCell>
+                                    <TableCell>{med.medicationName}</TableCell>
+                                    <TableCell>{med.dosage}</TableCell>
+                                    <TableCell>{med.frequency}</TableCell>
+                                    <TableCell>{med.duration}</TableCell>
+                                    <TableCell>{med.additionalInstructions}</TableCell>
+                                  </TableRow>
+                                ))}
+                              </TableBody>
+                            </Table>
+                          </Box>
+                        </Grid>
+
+                        {/* Follow-Up Section */}
+                        <Grid item xs={12} md={6}>
+                          <Typography variant="h6" gutterBottom sx={{ marginTop: 3 }}>
+                            Follow-Up
+                          </Typography>
+                          <Divider sx={{ marginBottom: 2 }} />
+                          {correspondingVisit.followUp.map((follow) => (
+                            <Typography
+                              key={follow._id}
+                              variant="subtitle1"
+                              sx={{ marginBottom: 1 }}
+                            >
+                              <strong>Date:</strong>{' '}
+                              {new Date(follow.followUpDate).toLocaleDateString()}
+                              <br />
+                              <strong>Consultation:</strong> {follow.consultationVia}
+                              <br />
+                              <strong>Plan:</strong> {follow.plan}
+                            </Typography>
+                          ))}
+                        </Grid>
+
+                        {/* Referrals Section */}
+                        <Grid item xs={12} md={6}>
+                          <Typography variant="h6" gutterBottom sx={{ marginTop: 3 }}>
+                            Referrals
+                          </Typography>
+                          <Divider sx={{ marginBottom: 2 }} />
+                          {correspondingVisit.referral.map((ref) => (
+                            <Typography key={ref._id} variant="subtitle1" sx={{ marginBottom: 1 }}>
+                              <strong>Specialty:</strong> {ref.specialty}
+                              <br />
+                              <strong>Doctor:</strong> {ref.doctor}
+                              <br />
+                              <strong>Hospital:</strong> {ref.hospital}
+                            </Typography>
+                          ))}
+                        </Grid>
+
+                        {/* Additional Notes Section */}
+                        <Grid item xs={12}>
+                          <Typography variant="subtitle1" sx={{ marginTop: 3 }}>
+                            <strong>Additional Notes:</strong> {correspondingVisit.notes}
+                          </Typography>
+                        </Grid>
+                      </Grid>
+                    ) : (
+                      <Grid item xs={12}>
+                        <Typography
+                          variant="subtitle1"
+                          color="textSecondary"
+                          align="center"
+                          sx={{ marginTop: 2 }}
+                        >
+                          No Visit Record found for this Medical Report.
+                        </Typography>
+                      </Grid>
+                    )}
                   </Grid>
                 </Card>
-              ))
-            ) : (
-              <Card sx={{ padding: 2, marginTop: 2, backgroundColor: theme.palette.warning.light }}>
-                <Typography variant="subtitle1" color="InfoText" align="center">
-                  No Medical Records
-                </Typography>
-              </Card>
-            )}
-          </Box>
-
-          {/* Visits Section */}
-          <Typography variant="h6" gutterBottom sx={{ mt: 4 }}>
-            Visit Records
-          </Typography>
-          {patientProfile.visits && patientProfile.visits.length > 0 ? (
-            patientProfile.visits.map((visit, index) => (
-              <Card
-                key={visit._id}
-                sx={{ padding: 2, marginBottom: 2, backgroundColor: theme.palette.grey[100] }}
-              >
-                <Typography variant="h6">Visit Record #{visit.visitNumber}</Typography>
-                <Typography variant="subtitle1">
-                  <strong>Date:</strong> {new Date(visit.visitDate).toLocaleDateString()}
-                </Typography>
-                <Typography variant="subtitle1">
-                  <strong>Doctor:</strong> {visit.doctor.name} ({visit.doctor.role.toUpperCase()})
-                </Typography>
-                <Typography variant="subtitle1">
-                  <strong>Chief Complaint:</strong> {visit.complaints.chiefComplaint}
-                </Typography>
-                <Typography variant="subtitle1">
-                  <strong>Known Complaint:</strong> {visit.complaints.knownComplaint}
-                </Typography>
-                <Typography variant="subtitle1">
-                  <strong>Additional Complaint:</strong> {visit.complaints.additionalComplaint}
-                </Typography>
-                <Typography variant="subtitle1">
-                  <strong>Primary Diagnosis:</strong> {visit.diagnosis.primary}
-                </Typography>
-                <Typography variant="subtitle1">
-                  <strong>Secondary Diagnosis:</strong> {visit.diagnosis.secondary}
-                </Typography>
-                <Typography variant="subtitle1">
-                  <strong>Assessment - HEENT:</strong> {visit.assessments.heent}
-                </Typography>
-                <Typography variant="subtitle1">
-                  <strong>Assessment - Respiratory:</strong> {visit.assessments.respiratory}
-                </Typography>
-                <Typography variant="subtitle1">
-                  <strong>Assessment - Gastrointestinal:</strong>{' '}
-                  {visit.assessments.gastrointestinal}
-                </Typography>
-                <Typography variant="subtitle1">
-                  <strong>Assessment - Genitourinary:</strong> {visit.assessments.genitourinary}
-                </Typography>
-                <Typography variant="subtitle1">
-                  <strong>Assessment - Musculoskeletal:</strong> {visit.assessments.musculoskeletal}
-                </Typography>
-                <Typography variant="subtitle1">
-                  <strong>Assessment - CNS:</strong> {visit.assessments.cns}
-                </Typography>
-                <Typography variant="subtitle1">
-                  <strong>Instructions:</strong> {visit.instructions.notes}
-                </Typography>
-                <Typography variant="subtitle1">
-                  <strong>Follow-Up:</strong>{' '}
-                  {visit.followUp.length > 0
-                    ? visit.followUp.map((followUp, fIndex) => (
-                        <span key={followUp._id}>
-                          {followUp.plan} on {new Date(followUp.followUpDate).toLocaleDateString()}{' '}
-                          (via {followUp.consultationVia})
-                          {fIndex < visit.followUp.length - 1 ? ', ' : ''}
-                        </span>
-                      ))
-                    : 'No follow-up required'}
-                </Typography>
-                <Typography variant="subtitle1">
-                  <strong>Referral:</strong>{' '}
-                  {visit.referral.length > 0
-                    ? visit.referral.map((ref, rIndex) => (
-                        <span key={ref._id}>
-                          {ref.specialty} to {ref.doctor} at {ref.hospital}
-                          {rIndex < visit.referral.length - 1 ? ', ' : ''}
-                        </span>
-                      ))
-                    : 'No referrals made'}
-                </Typography>
-                <Typography variant="subtitle1">
-                  <strong>Notes:</strong> {visit.notes}
-                </Typography>
-                <Typography variant="subtitle1">
-                  <strong>Prescriptions:</strong>{' '}
-                  {visit.prescription.length > 0
-                    ? visit.prescription.map((med, mIndex) => (
-                        <span key={med._id}>
-                          {med.medicationName} ({med.dosage}, {med.frequency})
-                          {mIndex < visit.prescription.length - 1 ? ', ' : ''}
-                        </span>
-                      ))
-                    : 'No prescriptions issued'}
-                </Typography>
-                <Typography variant="subtitle1">
-                  <strong>Investigations:</strong>{' '}
-                  {visit.investigations.length > 0
-                    ? visit.investigations.map((investigation, iIndex) => (
-                        <span key={investigation._id}>
-                          {investigation.notes} ({investigation.reportPicture})
-                          {iIndex < visit.investigations.length - 1 ? ', ' : ''}
-                        </span>
-                      ))
-                    : 'No investigations performed'}
-                </Typography>
-              </Card>
-            ))
+              );
+            })
           ) : (
-            <Card sx={{ padding: 2, marginTop: 2, backgroundColor: theme.palette.warning.light }}>
+            <Card sx={{ padding: 3, marginTop: 3, backgroundColor: theme.palette.warning.light }}>
               <Typography variant="subtitle1" color="InfoText" align="center">
-                No Visit Records
+                No Medical Records
               </Typography>
             </Card>
           )}
