@@ -154,8 +154,11 @@ export default function Profile() {
       {patientProfile && (
         <Card sx={{ padding: 3 }}>
           {/* Patient Details Section */}
-
-          <Box sx={{ position: 'relative', padding: 3 }}>
+          <Box
+            sx={{
+              marginBottom: 3,
+            }}
+          >
             {/* Header with Basic Information */}
             <Card
               sx={{
@@ -264,7 +267,7 @@ export default function Profile() {
                 <Card
                   key={info._id}
                   sx={{
-                    padding: 4,
+                    padding: 2,
                     marginBottom: 4,
                     backgroundColor: theme.palette.background.paper,
                     borderRadius: 2,
@@ -273,7 +276,15 @@ export default function Profile() {
                 >
                   <Grid container spacing={0}>
                     {/* Medical Record Section */}
-                    <Grid container spacing={2}>
+                    <Grid
+                      container
+                      spacing={0}
+                      sx={{
+                        padding: 2,
+                        background: '#ececec',
+                        borderRadius: '10px',
+                      }}
+                    >
                       {/* Visit Details Section */}
                       <Grid item xs={12} md={4}>
                         <Typography
@@ -358,7 +369,7 @@ export default function Profile() {
 
                     {/* Visit Record Section */}
                     {correspondingVisit ? (
-                      <Grid container spacing={2} sx={{ marginTop: 3 }}>
+                      <Grid container spacing={2} sx={{ padding: 1, marginTop: 3 }}>
                         {/* Visit Information Section */}
                         <Grid item xs={12} md={6}>
                           <Typography variant="h6" gutterBottom>

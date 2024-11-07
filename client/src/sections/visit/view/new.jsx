@@ -7,7 +7,15 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import LoadingButton from '@mui/lab/LoadingButton';
-import { CircularProgress, Grid, MenuItem, Select, useMediaQuery, useTheme } from '@mui/material';
+import {
+  CircularProgress,
+  Grid,
+  IconButton,
+  MenuItem,
+  Select,
+  useMediaQuery,
+  useTheme,
+} from '@mui/material';
 import { DashboardContent } from '../../../layouts/dashboard/index';
 import { Iconify } from '../../../components/iconify';
 import { useRouter } from '../../../routes/hooks';
@@ -113,6 +121,34 @@ export default function VisitNew() {
     setData((prevData) => ({
       ...prevData,
       referral: [...prevData.referral, { specialty: '', doctor: '', hospital: '' }],
+    }));
+  };
+
+  const handleDeletePrescription = (index) => {
+    setData((prevData) => ({
+      ...prevData,
+      prescription: prevData.prescription.filter((_, i) => i !== index),
+    }));
+  };
+
+  const handleDeleteInvestigation = (index) => {
+    setData((prevData) => ({
+      ...prevData,
+      investigations: prevData.investigations.filter((_, i) => i !== index),
+    }));
+  };
+
+  const handleDeleteFollowUp = (index) => {
+    setData((prevData) => ({
+      ...prevData,
+      followUp: prevData.followUp.filter((_, i) => i !== index),
+    }));
+  };
+
+  const handleDeleteReferral = (index) => {
+    setData((prevData) => ({
+      ...prevData,
+      referral: prevData.referral.filter((_, i) => i !== index),
     }));
   };
 
@@ -243,19 +279,13 @@ export default function VisitNew() {
             </Grid>
 
             {/* Prescription Section */}
+
             <Grid item xs={12}>
               <Typography variant="h6" gutterBottom>
                 Prescription
               </Typography>
               {data.prescription.map((prescription, index) => (
-                <Grid
-                  container
-                  spacing={2}
-                  key={index}
-                  sx={{
-                    marginBottom: '20px',
-                  }}
-                >
+                <Grid container spacing={2} key={index} sx={{ marginBottom: '20px' }}>
                   <Grid item xs={12} sm={3}>
                     <TextField
                       name="medicationName"
@@ -263,6 +293,7 @@ export default function VisitNew() {
                       value={prescription.medicationName}
                       onChange={(e) => handlePrescriptionChange(index, e)}
                       fullWidth
+                      required
                     />
                   </Grid>
                   <Grid item xs={12} sm={3}>
@@ -272,6 +303,7 @@ export default function VisitNew() {
                       value={prescription.dosage}
                       onChange={(e) => handlePrescriptionChange(index, e)}
                       fullWidth
+                      required
                     />
                   </Grid>
                   <Grid item xs={12} sm={3}>
@@ -281,6 +313,7 @@ export default function VisitNew() {
                       value={prescription.frequency}
                       onChange={(e) => handlePrescriptionChange(index, e)}
                       fullWidth
+                      required
                     />
                   </Grid>
                   <Grid item xs={12} sm={3}>
@@ -290,6 +323,7 @@ export default function VisitNew() {
                       value={prescription.duration}
                       onChange={(e) => handlePrescriptionChange(index, e)}
                       fullWidth
+                      required
                     />
                   </Grid>
                   <Grid item xs={12}>
@@ -302,6 +336,15 @@ export default function VisitNew() {
                       multiline
                       rows={2}
                     />
+                  </Grid>
+                  <Grid item xs={2}>
+                    <IconButton
+                      color="error"
+                      onClick={() => handleDeletePrescription(index)}
+                      aria-label="delete"
+                    >
+                      <Iconify icon="material-symbols:delete" />
+                    </IconButton>
                   </Grid>
                 </Grid>
               ))}
@@ -402,6 +445,15 @@ export default function VisitNew() {
                       rows={1}
                     />
                   </Grid>
+                  <Grid item xs={2}>
+                    <IconButton
+                      color="error"
+                      onClick={() => handleDeleteInvestigation(index)}
+                      aria-label="delete"
+                    >
+                      <Iconify icon="material-symbols:delete" />
+                    </IconButton>
+                  </Grid>
                 </Grid>
               ))}
               <Button variant="outlined" onClick={handleAddInvestigation}>
@@ -475,6 +527,15 @@ export default function VisitNew() {
                       fullWidth
                     />
                   </Grid>
+                  <Grid item xs={2}>
+                    <IconButton
+                      color="error"
+                      onClick={() => handleDeleteFollowUp(index)}
+                      aria-label="delete"
+                    >
+                      <Iconify icon="material-symbols:delete" />
+                    </IconButton>
+                  </Grid>
                 </Grid>
               ))}
               <Button variant="outlined" onClick={handleAddFollowUp}>
@@ -522,6 +583,15 @@ export default function VisitNew() {
                       onChange={(e) => handleReferralChange(index, e)}
                       fullWidth
                     />
+                  </Grid>
+                  <Grid item xs={2}>
+                    <IconButton
+                      color="error"
+                      onClick={() => handleDeleteReferral(index)}
+                      aria-label="delete"
+                    >
+                      <Iconify icon="material-symbols:delete" />
+                    </IconButton>
                   </Grid>
                 </Grid>
               ))}
