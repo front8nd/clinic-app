@@ -3,7 +3,7 @@ import axios from 'axios';
 
 // ENV Variables
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
-
+console.log(API_BASE_URL);
 export const login = createAsyncThunk('auth/login', async (credentials, { rejectWithValue }) => {
   try {
     const response = await axios.post(`${API_BASE_URL}/login`, credentials);
