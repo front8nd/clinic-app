@@ -8,11 +8,10 @@ import { useRouter } from '../routes/hooks';
 // ----------------------------------------------------------------------
 
 export default function Page() {
-  //   const router = useRouter();
-  //   console.log('first');
-  //   useEffect(() => {
-  //     router.push('/users');
-  //   }, [router]);
+  const router = useRouter();
+  useEffect(() => {
+    router.push('/users');
+  }, [router]);
 
   return (
     <>
