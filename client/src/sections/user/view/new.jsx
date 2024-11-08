@@ -50,7 +50,7 @@ export default function UserNew() {
     password: '',
     c_password: '',
     role: 'admin',
-    birthYear: 0,
+    birthYear: '',
     contact: '',
     address: '',
     specialization: '',
@@ -163,12 +163,12 @@ export default function UserNew() {
               />
             </Grid>
 
-            {/* Date of Birth Field */}
+            {/* Year of Birth Field */}
             <Grid item xs={12} sm={4} md={6}>
               <Label
                 sx={{ fontSize: '0.9rem', padding: '20px', width: isMobile ? 'auto' : 'auto' }}
               >
-                Date of Birth
+                Year of Birth
               </Label>
             </Grid>
             <Grid item xs={12} sm={8} md={6}>

@@ -14,7 +14,8 @@ import { DashboardLayout } from '../layouts/dashboard/index';
 
 // ----------------------------------------------------------------------
 
-export const HomePage = lazy(() => import('../pages/home'));
+export const HomePage = lazy(() => import('../pages/homepage'));
+export const Dashboard = lazy(() => import('../pages/dashboard'));
 export const LoginPage = lazy(() => import('../pages/login'));
 export const RegisterPage = lazy(() => import('../pages/register'));
 export const UserPage = lazy(() => import('../pages/user/view'));
@@ -54,10 +55,10 @@ export function Router() {
       ),
       children: [
         {
+          path: 'dashboard',
           element: (
-            <ProtectedRoute allowedRoles={['admin', 'staff', 'doctor']} component={HomePage} />
+            <ProtectedRoute allowedRoles={['admin', 'staff', 'doctor']} component={Dashboard} />
           ),
-          index: true,
         },
         {
           path: 'users',
@@ -119,6 +120,19 @@ export function Router() {
         },
       ],
     },
+
+    // dont use protected routes for public pages such as landing page or homepage in this case
+    {
+      index: true,
+      path: '/',
+      element: <HomePage />,
+    },
+
+    // can wrap in protected routes as well but we will use below method here
+    // {
+    //   path: 'login',
+    //   element: <ProtectedRoute noAuthReq component={LoginPage} />,
+    // },
     {
       path: 'login',
       element: (
