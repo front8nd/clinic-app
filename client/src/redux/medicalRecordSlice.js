@@ -12,7 +12,7 @@ export const newPatientMedicalInfo = createAsyncThunk(
     try {
       const response = await axios.post(
         `${API_BASE_URL}/newPatientMedicalInfo/${data?.patientId}`,
-        data?.medicalInfo,
+        data,
         {
           headers: {
             Authorization: `Bearer ${userData.token}`,

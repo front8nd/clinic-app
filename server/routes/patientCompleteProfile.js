@@ -1,9 +1,10 @@
 const express = require("express");
-const Patient = require("../models/patientSchema");
-const Visit = require("../models/visitSchema");
-const PatientMedicalInfo = require("../models/patientMedicalInfoSchema");
 const router = express.Router();
+const Patient = require("../models/patientSchema");
 const authMiddleware = require("../middleware/auth");
+const Visit = require("../models/visitSchema");
+const Appointment = require("../models/appointmentSchema");
+const PatientMedicalInfo = require("../models/patientMedicalInfoSchema");
 
 // Get a specific patient profile with all visits and medical info
 router.get(
@@ -17,13 +18,17 @@ router.get(
       if (!patient) {
         return res.status(404).json({ message: "Patient not found." });
       }
+      // Retrieve all appointments associated with the patient using the unique patientId
+      const appointments = await Appointment.find({ patientId }).sort({
+        visitNumber: -1,
+      });
 
       // Retrieve all visits associated with the patient using the unique patientId
       const visits = await Visit.find({ patientId });
 
       // Retrieve all medical information associated with the patient
       const medicalInfo = await PatientMedicalInfo.find({ patientId }).sort({
-        visitDate: -1,
+        visitNumber: -1,
       });
 
       // Return the patient profile, visits, and medical info
@@ -31,6 +36,7 @@ router.get(
         patient,
         visits,
         medicalInfo,
+        appointments,
       });
     } catch (error) {
       console.error(error); // Log the error for debugging

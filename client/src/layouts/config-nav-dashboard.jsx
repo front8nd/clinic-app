@@ -23,6 +23,11 @@ export const navData = [
     icon: icon('ic-profile'),
   },
   {
+    title: 'Appointments',
+    path: '/appointments',
+    icon: icon('ic-appointments'),
+  },
+  {
     title: 'Patients',
     path: '/patients',
     icon: icon('ic-patient'),

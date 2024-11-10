@@ -20,6 +20,7 @@ import { Iconify } from '../../../components/iconify';
 import { useRouter } from '../../../routes/hooks';
 import { useSnackbar } from '../../../components/snackbar/snackbar';
 import { newPatientProfile, reset } from '../../../redux/patientSlice';
+import { appointmentSlots } from '../../../redux/appointmentSlice';
 
 export default function PatientNew() {
   const router = useRouter();
@@ -29,6 +30,7 @@ export default function PatientNew() {
 
   const dispatch = useDispatch();
   const { loading, isSuccess, isFailed } = useSelector((state) => state.patient);
+  const { todayAppointments } = useSelector((state) => state.appointment);
   const { userData } = useSelector((state) => state.auth);
 
   const genderOptions = ['male', 'female'];
@@ -53,7 +55,17 @@ export default function PatientNew() {
     blood_pressure_dia: '',
     allergies: '',
     chronicConditions: '',
+
+    // Appointment
+    appointmentDateTime: '',
+    type: 'offline',
+    status: 'scheduled',
   });
+
+  // Appoinment
+
+  const appointmentType = ['online', 'offline'];
+  const appoinmentStatus = ['scheduled', 'completed', 'cancelled'];
 
   // Define fee options with string keys for compatibility
   const feeOptions = {
@@ -118,8 +130,6 @@ export default function PatientNew() {
     }
   }, [discounted, feesType, feeOptions.full]);
 
-  console.log(feesData);
-
   const changeHandler = (e) => {
     setData((prevData) => ({ ...prevData, [e.target.name]: e.target.value }));
   };
@@ -166,13 +176,25 @@ export default function PatientNew() {
       fees: feesData,
     };
 
+    const appointmentInfo = {
+      appointmentDateTime: data?.appointmentDateTime,
+      type: data?.type,
+      status: data?.status,
+    };
+
     const additionalData = {
       personalInfo,
       medicalInfo,
+      appointmentInfo,
     };
     console.log(additionalData);
     await dispatch(newPatientProfile(additionalData));
   };
+
+  useEffect(() => {
+    dispatch(appointmentSlots());
+  }, [dispatch]);
+  console.log(todayAppointments);
 
   useEffect(() => {
     if (isSuccess) {
@@ -320,6 +342,89 @@ export default function PatientNew() {
                   - Final Amount: Rs. {feesData.final}
                 </Typography>
               </Stack>
+            </Grid>
+
+            {/* Appoinment Information Section */}
+            <Grid item xs={12}>
+              <Typography variant="h5" gutterBottom>
+                Appoinment
+              </Typography>
+            </Grid>
+
+            <Grid item xs={12} sm={6} md={4}>
+              <Select
+                name="type"
+                value={data.type}
+                onChange={changeHandler}
+                displayEmpty
+                fullWidth
+                required
+                disabled
+                renderValue={(selected) =>
+                  selected?.toUpperCase() || <em>Select Appoinment Type</em>
+                }
+              >
+                {appointmentType.map((option) => (
+                  <MenuItem key={option} value={option}>
+                    {option.toUpperCase()}
+                  </MenuItem>
+                ))}
+              </Select>
+            </Grid>
+            <Grid item xs={12} sm={6} md={4}>
+              <Select
+                name="status"
+                value={data.status}
+                onChange={changeHandler}
+                displayEmpty
+                fullWidth
+                required
+                disabled
+                renderValue={(selected) =>
+                  selected?.toUpperCase() || <em>Select Appoinment Status</em>
+                }
+              >
+                {appoinmentStatus.map((option) => (
+                  <MenuItem key={option} value={option}>
+                    {option.toUpperCase()}
+                  </MenuItem>
+                ))}
+              </Select>
+            </Grid>
+            <Grid item xs={12} sm={6} md={4}>
+              <Select
+                name="appointmentDateTime"
+                value={data.appointmentDateTime}
+                onChange={changeHandler}
+                displayEmpty
+                fullWidth
+                required
+                renderValue={(selected) =>
+                  selected?.toUpperCase() || <em>Select Appointment Date Time </em>
+                }
+              >
+                {todayAppointments?.slots.map((option) => (
+                  <MenuItem
+                    key={option?.time}
+                    value={option?.time}
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                    }}
+                  >
+                    <Typography
+                      sx={{
+                        fontWeight: 'bold',
+                      }}
+                    >
+                      {option?.time}
+                    </Typography>
+                    <Typography color={option?.available === true ? 'green' : 'red'}>
+                      {option?.available === true ? 'Available' : 'Booked'}
+                    </Typography>
+                  </MenuItem>
+                ))}
+              </Select>
             </Grid>
 
             {/* Medical Information Section */}

@@ -7,6 +7,7 @@ import patientSlice from './patientSlice';
 import visitSlice from './visitSlice';
 import patientProfileSlice from './patientProfileSlice';
 import medicalRecordSlice from './medicalRecordSlice';
+import appointmentSlice from './appointmentSlice';
 
 const store = configureStore({
   reducer: {
@@ -16,6 +17,7 @@ const store = configureStore({
     visit: visitSlice,
     patientProfile: patientProfileSlice,
     medicalRecord: medicalRecordSlice,
+    appointment: appointmentSlice,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(tokenExpirationMiddleware),
 });

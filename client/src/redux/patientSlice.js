@@ -87,6 +87,7 @@ const patientSlice = createSlice({
         state.loading = false;
         state.data = action.payload;
         state.isSuccess = true;
+        console.log(action.payload);
       })
       .addCase(newPatientProfile.rejected, (state, action) => {
         state.loading = false;

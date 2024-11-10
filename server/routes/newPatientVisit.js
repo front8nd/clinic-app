@@ -1,6 +1,7 @@
 const express = require("express");
-const VisitModel = require("../models/visitSchema");
+const Visit = require("../models/visitSchema");
 const Patient = require("../models/patientSchema");
+const Appointment = require("../models/appointmentSchema");
 const authMiddleware = require("../middleware/auth");
 
 const router = express.Router();
@@ -16,13 +17,25 @@ router.post("/newPatientVisit/:patientId", authMiddleware, async (req, res) => {
     }
 
     // Find the last visit for the patient to determine the visit number
-    const lastVisit = await VisitModel.findOne({ patientId }).sort({
+    const lastVisit = await Visit.findOne({ patientId }).sort({
       visitNumber: -1,
     });
     const visitNumber = lastVisit ? lastVisit.visitNumber + 1 : 1; // Increment or set to 1
 
+    // Based on the visit number, mark the appointment as completed
+    const appointmentToUpdate = await Appointment.findOne({
+      patientId,
+      visitNumber,
+      status: { $ne: "completed" },
+    });
+
+    if (appointmentToUpdate) {
+      appointmentToUpdate.status = "completed";
+      await appointmentToUpdate.save(); // Save the updated appointment status
+    }
+
     // Create a new visit record
-    const newVisit = new VisitModel({
+    const newVisit = new Visit({
       patientId,
       visitNumber,
       ...req.body,
@@ -30,7 +43,12 @@ router.post("/newPatientVisit/:patientId", authMiddleware, async (req, res) => {
 
     // Save the visit to the database
     const savedVisit = await newVisit.save();
-    res.status(201).json(savedVisit); // Sends back the created visit record
+    res.status(201).json({
+      message:
+        "Visit created and appointment marked as completed if applicable.",
+      visit: savedVisit,
+      updatedAppointment: appointmentToUpdate,
+    });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }

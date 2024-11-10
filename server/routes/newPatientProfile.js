@@ -2,11 +2,12 @@ const mongoose = require("mongoose");
 const express = require("express");
 const router = express.Router();
 const Patient = require("../models/patientSchema");
+const Appointment = require("../models/appointmentSchema");
 const PatientMedicalInfo = require("../models/patientMedicalInfoSchema");
 const authMiddleware = require("../middleware/auth");
 const getNextPatientID = require("../utils/patientID");
 
-// POST /patients/newPatientProfile - Create a new patient profile
+// POST /patients/newPatientProfile - Create a new patient profile and book an appointment
 router.post("/newPatientProfile", authMiddleware, async (req, res) => {
   const session = await mongoose.startSession();
   session.startTransaction();
@@ -25,6 +26,37 @@ router.post("/newPatientProfile", authMiddleware, async (req, res) => {
         .status(409)
         .json({ message: "Patient ID conflict. Please try again." });
     }
+
+    // Extract appointment info from request body
+    const { appointmentDateTime, type } = req.body.appointmentInfo;
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0); // Start of the current day
+    const todayEnd = new Date();
+    todayEnd.setHours(23, 59, 59, 999); // End of the current day
+
+    // Check if the slot is already booked on the current day
+    const existingAppointment = await Appointment.findOne({
+      appointmentDateTime: appointmentDateTime.trim(), // Ensure comparison is precise
+      status: { $in: ["scheduled", "completed"] }, // Include both statuses
+      createdAt: { $gte: todayStart, $lte: todayEnd }, // Ensure it is for today
+    }).session(session);
+
+    if (existingAppointment) {
+      await session.abortTransaction();
+      return res.status(409).json({
+        message: "The selected appointment slot is already booked for today.",
+      });
+    }
+
+    // Create a new appointment for the patient
+    const newAppointment = new Appointment({
+      patientId,
+      appointmentDateTime: appointmentDateTime.trim(),
+      type,
+      status: "scheduled",
+      visitNumber: 1,
+    });
+    const savedAppointment = await newAppointment.save({ session });
 
     // Create new patient data with the generated patient ID
     const newPatient = new Patient({
@@ -49,10 +81,16 @@ router.post("/newPatientProfile", authMiddleware, async (req, res) => {
     res.status(201).json({
       patient: savedPatient,
       medicalInfo: savedMedicalInfo,
-      message: "Patient profile and initial medical info added successfully.",
+      appointment: savedAppointment,
+      message:
+        "Patient profile and initial medical info added successfully, and appointment booked.",
     });
   } catch (error) {
     await session.abortTransaction(); // Roll back the transaction on error
+    console.error(
+      "Error creating new patient profile and booking appointment:",
+      error
+    );
     if (error.name === "ValidationError") {
       return res
         .status(400)

@@ -14,10 +14,16 @@ import { DashboardLayout } from '../layouts/dashboard/index';
 
 // ----------------------------------------------------------------------
 
+// Default Pages
 export const HomePage = lazy(() => import('../pages/homepage'));
 export const Dashboard = lazy(() => import('../pages/dashboard'));
+export const Page404 = lazy(() => import('../pages/page-not-found'));
+
+// Auth
 export const LoginPage = lazy(() => import('../pages/login'));
 export const RegisterPage = lazy(() => import('../pages/register'));
+
+// Custom Pages
 export const UserPage = lazy(() => import('../pages/user/view'));
 export const NewUserPage = lazy(() => import('../pages/user/new'));
 export const PatientProfile = lazy(() => import('../pages/patient/profile'));
@@ -26,7 +32,7 @@ export const NewPatientPage = lazy(() => import('../pages/patient/new'));
 export const NewMedicalRecord = lazy(() => import('../pages/patient/medical'));
 export const VisitPage = lazy(() => import('../pages/visit/view'));
 export const NewVisitPage = lazy(() => import('../pages/visit/new'));
-export const Page404 = lazy(() => import('../pages/page-not-found'));
+export const AppointmentsPage = lazy(() => import('../pages/appointment/view'));
 
 // ----------------------------------------------------------------------
 
@@ -115,6 +121,15 @@ export function Router() {
             <ProtectedRoute
               allowedRoles={['admin', 'staff', 'doctor']}
               component={NewMedicalRecord}
+            />
+          ),
+        },
+        {
+          path: 'appointments',
+          element: (
+            <ProtectedRoute
+              allowedRoles={['admin', 'staff', 'doctor']}
+              component={AppointmentsPage}
             />
           ),
         },

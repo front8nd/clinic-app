@@ -25,6 +25,8 @@ const patientCompleteProfile = require("./routes/patientCompleteProfile"); // ge
 const newPatientProfile = require("./routes/newPatientProfile"); // a new profile will be created 1st time
 const newPatientMedicalInfo = require("./routes/newPatientMedicalInfo"); // 2nd time only medical info will be added by STAFF
 const newPatientVisit = require("./routes/newPatientVisit"); // visit data will be filled by Doctor everytime, needs patient profile to be created first and retrived via patientCompleteProfile
+const todayAppointments = require("./routes/todayAppointments"); // for all the possible slots today
+const appointments = require("./routes/appointments"); // Appointments list
 
 // Endpoints
 app.use(register);
@@ -36,6 +38,8 @@ app.use(patientCompleteProfile);
 app.use(newPatientProfile);
 app.use(newPatientMedicalInfo);
 app.use(newPatientVisit);
+app.use(todayAppointments);
+app.use(appointments);
 
 // Root route to show a message
 app.get("/", (req, res) => {
