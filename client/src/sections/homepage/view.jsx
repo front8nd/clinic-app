@@ -26,6 +26,8 @@ function AppointmentView() {
   };
   const isWorkingHours = isWithinWorkingHours();
   const workingHours = getFormattedWorkingHours().join(', ');
+
+  console.log(isWorkingHours);
   return (
     <div className="custom-message">
       {/*  WhatsApp Support  */}
@@ -88,7 +90,7 @@ function AppointmentView() {
                   Select your patient type to proceed with the booking.
                 </Typography>
               )}
-              {!isWorkingHours && (
+              {/* {!isWorkingHours && (
                 <div>
                   <Typography gutterBottom variant="body1" color="error" align="center">
                     No slots available due to non-working hours. For emergency cases, visit the
@@ -111,9 +113,9 @@ function AppointmentView() {
                     Please try booking an appointment tomorrow.
                   </Typography>
                 </div>
-              )}
+              )} */}
             </Box>
-            {isWorkingHours && (
+            {!isWorkingHours && (
               <>
                 {/* Tab navigation */}
                 <Box sx={{ borderBottom: 1, borderColor: 'divider', width: '100%' }}>

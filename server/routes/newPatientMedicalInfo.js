@@ -34,6 +34,12 @@ router.post(
         ? lastAppointment.appointmentNumber + 1
         : 1;
 
+      // Check last appointment to cancel it if its status is scheduled
+      if (lastAppointment && lastAppointment.status === "scheduled") {
+        lastAppointment.status = "cancelled";
+        await lastAppointment.save({ session });
+      }
+
       // Extract appointment info from request body
       const { appointmentTime, type } = appointmentInfo;
       const todayStart = new Date();

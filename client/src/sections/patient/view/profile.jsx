@@ -65,9 +65,9 @@ export default function Profile() {
 
   const age = calculateAge(patientProfile?.patient?.birthYear);
 
-  // Helper function to find the visit record based on visitNumber
-  const getVisitByVisitNumber = (visitNumber) =>
-    patientProfile.visits.find((visit) => visit.visitNumber === visitNumber);
+  // Helper function to find the visit record based on AppointmentNumber
+  const getVisitByAppointmentNumber = (appointmentNumber) =>
+    patientProfile.visits.find((e) => e.appointmentNumber === appointmentNumber);
 
   return (
     <DashboardContent>
@@ -262,7 +262,7 @@ export default function Profile() {
           {/* Loop through medicalInfo and visit records */}
           {patientProfile.medicalInfo && patientProfile.medicalInfo.length > 0 ? (
             patientProfile.medicalInfo.map((info) => {
-              const correspondingVisit = getVisitByVisitNumber(info.appointmentNumber);
+              const correspondingVisit = getVisitByAppointmentNumber(info.appointmentNumber);
 
               return (
                 <Card
@@ -375,7 +375,7 @@ export default function Profile() {
                         <Grid item xs={12} md={6}>
                           <Typography variant="h6" gutterBottom>
                             Basic Details
-                            {/* Visit Record #{correspondingVisit.visitNumber} */}
+                            {/* Visit Record #{correspondingVisit.AppointmentNumber} */}
                           </Typography>
                           <Divider sx={{ marginBottom: 2 }} />
                           <Typography variant="subtitle1" sx={{ marginBottom: 1 }}>

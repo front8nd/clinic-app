@@ -55,7 +55,7 @@ export function CustomTableRow({ row, selected }) {
           <Label
             color={
               row?.status === 'cancelled'
-                ? 'warning'
+                ? 'error'
                 : row?.status === 'scheduled'
                   ? 'warning'
                   : row?.status === 'completed'

@@ -623,13 +623,14 @@ export default function VisitNew() {
               }}
             >
               <LoadingButton
-                type="submit"
                 size="large"
+                type="submit"
                 variant="contained"
+                color="primary"
                 loading={loading}
-                fullWidth
+                loadingIndicator={<CircularProgress size={24} color="inherit" />}
               >
-                Submit
+                Create New Visit Record
               </LoadingButton>
             </Grid>
           </Grid>

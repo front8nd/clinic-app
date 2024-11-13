@@ -24,13 +24,24 @@ router.post("/newPatientVisit/:patientId", authMiddleware, async (req, res) => {
 
     // Find the last appointment for the patient to determine the appointment number
     const lastAppointment = await Appointment.findOne({ patientId })
-      .sort({
-        appointmentNumber: -1,
-      })
+      .sort({ appointmentNumber: -1 })
       .session(session);
     const appointmentNumber = lastAppointment
-      ? lastAppointment.appointmentNumber + 1
+      ? lastAppointment.appointmentNumber
       : 1;
+
+    // Find the last visit record for the patient to check the appointment number
+    const lastVisit = await Visit.findOne({ patientId })
+      .sort({ appointmentNumber: -1 })
+      .session(session);
+    const lastVisitNumber = lastVisit ? lastVisit.appointmentNumber : null;
+
+    // If the appointment number of the last visit matches the appointment number, skip creating a new visit
+    if (appointmentNumber === lastVisitNumber) {
+      return res.status(400).json({
+        message: "A visit already exists for this appointment number.",
+      });
+    }
 
     // Based on the appointment number, mark the appointment as completed
     const appointmentToUpdate = await Appointment.findOne({

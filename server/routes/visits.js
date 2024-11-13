@@ -15,7 +15,7 @@ router.get("/visits", authMiddleware, async (req, res) => {
     const filter = {};
     if (date) {
       const selectedDate = new Date(date);
-      filter.visitDate = {
+      filter.createdAt = {
         $gte: new Date(selectedDate.setHours(0, 0, 0, 0)), // Start of the day
         $lt: new Date(selectedDate.setHours(23, 59, 59, 999)), // End of the day
       };
