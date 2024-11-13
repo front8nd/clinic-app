@@ -108,7 +108,7 @@ function AppointmentView() {
                   </Typography>
 
                   <Typography variant="body1" color="textSecondary" align="center">
-                    Please try booking an appointment for tomorrow.
+                    Please try booking an appointment tomorrow.
                   </Typography>
                 </div>
               )}
