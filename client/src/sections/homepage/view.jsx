@@ -5,7 +5,7 @@ import { Tabs, Tab, Box, Card, CardContent, Typography, useTheme } from '@mui/ma
 import NewPatientForm from './NewPatientForm';
 import OldPatientForm from './OldPatientForm';
 import { stylesMode } from '../../theme/styles';
-import { useRouter } from '../../routes/hooks';
+import { isWithinWorkingHours, getFormattedWorkingHours } from '../../utils/workingHoursChecker';
 
 function AppointmentView() {
   const [selectedTab, setSelectedTab] = useState(0);
@@ -24,7 +24,8 @@ function AppointmentView() {
       ease: 'easeInOut',
     },
   };
-
+  const isWorkingHours = isWithinWorkingHours();
+  const workingHours = getFormattedWorkingHours().join(', ');
   return (
     <div className="custom-message">
       {/*  WhatsApp Support  */}
@@ -48,7 +49,6 @@ function AppointmentView() {
           position: 'relative',
         }}
       >
-        {/* Background Overlay using sx prop to manage background image */}
         <Box
           sx={{
             position: 'absolute',
@@ -83,37 +83,65 @@ function AppointmentView() {
               <Typography variant="h4" fontWeight="bold" color={theme.palette.primary.main}>
                 Schedule Your Appointment
               </Typography>
-              <Typography variant="body2" color="text.secondary" align="center">
-                Select your patient type to proceed with the booking.
-              </Typography>
-            </Box>
-
-            {/* Tab navigation */}
-            <Box sx={{ borderBottom: 1, borderColor: 'divider', width: '100%' }}>
-              <Tabs
-                value={selectedTab}
-                onChange={handleTabChange}
-                centered
-                indicatorColor="primary"
-                textColor="primary"
-              >
-                <Tab label="New Patient" />
-                <Tab label="Old Patient" />
-              </Tabs>
-            </Box>
-
-            {/* Form rendering with smooth animations */}
-            <AnimatePresence mode="wait">
-              {selectedTab === 0 ? (
-                <motion.div key="new-patient" {...animationConfig} className="w-full mt-4">
-                  <NewPatientForm />
-                </motion.div>
-              ) : (
-                <motion.div key="old-patient" {...animationConfig} className="w-full mt-4">
-                  <OldPatientForm />
-                </motion.div>
+              {isWorkingHours && (
+                <Typography variant="body2" color="text.secondary" align="center">
+                  Select your patient type to proceed with the booking.
+                </Typography>
               )}
-            </AnimatePresence>
+              {!isWorkingHours && (
+                <div>
+                  <Typography gutterBottom variant="body1" color="error" align="center">
+                    No slots available due to non-working hours. For emergency cases, visit the
+                    clinic or contact via phone number.
+                  </Typography>
+                  <Typography gutterBottom variant="subtitle1" color="textSecondary" align="center">
+                    Our working hours are:
+                  </Typography>
+                  <Typography
+                    gutterBottom
+                    variant="body1"
+                    color="textSecondary"
+                    bgcolor="ButtonFace"
+                    align="center"
+                  >
+                    {workingHours}
+                  </Typography>
+
+                  <Typography variant="body1" color="textSecondary" align="center">
+                    Please try booking an appointment for tomorrow.
+                  </Typography>
+                </div>
+              )}
+            </Box>
+            {isWorkingHours && (
+              <>
+                {/* Tab navigation */}
+                <Box sx={{ borderBottom: 1, borderColor: 'divider', width: '100%' }}>
+                  <Tabs
+                    value={selectedTab}
+                    onChange={handleTabChange}
+                    centered
+                    indicatorColor="primary"
+                    textColor="primary"
+                  >
+                    <Tab label="New Patient" />
+                    <Tab label="Old Patient" />
+                  </Tabs>
+                </Box>
+                {/* Form rendering with smooth animations */}
+                <AnimatePresence mode="wait">
+                  {selectedTab === 0 ? (
+                    <motion.div key="new-patient" {...animationConfig} className="w-full mt-4">
+                      <NewPatientForm />
+                    </motion.div>
+                  ) : (
+                    <motion.div key="old-patient" {...animationConfig} className="w-full mt-4">
+                      <OldPatientForm />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </>
+            )}
           </CardContent>
         </Card>
       </div>

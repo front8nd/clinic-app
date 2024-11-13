@@ -91,7 +91,7 @@ function NewPatientForm() {
   console.log(appointmentData);
 
   return (
-    <form className="space-y-4">
+    <form className="space-y-4" onSubmit={handleClick}>
       {appointmentData && <PatientDetails appointmentData={appointmentData} />}
       <TextField
         name="name"
@@ -173,14 +173,7 @@ function NewPatientForm() {
           ))}
         </Select>
       </FormControl>
-      <LoadingButton
-        fullWidth
-        size="large"
-        type="submit"
-        variant="contained"
-        color="inherit"
-        onClick={handleClick}
-      >
+      <LoadingButton fullWidth size="large" type="submit" variant="contained" color="inherit">
         {isSubmitted === false ? (
           'Book Slot'
         ) : (

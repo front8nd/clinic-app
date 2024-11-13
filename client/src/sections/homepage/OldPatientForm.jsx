@@ -11,7 +11,6 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import { useDispatch, useSelector } from 'react-redux';
 import { appointmentByOldPatient, appointmentSlots, reset } from '../../redux/appointmentSlice';
 import { useSnackbar } from '../../components/snackbar/snackbar';
-import { useRouter } from '../../routes/hooks';
 import PatientDetails from './patientDetails';
 
 function OldPatientForm() {
@@ -68,9 +67,8 @@ function OldPatientForm() {
     };
   }, [isSuccess, isFailed, openSnackbar, dispatch]);
 
-  console.log(appointmentData);
   return (
-    <form className="space-y-4">
+    <form className="space-y-4" onSubmit={handleClick}>
       {appointmentData && <PatientDetails appointmentData={appointmentData} />}
 
       <TextField
@@ -116,14 +114,7 @@ function OldPatientForm() {
           ))}
         </Select>
       </FormControl>
-      <LoadingButton
-        fullWidth
-        size="large"
-        type="submit"
-        variant="contained"
-        color="inherit"
-        onClick={handleClick}
-      >
+      <LoadingButton fullWidth size="large" type="submit" variant="contained" color="inherit">
         {isSubmitted === false ? (
           'Book Slot'
         ) : (
