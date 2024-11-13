@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const Appointment = require("../models/appointmentSchema");
-const authMiddleware = require("../middleware/auth");
 const generateTimeSlots = require("../utils/slots");
 
 // API to get today's appointment slots and availability
@@ -17,14 +16,14 @@ router.get("/today-appointments", async (req, res) => {
     const appointments = await Appointment.find({
       createdAt: { $gte: todayStart, $lte: todayEnd }, // Check for today's date range
       status: { $in: ["scheduled", "completed"] }, // Include both statuses
-    }).select("appointmentDateTime");
+    }).select("appointmentTime");
 
     // Generate all possible slots for today
     const allSlots = generateTimeSlots();
 
     // Convert appointment times from the database into a set
     const bookedSlots = new Set(
-      appointments.map((appt) => appt.appointmentDateTime.trim()) // Match exact time string
+      appointments.map((appt) => appt.appointmentTime.trim()) // Match exact time string
     );
 
     // Mark slots as available or occupied

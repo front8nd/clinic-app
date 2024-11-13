@@ -21,17 +21,21 @@ router.post(
       // Find the patient and check if they exist
       const patient = await Patient.findOne({ patientId }).session(session);
       if (!patient) {
-        throw new Error("Patient not found");
+        return res.status(400).json({
+          message: "Patient not found.",
+        });
       }
 
       // Find the last visit to determine visit number
-      const lastVisit = await PatientMedicalInfo.findOne({ patientId })
-        .sort({ visitNumber: -1 })
+      const lastAppointment = await Appointment.findOne({ patientId })
+        .sort({ appointmentNumber: -1 })
         .session(session);
-      const visitNumber = lastVisit ? lastVisit.visitNumber + 1 : 1;
+      const appointmentNumber = lastAppointment
+        ? lastAppointment.appointmentNumber + 1
+        : 1;
 
       // Extract appointment info from request body
-      const { appointmentDateTime, type } = appointmentInfo;
+      const { appointmentTime, type } = appointmentInfo;
       const todayStart = new Date();
       todayStart.setHours(0, 0, 0, 0); // Start of the current day
       const todayEnd = new Date();
@@ -39,8 +43,8 @@ router.post(
 
       // Check if the slot is already booked on the current day
       const existingAppointment = await Appointment.findOne({
-        appointmentDateTime: appointmentDateTime.trim(),
-        status: { $in: ["scheduled", "completed"] }, // Include both statuses
+        appointmentTime: appointmentTime.trim(), // Ensure comparison is precise
+        status: { $in: ["scheduled", "completed"] },
         createdAt: { $gte: todayStart, $lte: todayEnd },
       }).session(session);
 
@@ -54,10 +58,10 @@ router.post(
       // Create a new appointment for the patient
       const newAppointment = new Appointment({
         patientId,
-        appointmentDateTime: appointmentDateTime.trim(),
+        appointmentTime: appointmentTime.trim(),
         type,
         status: "scheduled",
-        visitNumber,
+        appointmentNumber,
       });
 
       const savedAppointment = await newAppointment.save({ session });
@@ -66,7 +70,7 @@ router.post(
       const newMedicalInfo = new PatientMedicalInfo({
         patientId,
         visitDate: new Date(),
-        visitNumber,
+        appointmentNumber,
         ...medicalInfo,
       });
 

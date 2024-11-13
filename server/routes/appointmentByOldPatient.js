@@ -23,14 +23,16 @@ router.post(
         return res.status(400).json({ message: "Patient doesn't exists" });
       }
 
-      // Find the last visit to determine visit number
-      const lastVisit = await Appointment.findOne({ patientId })
-        .sort({ visitNumber: -1 })
+      // Find the last visit for the patient to determine the visit number
+      const lastAppointment = await Appointment.findOne({ patientId })
+        .sort({ appointmentNumber: -1 })
         .session(session);
-      const visitNumber = lastVisit ? lastVisit.visitNumber + 1 : 1;
+      const appointmentNumber = lastAppointment
+        ? lastAppointment.appointmentNumber + 1
+        : 1;
 
       // Extract appointment info from request body
-      const { appointmentDateTime, type } = appointmentInfo;
+      const { appointmentTime, type } = appointmentInfo;
       const todayStart = new Date();
       todayStart.setHours(0, 0, 0, 0); // Start of the current day
       const todayEnd = new Date();
@@ -38,7 +40,7 @@ router.post(
 
       // Check if the slot is already booked on the current day
       const existingAppointment = await Appointment.findOne({
-        appointmentDateTime: appointmentDateTime.trim(),
+        appointmentTime: appointmentTime.trim(), // Ensure comparison is precise
         status: { $in: ["scheduled", "completed"] },
         createdAt: { $gte: todayStart, $lte: todayEnd },
       }).session(session);
@@ -56,7 +58,7 @@ router.post(
         appointmentDateTime: appointmentDateTime.trim(),
         type,
         status: "scheduled",
-        visitNumber,
+        appointmentNumber,
       });
 
       const savedAppointment = await newAppointment.save({ session });

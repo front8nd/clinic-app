@@ -28,7 +28,7 @@ router.post("/newPatientProfile", authMiddleware, async (req, res) => {
     }
 
     // Extract appointment info from request body
-    const { appointmentDateTime, type } = req.body.appointmentInfo;
+    const { appointmentTime, type } = req.body.appointmentInfo;
     const todayStart = new Date();
     todayStart.setHours(0, 0, 0, 0); // Start of the current day
     const todayEnd = new Date();
@@ -36,7 +36,7 @@ router.post("/newPatientProfile", authMiddleware, async (req, res) => {
 
     // Check if the slot is already booked on the current day
     const existingAppointment = await Appointment.findOne({
-      appointmentDateTime: appointmentDateTime.trim(), // Ensure comparison is precise
+      appointmentTime: appointmentTime.trim(), // Ensure comparison is precise
       status: { $in: ["scheduled", "completed"] }, // Include both statuses
       createdAt: { $gte: todayStart, $lte: todayEnd }, // Ensure it is for today
     }).session(session);
@@ -51,10 +51,10 @@ router.post("/newPatientProfile", authMiddleware, async (req, res) => {
     // Create a new appointment for the patient
     const newAppointment = new Appointment({
       patientId,
-      appointmentDateTime: appointmentDateTime.trim(),
+      appointmentTime: appointmentTime.trim(),
       type,
       status: "scheduled",
-      visitNumber: 1,
+      appointmentNumber: 1,
     });
     const savedAppointment = await newAppointment.save({ session });
 
@@ -69,7 +69,7 @@ router.post("/newPatientProfile", authMiddleware, async (req, res) => {
     const newMedicalInfo = new PatientMedicalInfo({
       patientId,
       visitDate: new Date(),
-      visitNumber: 1,
+      appointmentNumber: 1,
       ...req.body.medicalInfo,
     });
     const savedMedicalInfo = await newMedicalInfo.save({ session });

@@ -8,6 +8,7 @@ import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import LoadingButton from '@mui/lab/LoadingButton';
 import {
+  Checkbox,
   CircularProgress,
   Grid,
   MenuItem,
@@ -22,6 +23,8 @@ import { useRouter } from '../../../routes/hooks';
 import { useSnackbar } from '../../../components/snackbar/snackbar';
 import { newPatientMedicalInfo, reset } from '../../../redux/medicalRecordSlice';
 import { appointmentSlots } from '../../../redux/appointmentSlice';
+import formatTime12Hour from '../../../utils/12HoursFormater';
+import { isWithinWorkingHours } from '../../../utils/workingHoursChecker';
 
 export default function MedicalNew() {
   const router = useRouter();
@@ -50,7 +53,7 @@ export default function MedicalNew() {
     blood_pressure_dia: '',
 
     // Appointment
-    appointmentDateTime: '',
+    appointmentTime: '',
     type: 'offline',
     status: 'scheduled',
   });
@@ -158,6 +161,11 @@ export default function MedicalNew() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [patientProfile, discounted, feeOptions.full]);
 
+  const [extendSlots, setExtentSlots] = useState(false);
+  const slotsHandler = () => {
+    setExtentSlots((prev) => !prev);
+  };
+
   const changeHandler = (e) => {
     setData((prevData) => ({ ...prevData, [e.target.name]: e.target.value }));
   };
@@ -188,7 +196,7 @@ export default function MedicalNew() {
     };
 
     const appointmentInfo = {
-      appointmentDateTime: data?.appointmentDateTime,
+      appointmentTime: extendSlots ? formatTime12Hour() : data?.appointmentTime,
       type: data?.type,
       status: data?.status,
     };
@@ -217,6 +225,7 @@ export default function MedicalNew() {
     };
   }, [isSuccess, error, router, openSnackbar, dispatch]);
 
+  console.log(extendSlots);
   return (
     <DashboardContent>
       <Box display="flex" alignItems="center" mb={5}>
@@ -301,52 +310,12 @@ export default function MedicalNew() {
 
             <Grid item xs={12} sm={6} md={4}>
               <Select
-                name="type"
-                value={data.type}
+                name="appointmentTime"
+                value={data.appointmentTime}
                 onChange={changeHandler}
                 displayEmpty
                 fullWidth
-                required
-                disabled
-                renderValue={(selected) =>
-                  selected?.toUpperCase() || <em>Select Appoinment Type</em>
-                }
-              >
-                {appointmentType.map((option) => (
-                  <MenuItem key={option} value={option}>
-                    {option.toUpperCase()}
-                  </MenuItem>
-                ))}
-              </Select>
-            </Grid>
-            <Grid item xs={12} sm={6} md={4}>
-              <Select
-                name="status"
-                value={data.status}
-                onChange={changeHandler}
-                displayEmpty
-                fullWidth
-                required
-                disabled
-                renderValue={(selected) =>
-                  selected?.toUpperCase() || <em>Select Appoinment Status</em>
-                }
-              >
-                {appoinmentStatus.map((option) => (
-                  <MenuItem key={option} value={option}>
-                    {option.toUpperCase()}
-                  </MenuItem>
-                ))}
-              </Select>
-            </Grid>
-            <Grid item xs={12} sm={6} md={4}>
-              <Select
-                name="appointmentDateTime"
-                value={data.appointmentDateTime}
-                onChange={changeHandler}
-                displayEmpty
-                fullWidth
-                required
+                required={!extendSlots}
                 renderValue={(selected) =>
                   selected?.toUpperCase() || <em>Select Appointment Date Time </em>
                 }
@@ -373,6 +342,12 @@ export default function MedicalNew() {
                   </MenuItem>
                 ))}
               </Select>
+            </Grid>
+            <Grid item xs={12} sm={6} md={4}>
+              <Checkbox color="secondary" value={extendSlots} onChange={slotsHandler} />
+              <Typography variant="caption">
+                In Case of Non Workings or Slots Limit Reached, Check this Box.
+              </Typography>
             </Grid>
 
             {/* Medical Information Section */}

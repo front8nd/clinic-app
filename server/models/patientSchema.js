@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const PatientSchema = new mongoose.Schema({
   // Personal Information
-  patientId: { type: String, unique: true, required: true }, // Unique patient identifier
+  patientId: { type: String, unique: true, required: true },
   name: { type: String, required: true },
   birthYear: { type: Number, required: true },
   gender: { type: String, enum: ["male", "female"], required: true },

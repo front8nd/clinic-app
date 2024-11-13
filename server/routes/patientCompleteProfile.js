@@ -20,15 +20,17 @@ router.get(
       }
       // Retrieve all appointments associated with the patient using the unique patientId
       const appointments = await Appointment.find({ patientId }).sort({
-        visitNumber: -1,
+        appointmentNumber: -1,
       });
 
       // Retrieve all visits associated with the patient using the unique patientId
-      const visits = await Visit.find({ patientId });
+      const visits = await Visit.find({ patientId }).sort({
+        appointmentNumber: -1,
+      });
 
       // Retrieve all medical information associated with the patient
       const medicalInfo = await PatientMedicalInfo.find({ patientId }).sort({
-        visitNumber: -1,
+        appointmentNumber: -1,
       });
 
       // Return the patient profile, visits, and medical info

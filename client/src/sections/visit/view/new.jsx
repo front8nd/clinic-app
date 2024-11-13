@@ -34,7 +34,6 @@ export default function VisitNew() {
   const { userData } = useSelector((state) => state.auth);
 
   const [data, setData] = useState({
-    visitNumber: '',
     visitType: 'initial',
     primaryDiagnosis: '',
     secondaryDiagnosis: '',

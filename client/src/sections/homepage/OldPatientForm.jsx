@@ -26,7 +26,7 @@ function OldPatientForm() {
     patientId: null,
 
     // Appointment
-    appointmentDateTime: '',
+    appointmentTime: '',
     type: 'online',
     status: 'scheduled',
   });
@@ -39,7 +39,7 @@ function OldPatientForm() {
     e.preventDefault();
 
     const appointmentInfo = {
-      appointmentDateTime: data?.appointmentDateTime,
+      appointmentTime: data?.appointmentTime,
       type: data?.type,
       status: data?.status,
     };
@@ -83,8 +83,8 @@ function OldPatientForm() {
       />
       <FormControl fullWidth>
         <Select
-          name="appointmentDateTime"
-          value={data.appointmentDateTime}
+          name="appointmentTime"
+          value={data.appointmentTime}
           onChange={changeHandler}
           displayEmpty
           fullWidth

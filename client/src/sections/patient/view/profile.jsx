@@ -236,8 +236,8 @@ export default function Profile() {
                   <Typography variant="subtitle1" sx={{ mb: 1 }}>
                     <strong style={{ color: '#4a4a4a', fontWeight: 'bold' }}>Assisted By:</strong>{' '}
                     <span style={{ color: '#4f4f4f', fontWeight: 'normal' }}>
-                      {patientProfile?.patient?.assistedBy.name} (
-                      {patientProfile?.patient?.assistedBy.role.toUpperCase()})
+                      {patientProfile?.patient?.assistedBy?.name} (
+                      {patientProfile?.patient?.assistedBy?.role?.toUpperCase() || 'None'})
                     </span>
                   </Typography>
                   <Typography variant="subtitle1" sx={{ mb: 1 }}>
@@ -262,7 +262,7 @@ export default function Profile() {
           {/* Loop through medicalInfo and visit records */}
           {patientProfile.medicalInfo && patientProfile.medicalInfo.length > 0 ? (
             patientProfile.medicalInfo.map((info) => {
-              const correspondingVisit = getVisitByVisitNumber(info.visitNumber);
+              const correspondingVisit = getVisitByVisitNumber(info.appointmentNumber);
 
               return (
                 <Card
@@ -300,7 +300,7 @@ export default function Profile() {
                             borderRadius: '4px',
                           }}
                         >
-                          Medical Report #{info.visitNumber}
+                          Medical Report #{info.appointmentNumber}
                         </Typography>
                         <Divider sx={{ marginBottom: 2 }} />
                         <Typography variant="subtitle1" sx={{ marginBottom: 1 }}>
@@ -512,16 +512,18 @@ export default function Profile() {
                         </Grid>
                       </Grid>
                     ) : (
-                      <Grid item xs={12}>
-                        <Typography
-                          variant="subtitle1"
-                          color="textSecondary"
-                          align="center"
-                          sx={{ marginTop: 2 }}
-                        >
-                          No Visit Record found for this Medical Report.
+                      <Card
+                        sx={{
+                          padding: 3,
+                          marginTop: 3,
+                          backgroundColor: theme.palette.warning.light,
+                          width: '100%',
+                        }}
+                      >
+                        <Typography variant="subtitle1" color="InfoText" align="center">
+                          No Visit Record
                         </Typography>
-                      </Grid>
+                      </Card>
                     )}
                   </Grid>
                 </Card>

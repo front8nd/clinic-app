@@ -7,8 +7,8 @@ const patientMedicalInfoSchema = new mongoose.Schema({
     required: true,
   },
 
-  visitDate: { type: Date, default: Date.now, required: true },
-  visitNumber: { type: Number, required: true },
+  createdAt: { type: Date, default: Date.now, required: true },
+  appointmentNumber: { type: Number, required: true },
 
   assistedBy: {
     name: { type: String, required: true },

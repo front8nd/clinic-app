@@ -10,6 +10,7 @@ router.post(
 
   async (req, res) => {
     const { appointmentInfo, personalInfo } = req.body;
+
     // Start a session for the transaction
     const session = await mongoose.startSession();
     session.startTransaction();
@@ -29,7 +30,7 @@ router.post(
       }
 
       // Extract appointment info from request body
-      const { appointmentDateTime, type } = appointmentInfo;
+      const { appointmentTime, type } = appointmentInfo;
       const todayStart = new Date();
       todayStart.setHours(0, 0, 0, 0); // Start of the current day
       const todayEnd = new Date();
@@ -37,7 +38,7 @@ router.post(
 
       // Check if the slot is already booked on the current day
       const existingAppointment = await Appointment.findOne({
-        appointmentDateTime: appointmentDateTime.trim(),
+        appointmentTime: appointmentTime.trim(), // Ensure comparison is precise
         status: { $in: ["scheduled", "completed"] },
         createdAt: { $gte: todayStart, $lte: todayEnd },
       }).session(session);
@@ -52,16 +53,16 @@ router.post(
       // Create a new appointment for the patient
       const newAppointment = new Appointment({
         patientId,
-        appointmentDateTime: appointmentDateTime.trim(),
+        appointmentTime: appointmentTime.trim(),
         type,
         status: "scheduled",
-        visitNumber: 1,
+        appointmentNumber: 1,
       });
       const savedAppointment = await newAppointment.save({ session });
 
       // Create new patient data with the generated patient ID
       const newPatient = new Patient({
-        ...req.body.personalInfo,
+        personalInfo,
         patientId,
       });
       const savedPatient = await newPatient.save({ session });

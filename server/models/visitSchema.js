@@ -15,7 +15,9 @@ const VisitSchema = new mongoose.Schema({
   },
 
   // Visit details
-  visitNumber: { type: Number, required: true },
+  appointmentNumber: { type: Number, required: true },
+  createdAt: { type: Date, default: Date.now, required: true },
+
   visitType: {
     type: String,
     enum: ["initial", "follow-up", "emergency"],
@@ -90,8 +92,6 @@ const VisitSchema = new mongoose.Schema({
 
   // Additional notes
   notes: { type: String },
-
-  visitDate: { type: Date, default: Date.now, required: true },
 });
 
 // Create Visit model

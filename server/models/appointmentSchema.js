@@ -7,26 +7,22 @@ const AppointmentSchema = new mongoose.Schema({
     required: true,
   },
 
-  visitNumber: { type: Number, required: true },
+  appointmentNumber: { type: Number, required: true },
+  createdAt: { type: Date, default: Date.now, required: true },
 
-  appointmentDateTime: {
+  appointmentTime: {
     type: String,
     required: true,
   },
+
   type: {
     type: String,
     enum: ["online", "offline"],
-    default: "offline",
     required: true,
   },
   status: {
     type: String,
     enum: ["scheduled", "completed", "cancelled"],
-    default: "scheduled",
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
   },
 });
 

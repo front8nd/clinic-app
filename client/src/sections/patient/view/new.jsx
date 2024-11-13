@@ -7,6 +7,7 @@ import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import LoadingButton from '@mui/lab/LoadingButton';
 import {
+  Checkbox,
   CircularProgress,
   Grid,
   MenuItem,
@@ -21,6 +22,7 @@ import { useRouter } from '../../../routes/hooks';
 import { useSnackbar } from '../../../components/snackbar/snackbar';
 import { newPatientProfile, reset } from '../../../redux/patientSlice';
 import { appointmentSlots } from '../../../redux/appointmentSlice';
+import formatTime12Hour from '../../../utils/12HoursFormater';
 
 export default function PatientNew() {
   const router = useRouter();
@@ -57,7 +59,7 @@ export default function PatientNew() {
     chronicConditions: '',
 
     // Appointment
-    appointmentDateTime: '',
+    appointmentTime: '',
     type: 'offline',
     status: 'scheduled',
   });
@@ -130,6 +132,12 @@ export default function PatientNew() {
     }
   }, [discounted, feesType, feeOptions.full]);
 
+  const [extendSlots, setExtentSlots] = useState(false);
+
+  const slotsHandler = () => {
+    setExtentSlots((prev) => !prev);
+  };
+
   const changeHandler = (e) => {
     setData((prevData) => ({ ...prevData, [e.target.name]: e.target.value }));
   };
@@ -177,7 +185,7 @@ export default function PatientNew() {
     };
 
     const appointmentInfo = {
-      appointmentDateTime: data?.appointmentDateTime,
+      appointmentTime: extendSlots ? formatTime12Hour() : data?.appointmentTime,
       type: data?.type,
       status: data?.status,
     };
@@ -194,7 +202,6 @@ export default function PatientNew() {
   useEffect(() => {
     dispatch(appointmentSlots());
   }, [dispatch]);
-  console.log(todayAppointments);
 
   useEffect(() => {
     if (isSuccess) {
@@ -353,52 +360,12 @@ export default function PatientNew() {
 
             <Grid item xs={12} sm={6} md={4}>
               <Select
-                name="type"
-                value={data.type}
+                name="appointmentTime"
+                value={data.appointmentTime}
                 onChange={changeHandler}
                 displayEmpty
                 fullWidth
-                required
-                disabled
-                renderValue={(selected) =>
-                  selected?.toUpperCase() || <em>Select Appoinment Type</em>
-                }
-              >
-                {appointmentType.map((option) => (
-                  <MenuItem key={option} value={option}>
-                    {option.toUpperCase()}
-                  </MenuItem>
-                ))}
-              </Select>
-            </Grid>
-            <Grid item xs={12} sm={6} md={4}>
-              <Select
-                name="status"
-                value={data.status}
-                onChange={changeHandler}
-                displayEmpty
-                fullWidth
-                required
-                disabled
-                renderValue={(selected) =>
-                  selected?.toUpperCase() || <em>Select Appoinment Status</em>
-                }
-              >
-                {appoinmentStatus.map((option) => (
-                  <MenuItem key={option} value={option}>
-                    {option.toUpperCase()}
-                  </MenuItem>
-                ))}
-              </Select>
-            </Grid>
-            <Grid item xs={12} sm={6} md={4}>
-              <Select
-                name="appointmentDateTime"
-                value={data.appointmentDateTime}
-                onChange={changeHandler}
-                displayEmpty
-                fullWidth
-                required
+                required={!extendSlots}
                 renderValue={(selected) =>
                   selected?.toUpperCase() || <em>Select Appointment Date Time </em>
                 }
@@ -425,6 +392,13 @@ export default function PatientNew() {
                   </MenuItem>
                 ))}
               </Select>
+            </Grid>
+
+            <Grid item xs={12} sm={6} md={4}>
+              <Checkbox color="secondary" value={extendSlots} onChange={slotsHandler} />
+              <Typography variant="caption">
+                In Case of Non Workings or Slots Limit Reached, Check this Box.
+              </Typography>
             </Grid>
 
             {/* Medical Information Section */}
@@ -544,7 +518,7 @@ export default function PatientNew() {
             <Grid item xs={12} sm={6} md={4}>
               <TextField
                 name="chronicConditions"
-                label="chronic Conditions"
+                label="Chronic Conditions"
                 value={data.chronicConditions}
                 onChange={changeHandler}
                 fullWidth
