@@ -13,10 +13,6 @@ function AppointmentView() {
   const handleTabChange = (event, newValue) => {
     setSelectedTab(newValue);
   };
-  const router = useRouter();
-  useEffect(() => {
-    router.push('/users');
-  }, [router]);
 
   // Minimal animation for a professional, calm effect
   const animationConfig = {

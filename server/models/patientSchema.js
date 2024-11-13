@@ -10,13 +10,13 @@ const PatientSchema = new mongoose.Schema({
   address: { type: String, required: true },
 
   // Additional Information
-  allergies: { type: String, required: true },
-  chronicConditions: { type: String, required: true },
+  allergies: { type: String },
+  chronicConditions: { type: String },
   assistedBy: {
-    name: { type: String, required: true },
-    email: { type: String, required: true },
-    role: { type: String, required: true },
-    id: { type: String, required: true },
+    name: { type: String },
+    email: { type: String },
+    role: { type: String },
+    id: { type: String },
   },
 
   createdAt: { type: Date, default: Date.now, required: true },

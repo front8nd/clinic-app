@@ -39,7 +39,7 @@ const medicalRecordSlice = createSlice({
   name: 'medicalRecord',
   initialState,
   reducers: {
-    resetErrors(state) {
+    reset(state) {
       state.error = null;
       state.isSuccess = null;
     },
@@ -64,6 +64,6 @@ const medicalRecordSlice = createSlice({
 });
 
 // Export logout action for use in components
-export const { resetErrors } = medicalRecordSlice.actions;
+export const { reset } = medicalRecordSlice.actions;
 
 export default medicalRecordSlice.reducer;

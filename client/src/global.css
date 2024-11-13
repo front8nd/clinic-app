@@ -65,7 +65,7 @@ input[type='number']::-webkit-inner-spin-button {
 .custom-message::before {
   content: 'Need Help? Contact us At WhatsApp';
   position: fixed;
-  bottom: 45px;
+  bottom: 6rem;
   right: 100px;
   color: white;
   font-size: 14px;
@@ -74,4 +74,19 @@ input[type='number']::-webkit-inner-spin-button {
   background-color: #25d366;
   padding: 5px 10px;
   border-radius: 5px;
+  z-index: 999999;
+}
+
+.styles-module_whatsappButton__tVits {
+  bottom: 5rem !important;
+}
+@media (max-width: 568px) {
+  .custom-message::before {
+    font-size: 12px;
+    bottom: 5rem;
+    right: 100px;
+  }
+  .styles-module_whatsappButton__tVits {
+    bottom: 4rem !important;
+  }
 }

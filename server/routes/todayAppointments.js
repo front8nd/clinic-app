@@ -5,7 +5,7 @@ const authMiddleware = require("../middleware/auth");
 const generateTimeSlots = require("../utils/slots");
 
 // API to get today's appointment slots and availability
-router.get("/today-appointments", authMiddleware, async (req, res) => {
+router.get("/today-appointments", async (req, res) => {
   try {
     // Get today's date range (start and end of the current day)
     const todayStart = new Date();
@@ -32,9 +32,6 @@ router.get("/today-appointments", authMiddleware, async (req, res) => {
       time: slot,
       available: !bookedSlots.has(slot), // If the slot is in the bookedSlots set, mark it as unavailable
     }));
-
-    // Log the slots with their availability status for verification
-    console.log("All slots with availability status:", slotsWithAvailability);
 
     res.status(200).json({
       date: new Date().toLocaleDateString(),

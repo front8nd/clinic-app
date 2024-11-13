@@ -20,7 +20,7 @@ import { DashboardContent } from '../../../layouts/dashboard/index';
 import { Iconify } from '../../../components/iconify';
 import { useRouter } from '../../../routes/hooks';
 import { useSnackbar } from '../../../components/snackbar/snackbar';
-import { newPatientMedicalInfo, resetErrors } from '../../../redux/medicalRecordSlice';
+import { newPatientMedicalInfo, reset } from '../../../redux/medicalRecordSlice';
 import { appointmentSlots } from '../../../redux/appointmentSlice';
 
 export default function MedicalNew() {
@@ -213,7 +213,7 @@ export default function MedicalNew() {
       openSnackbar(`${error?.message || error?.error || error}`, 'error');
     }
     return () => {
-      dispatch(resetErrors());
+      dispatch(reset());
     };
   }, [isSuccess, error, router, openSnackbar, dispatch]);
 
