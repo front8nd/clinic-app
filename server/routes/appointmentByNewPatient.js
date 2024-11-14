@@ -36,6 +36,7 @@ router.post("/appointmentByNewPatient", async (req, res) => {
     // Extract and validate appointment info
     const { appointmentTime, type } = appointmentInfo;
     const sanitizedAppointmentTime = appointmentTime.trim();
+
     const todayStart = new Date();
     todayStart.setHours(0, 0, 0, 0);
     const todayEnd = new Date();
@@ -45,7 +46,7 @@ router.post("/appointmentByNewPatient", async (req, res) => {
     const existingAppointment = await Appointment.findOne({
       appointmentTime: sanitizedAppointmentTime,
       status: { $in: ["scheduled", "completed"] },
-      appointmentTime: { $gte: todayStart, $lte: todayEnd },
+      createdAt: { $gte: todayStart, $lte: todayEnd },
     }).session(session);
 
     if (existingAppointment) {
