@@ -25,6 +25,7 @@ import { newPatientMedicalInfo, reset } from '../../../redux/medicalRecordSlice'
 import { appointmentSlots } from '../../../redux/appointmentSlice';
 import formatTime12Hour from '../../../utils/12HoursFormater';
 import { isWithinWorkingHours } from '../../../utils/workingHoursChecker';
+import { today } from '../../../utils/format-time';
 
 export default function MedicalNew() {
   const router = useRouter();
@@ -161,14 +162,33 @@ export default function MedicalNew() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [patientProfile, discounted, feeOptions.full]);
 
+  const changeHandler = (e) => {
+    setData((prevData) => ({ ...prevData, [e.target.name]: e.target.value }));
+  };
+
   const [extendSlots, setExtentSlots] = useState(false);
   const slotsHandler = () => {
     setExtentSlots((prev) => !prev);
   };
 
-  const changeHandler = (e) => {
-    setData((prevData) => ({ ...prevData, [e.target.name]: e.target.value }));
-  };
+  // in case of online patient, REMOVE the new appointment object
+  const [isOnlinePatient, setIsOnlinePatient] = useState(false);
+
+  // get appointment full date
+  const date = new Date(patientProfile?.appointments[0]?.createdAt);
+
+  // Extract only the date part (YYYY-MM-DD)
+  const formattedDate = date?.toISOString().split('T')[0];
+
+  useEffect(() => {
+    if (
+      patientProfile &&
+      patientProfile?.appointments[0]?.type === 'online' &&
+      patientProfile?.appointments[0]?.status === 'scheduled'
+    ) {
+      setIsOnlinePatient(true);
+    }
+  }, [patientProfile]);
 
   const handleClick = async (e) => {
     e.preventDefault();
@@ -204,7 +224,8 @@ export default function MedicalNew() {
     const additionalData = {
       medicalInfo,
       patientId,
-      appointmentInfo,
+      ...(isOnlinePatient === false && { appointmentInfo }),
+      ...(isOnlinePatient === true && { isOnlinePatient }),
     };
     console.log(additionalData);
     await dispatch(newPatientMedicalInfo(additionalData));
@@ -225,7 +246,7 @@ export default function MedicalNew() {
     };
   }, [isSuccess, error, router, openSnackbar, dispatch]);
 
-  console.log(extendSlots);
+  console.log(patientProfile);
   return (
     <DashboardContent>
       <Box display="flex" alignItems="center" mb={5}>
@@ -308,47 +329,89 @@ export default function MedicalNew() {
               </Typography>
             </Grid>
 
-            <Grid item xs={12} sm={6} md={4}>
-              <Select
-                name="appointmentTime"
-                value={data.appointmentTime}
-                onChange={changeHandler}
-                displayEmpty
-                fullWidth
-                required={!extendSlots}
-                renderValue={(selected) =>
-                  selected?.toUpperCase() || <em>Select Appointment Date Time </em>
-                }
-              >
-                {todayAppointments?.slots.map((option) => (
-                  <MenuItem
-                    key={option?.time}
-                    value={option?.time}
-                    sx={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                    }}
+            {isOnlinePatient === false ? (
+              <>
+                <Grid item xs={12} sm={6} md={4}>
+                  <Select
+                    name="appointmentTime"
+                    value={data.appointmentTime}
+                    onChange={changeHandler}
+                    displayEmpty
+                    fullWidth
+                    required={!extendSlots}
+                    renderValue={(selected) =>
+                      selected?.toUpperCase() || <em>Select Appointment Date Time </em>
+                    }
                   >
-                    <Typography
-                      sx={{
-                        fontWeight: 'bold',
+                    {todayAppointments?.slots.map((option) => (
+                      <MenuItem
+                        key={option?.time}
+                        value={option?.time}
+                        sx={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                        }}
+                      >
+                        <Typography
+                          sx={{
+                            fontWeight: 'bold',
+                          }}
+                        >
+                          {option?.time}
+                        </Typography>
+                        <Typography color={option?.available === true ? 'green' : 'red'}>
+                          {option?.available === true ? 'Available' : 'Booked'}
+                        </Typography>
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </Grid>
+                <Grid item xs={12} sm={6} md={4}>
+                  <Checkbox
+                    inputProps={{ 'aria-label': 'controlled' }}
+                    color="secondary"
+                    value={extendSlots}
+                    onChange={slotsHandler}
+                  />
+                  <Typography variant="caption">
+                    In Case of Non Working Hours or Slots Limit Reached, Check this Box.
+                  </Typography>
+                  {patientProfile &&
+                  patientProfile?.appointments[0]?.type === 'online' &&
+                  patientProfile?.appointments[0]?.status === 'scheduled' ? (
+                    <Button
+                      color="warning"
+                      onClick={() => {
+                        setIsOnlinePatient(true);
                       }}
                     >
-                      {option?.time}
-                    </Typography>
-                    <Typography color={option?.available === true ? 'green' : 'red'}>
-                      {option?.available === true ? 'Available' : 'Booked'}
-                    </Typography>
-                  </MenuItem>
-                ))}
-              </Select>
-            </Grid>
-            <Grid item xs={12} sm={6} md={4}>
-              <Checkbox color="secondary" value={extendSlots} onChange={slotsHandler} />
-              <Typography variant="caption">
-                In Case of Non Workings or Slots Limit Reached, Check this Box.
-              </Typography>
-            </Grid>
+                      Re-Consider old Appointment?
+                    </Button>
+                  ) : (
+                    ''
+                  )}
+                </Grid>
+              </>
+            ) : (
+              <>
+                <Grid item xs={12} sm={6} md={6}>
+                  <Typography variant="body1" color="green" gutterBottom>
+                    · An Appointment was Already Booked
+                  </Typography>
+                  <Typography variant="body1" gutterBottom>
+                    · Time: {patientProfile?.appointments[0]?.appointmentTime} - {formattedDate}
+                  </Typography>
+                  <Button
+                    color="error"
+                    onClick={() => {
+                      setIsOnlinePatient(false);
+                    }}
+                  >
+                    Cancel This Appointment?
+                  </Button>
+                </Grid>
+              </>
+            )}
 
             {/* Medical Information Section */}
             <Grid item xs={12}>
