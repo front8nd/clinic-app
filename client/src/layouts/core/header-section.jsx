@@ -1,5 +1,6 @@
 import Box from '@mui/material/Box';
 import AppBar from '@mui/material/AppBar';
+import { Button, Typography } from '@mui/material';
 import Toolbar from '@mui/material/Toolbar';
 import Container from '@mui/material/Container';
 import { useTheme } from '@mui/material/styles';
@@ -7,6 +8,7 @@ import { useTheme } from '@mui/material/styles';
 import { bgBlur, varAlpha } from '../../theme/styles';
 
 import { layoutClasses } from '../classes';
+import { Iconify } from '../../components/iconify';
 
 // ----------------------------------------------------------------------
 
@@ -63,11 +65,23 @@ export function HeaderSection({ sx, slots, slotProps, layoutQuery = 'md', ...oth
           }}
         >
           {slots?.leftArea}
-
+          <Button
+            sx={{
+              color: 'black',
+              fontSize: '1.2rem',
+            }}
+          >
+            <Iconify
+              icon="fxemoji:hospital"
+              style={{
+                marginRight: '10px',
+              }}
+            />
+            Al Farooq Dar-us Shifa
+          </Button>
           <Box sx={{ display: 'flex', flex: '1 1 auto', justifyContent: 'center' }}>
             {slots?.centerArea}
           </Box>
-
           {slots?.rightArea}
         </Container>
       </Toolbar>

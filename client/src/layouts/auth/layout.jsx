@@ -38,17 +38,17 @@ export function AuthLayout({ sx, children, header }) {
                 This is an info Alert.
               </Alert>
             ),
-            leftArea: <Logo />,
-            rightArea: (
-              <Link
-                component={RouterLink}
-                href="#"
-                color="inherit"
-                sx={{ typography: 'subtitle2' }}
-              >
-                Need help?
-              </Link>
-            ),
+            // leftArea: <Logo />,
+            // rightArea: (
+            //   <Link
+            //     component={RouterLink}
+            //     href="#"
+            //     color="inherit"
+            //     sx={{ typography: 'subtitle2' }}
+            //   >
+            //     Need help?
+            //   </Link>
+            // ),
           }}
         />
       }

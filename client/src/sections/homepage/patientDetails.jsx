@@ -115,7 +115,9 @@ export default function PatientDetails({ appointmentData }) {
           </DialogContentText>
         </DialogContent>
       </div>
-      <Button onClick={takeScreenshot}>Download</Button>
+      <Button variant="contained" onClick={takeScreenshot}>
+        Download
+      </Button>
     </Dialog>
   );
 }

@@ -86,7 +86,7 @@ export function NavContent({ data, slots, workspaces, sx }) {
 
   return (
     <>
-      <Logo />
+      {/* <Logo /> */}
 
       {slots?.topArea}
 

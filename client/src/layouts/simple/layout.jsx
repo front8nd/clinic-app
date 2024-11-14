@@ -30,17 +30,17 @@ export function SimpleLayout({ sx, children, header, content }) {
                 This is an info Alert.
               </Alert>
             ),
-            leftArea: <Logo />,
-            rightArea: (
-              <Link
-                href="#"
-                component={RouterLink}
-                color="inherit"
-                sx={{ typography: 'subtitle2' }}
-              >
-                Need help?
-              </Link>
-            ),
+            // leftArea: <Logo />,
+            // rightArea: (
+            //   <Link
+            //     href="#"
+            //     component={RouterLink}
+            //     color="inherit"
+            //     sx={{ typography: 'subtitle2' }}
+            //   >
+            //     Need help?
+            //   </Link>
+            // ),
           }}
         />
       }

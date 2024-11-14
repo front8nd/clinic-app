@@ -13,8 +13,6 @@ router.post("/appointmentByNewPatient", async (req, res) => {
     return res.status(400).json({ message: "Missing required information." });
   }
 
-  console.log(personalInfo);
-
   // Start a session for the transaction
   const session = await mongoose.startSession();
   session.startTransaction();
