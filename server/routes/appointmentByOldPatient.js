@@ -2,8 +2,6 @@ const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
 const Patient = require("../models/patientSchema");
-const PatientMedicalInfo = require("../models/patientMedicalInfoSchema");
-const authMiddleware = require("../middleware/auth");
 const Appointment = require("../models/appointmentSchema");
 
 router.post(
@@ -31,6 +29,12 @@ router.post(
         ? lastAppointment.appointmentNumber + 1
         : 1;
 
+      // Check last appointment to cancel it if its status is scheduled
+      if (lastAppointment && lastAppointment.status === "scheduled") {
+        lastAppointment.status = "cancelled";
+        await lastAppointment.save({ session });
+      }
+
       // Extract appointment info from request body
       const { appointmentTime, type } = appointmentInfo;
       const todayStart = new Date();
@@ -55,7 +59,7 @@ router.post(
       // Create a new appointment for the patient
       const newAppointment = new Appointment({
         patientId,
-        appointmentDateTime: appointmentDateTime.trim(),
+        appointmentTime: appointmentTime.trim(),
         type,
         status: "scheduled",
         appointmentNumber,

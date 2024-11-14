@@ -107,8 +107,8 @@ export default function PatientDetails({ appointmentData }) {
               )}
               {appointment && (
                 <Typography variant="body1" color="inherit" align="center">
-                  Your appointment is scheduled for today at {appointment.appointmentDateTime}.
-                  Please be on time for the best experience.
+                  Your appointment is scheduled for today at {appointment.appointmentTime}. Please
+                  be on time for the best experience.
                 </Typography>
               )}
             </Stack>

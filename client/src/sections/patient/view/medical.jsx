@@ -142,8 +142,8 @@ export default function MedicalNew() {
 
   // Check if visit date is within 5 days of today
   useEffect(() => {
-    if (patientProfile && patientProfile.medicalInfo[0].visitDate) {
-      const visitDate = new Date(patientProfile.medicalInfo[0].visitDate);
+    if (patientProfile && patientProfile?.medicalInfo[0]?.visitDate) {
+      const visitDate = new Date(patientProfile?.medicalInfo[0]?.visitDate);
       const differenceInDays = (dateToday - visitDate) / (1000 * 60 * 60 * 24);
 
       if (differenceInDays >= 0 && differenceInDays <= 5) {

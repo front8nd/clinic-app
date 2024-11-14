@@ -1,6 +1,7 @@
 const express = require("express");
 const Visit = require("../models/visitSchema");
 const Patient = require("../models/patientSchema");
+const MedicalInfo = require("../models/patientMedicalInfoSchema");
 const Appointment = require("../models/appointmentSchema");
 const authMiddleware = require("../middleware/auth");
 const mongoose = require("mongoose");
@@ -18,6 +19,7 @@ router.post("/newPatientVisit/:patientId", authMiddleware, async (req, res) => {
   try {
     // Validate that the patient exists using patientId as a String
     const patient = await Patient.findOne({ patientId }).session(session);
+
     if (!patient) {
       return res.status(404).json({ message: "Patient not found" });
     }
@@ -30,11 +32,24 @@ router.post("/newPatientVisit/:patientId", authMiddleware, async (req, res) => {
       ? lastAppointment.appointmentNumber
       : 1;
 
-    // Find the last visit record for the patient to check the appointment number
+    // Find the last visit record for the patient to check the appointment number in case if the doctor creates mulitple visit record on same appointment number
     const lastVisit = await Visit.findOne({ patientId })
       .sort({ appointmentNumber: -1 })
       .session(session);
+
     const lastVisitNumber = lastVisit ? lastVisit.appointmentNumber : null;
+
+    // Check if there is a corresponding MedicalInfo for the appointmentNumber
+    const medicalInfo = await MedicalInfo.findOne({
+      patientId,
+      appointmentNumber,
+    }).session(session);
+
+    if (!medicalInfo) {
+      return res.status(400).json({
+        message: `No Medical Info exists for this appointment number (${appointmentNumber}). Medical Info is required before creating a visit.`,
+      });
+    }
 
     // If the appointment number of the last visit matches the appointment number, skip creating a new visit
     if (appointmentNumber === lastVisitNumber) {

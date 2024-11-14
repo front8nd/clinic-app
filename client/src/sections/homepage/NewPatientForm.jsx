@@ -54,7 +54,6 @@ function NewPatientForm() {
       gender: data.gender,
       contact: data.contact,
       address: data.address,
-      patientId: null,
       allergies: data.allergies,
       chronicConditions: data.chronicConditions,
     };

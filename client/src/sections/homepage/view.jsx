@@ -115,35 +115,34 @@ function AppointmentView() {
                 </div>
               )} */}
             </Box>
-            {!isWorkingHours && (
-              <>
-                {/* Tab navigation */}
-                <Box sx={{ borderBottom: 1, borderColor: 'divider', width: '100%' }}>
-                  <Tabs
-                    value={selectedTab}
-                    onChange={handleTabChange}
-                    centered
-                    indicatorColor="primary"
-                    textColor="primary"
-                  >
-                    <Tab label="New Patient" />
-                    <Tab label="Old Patient" />
-                  </Tabs>
-                </Box>
-                {/* Form rendering with smooth animations */}
-                <AnimatePresence mode="wait">
-                  {selectedTab === 0 ? (
-                    <motion.div key="new-patient" {...animationConfig} className="w-full mt-4">
-                      <NewPatientForm />
-                    </motion.div>
-                  ) : (
-                    <motion.div key="old-patient" {...animationConfig} className="w-full mt-4">
-                      <OldPatientForm />
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </>
-            )}
+
+            <>
+              {/* Tab navigation */}
+              <Box sx={{ borderBottom: 1, borderColor: 'divider', width: '100%' }}>
+                <Tabs
+                  value={selectedTab}
+                  onChange={handleTabChange}
+                  centered
+                  indicatorColor="primary"
+                  textColor="primary"
+                >
+                  <Tab label="New Patient" />
+                  <Tab label="Old Patient" />
+                </Tabs>
+              </Box>
+              {/* Form rendering with smooth animations */}
+              <AnimatePresence mode="wait">
+                {selectedTab === 0 ? (
+                  <motion.div key="new-patient" {...animationConfig} className="w-full mt-4">
+                    <NewPatientForm />
+                  </motion.div>
+                ) : (
+                  <motion.div key="old-patient" {...animationConfig} className="w-full mt-4">
+                    <OldPatientForm />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </>
           </CardContent>
         </Card>
       </div>
