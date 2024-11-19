@@ -27,6 +27,7 @@ import formatTime12Hour from '../../../utils/12HoursFormater';
 import { isWithinWorkingHours } from '../../../utils/workingHoursChecker';
 import { today } from '../../../utils/format-time';
 import { configData } from '../../../redux/configSlice';
+import getCurrentHalfHour from '../../../utils/getCurrentHalfHour';
 
 export default function MedicalNew() {
   const theme = useTheme();
@@ -215,10 +216,14 @@ export default function MedicalNew() {
       fees: feesData,
     };
 
+    const currentHalfHour = getCurrentHalfHour();
+
     const appointmentInfo = {
-      appointmentTime: extendSlots ? formatTime12Hour() : data?.appointmentTime,
+      appointmentTime: extendSlots ? currentHalfHour : data?.appointmentTime,
       type: data?.type,
       status: data?.status,
+      ...(extendSlots === false && { isSpecialSlot: false }),
+      ...(extendSlots === true && { isSpecialSlot: true }),
     };
 
     const additionalData = {

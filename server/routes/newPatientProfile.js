@@ -30,42 +30,45 @@ router.post("/newPatientProfile", authMiddleware, async (req, res) => {
     }
 
     // Extract appointment info from request body
-    const { appointmentTime, type } = req.body.appointmentInfo;
+    const { appointmentTime, type, isSpecialSlot } = req.body.appointmentInfo;
 
-    // Fetch today's slots dynamically
-    const appointmentConfig = await Config.findOne({});
-    if (!appointmentConfig) {
-      throw new Error("Appointment configuration not found.");
-    }
-    const allSlots = generateTimeSlots(appointmentConfig);
+    // Incase of extending slots
+    if (!isSpecialSlot) {
+      // Fetch today's slots dynamically
+      const appointmentConfig = await Config.findOne({});
+      if (!appointmentConfig) {
+        throw new Error("Appointment configuration not found.");
+      }
+      const allSlots = generateTimeSlots(appointmentConfig);
 
-    // Validate appointmentTime against the slots
-    const matchingSlot = allSlots.find(
-      (slot) => slot.timeRange === appointmentTime
-    );
+      // Validate appointmentTime against the slots
+      const matchingSlot = allSlots.find(
+        (slot) => slot.timeRange === appointmentTime
+      );
 
-    if (!matchingSlot) {
-      await session.abortTransaction();
-      return res.status(400).json({
-        message: "Invalid appointment time. Please select a valid slot.",
-      });
-    }
+      if (!matchingSlot) {
+        await session.abortTransaction();
+        return res.status(400).json({
+          message: "Invalid appointment time. Please select a valid slot.",
+        });
+      }
 
-    // Check if the slot is already fully booked
-    const existingAppointments = await Appointment.countDocuments({
-      appointmentTime,
-      status: { $in: ["scheduled", "completed"] },
-      createdAt: {
-        $gte: new Date().setHours(0, 0, 0, 0),
-        $lte: new Date().setHours(23, 59, 59, 999),
-      },
-    }).session(session);
+      // Check if the slot is already fully booked
+      const existingAppointments = await Appointment.countDocuments({
+        appointmentTime,
+        status: { $in: ["scheduled", "completed"] },
+        createdAt: {
+          $gte: new Date().setHours(0, 0, 0, 0),
+          $lte: new Date().setHours(23, 59, 59, 999),
+        },
+      }).session(session);
 
-    if (existingAppointments >= matchingSlot.maxSlots) {
-      await session.abortTransaction();
-      return res.status(409).json({
-        message: `The selected slot '${appointmentTime}' is fully booked. Please choose another time.`,
-      });
+      if (existingAppointments >= matchingSlot.maxSlots) {
+        await session.abortTransaction();
+        return res.status(409).json({
+          message: `The selected slot '${appointmentTime}' is fully booked. Please choose another time.`,
+        });
+      }
     }
 
     // Create a new appointment for the patient

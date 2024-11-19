@@ -24,6 +24,7 @@ import { newPatientProfile, reset } from '../../../redux/patientSlice';
 import { appointmentSlots } from '../../../redux/appointmentSlice';
 import formatTime12Hour from '../../../utils/12HoursFormater';
 import { configData } from '../../../redux/configSlice';
+import getCurrentHalfHour from '../../../utils/getCurrentHalfHour';
 
 export default function PatientNew() {
   const theme = useTheme();
@@ -77,6 +78,7 @@ export default function PatientNew() {
     amount: 0,
     discount: 0,
     final: 0,
+    visitedOn5D: false,
   });
   const [discounted, setDiscounted] = useState(0); // Discount amount entered by the user
 
@@ -192,10 +194,13 @@ export default function PatientNew() {
       fees: feesData,
     };
 
+    const currentHalfHour = getCurrentHalfHour();
     const appointmentInfo = {
-      appointmentTime: extendSlots ? formatTime12Hour() : data?.appointmentTime,
+      appointmentTime: extendSlots ? currentHalfHour : data?.appointmentTime,
       type: data?.type,
       status: data?.status,
+      ...(extendSlots === false && { isSpecialSlot: false }),
+      ...(extendSlots === true && { isSpecialSlot: true }),
     };
 
     const additionalData = {
