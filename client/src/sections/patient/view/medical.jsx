@@ -26,20 +26,21 @@ import { appointmentSlots } from '../../../redux/appointmentSlice';
 import formatTime12Hour from '../../../utils/12HoursFormater';
 import { isWithinWorkingHours } from '../../../utils/workingHoursChecker';
 import { today } from '../../../utils/format-time';
+import { configData } from '../../../redux/configSlice';
 
 export default function MedicalNew() {
+  const theme = useTheme();
   const router = useRouter();
+  const dispatch = useDispatch();
   const { patientId } = useParams();
   const { openSnackbar } = useSnackbar();
-  const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-  const dispatch = useDispatch();
-  const { loading, error, isSuccess } = useSelector((state) => state.medicalRecord);
+  const { userData } = useSelector((state) => state.auth);
+  const { configDetails } = useSelector((state) => state.config);
   const { patientProfile } = useSelector((state) => state.patientProfile);
   const { todayAppointments } = useSelector((state) => state.appointment);
-
-  const { userData } = useSelector((state) => state.auth);
+  const { loading, error, isSuccess } = useSelector((state) => state.medicalRecord);
 
   const [data, setData] = useState({
     // Medical Info
@@ -59,15 +60,10 @@ export default function MedicalNew() {
     status: 'scheduled',
   });
 
-  // Appoinment
-
-  const appointmentType = ['online', 'offline'];
-  const appoinmentStatus = ['scheduled', 'completed', 'cancelled'];
-
-  // Define fee options with string keys for compatibility
+  // Initialize fee options from config
   const feeOptions = {
-    full: 600,
-    discount: 600,
+    full: configDetails?.appointmentFees || 600, // Use config data or default to 600
+    discount: configDetails?.appointmentFees || 600,
   };
 
   // Initialize state variables for fee type and fees data
@@ -89,8 +85,8 @@ export default function MedicalNew() {
     const selectedFeeType = e.target.value;
     setFeesType(selectedFeeType); // Update selected fee type
 
-    // Calculate the 5-day discount if applicable
-    const visitDiscount = isWithin5Days ? 100 : 0;
+    // Calculate the 5-day discount if applicable (using config's `fifthDayDiscount`)
+    const visitDiscount = isWithin5Days ? configDetails?.fifthDayDiscount || 10 : 0; // Default to 10 if not in config
 
     // Determine the combined discount, ensuring it does not exceed the full fee
     const totalDiscount = Math.min(discounted + visitDiscount, feeOptions.full);
@@ -119,8 +115,9 @@ export default function MedicalNew() {
     let discountValue = parseInt(e.target.value, 10) || 0; // Convert input to integer
 
     // Ensure that the discount value plus the 5-day discount does not exceed the full fee
-    if (discountValue + (isWithin5Days ? 100 : 0) > feeOptions.full) {
-      discountValue = feeOptions.full - (isWithin5Days ? 100 : 0);
+    const visitDiscount = isWithin5Days ? configDetails?.fifthDayDiscount || 10 : 0; // Default to 10 if not in config
+    if (discountValue + visitDiscount > feeOptions.full) {
+      discountValue = feeOptions.full - visitDiscount;
     }
 
     setDiscounted(discountValue); // Update discounted amount
@@ -128,7 +125,7 @@ export default function MedicalNew() {
 
   // Update feesData when discount changes and discount option is selected
   useEffect(() => {
-    const visitDiscount = isWithin5Days ? 100 : 0; // Discount if within 5 days
+    const visitDiscount = isWithin5Days ? configDetails?.fifthDayDiscount || 10 : 0; // Default to 10 if not in config
 
     if (feesType === 'discount') {
       const totalDiscount = Math.min(discounted + visitDiscount, feeOptions.full);
@@ -139,20 +136,24 @@ export default function MedicalNew() {
         visitedOn5D: visitDiscount,
       }));
     }
-  }, [discounted, feesType, isWithin5Days, feeOptions.full]);
+  }, [discounted, feesType, isWithin5Days, feeOptions.full, configDetails]);
 
   // Check if visit date is within 5 days of today
+  console.log(patientProfile);
   useEffect(() => {
-    if (patientProfile && patientProfile?.medicalInfo[0]?.visitDate) {
-      const visitDate = new Date(patientProfile?.medicalInfo[0]?.visitDate);
+    if (patientProfile && patientProfile?.medicalInfo[0]?.createdAt) {
+      const visitDate = new Date(patientProfile?.medicalInfo[0]?.createdAt);
       const differenceInDays = (dateToday - visitDate) / (1000 * 60 * 60 * 24);
 
       if (differenceInDays >= 0 && differenceInDays <= 5) {
         setIsWithin5Days(true);
-        const totalDiscount = Math.min(discounted + 100, feeOptions.full);
+        const totalDiscount = Math.min(
+          discounted + (configDetails?.fifthDayDiscount || 10),
+          feeOptions.full
+        );
         setFeesData((prevData) => ({
           ...prevData,
-          visitedOn5D: 100,
+          visitedOn5D: configDetails?.fifthDayDiscount || 10,
           final: feeOptions.full - totalDiscount,
         }));
       } else {
@@ -160,7 +161,7 @@ export default function MedicalNew() {
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [patientProfile, discounted, feeOptions.full]);
+  }, [patientProfile, discounted, feeOptions.full, configDetails]);
 
   const changeHandler = (e) => {
     setData((prevData) => ({ ...prevData, [e.target.name]: e.target.value }));
@@ -176,9 +177,8 @@ export default function MedicalNew() {
 
   // get appointment full date
   const date = new Date(patientProfile?.appointments[0]?.createdAt);
-
   // Extract only the date part (YYYY-MM-DD)
-  const formattedDate = date?.toISOString().split('T')[0];
+  const formattedDate = date?.toISOString().split('T')[0] || Date.now();
 
   useEffect(() => {
     if (
@@ -236,6 +236,10 @@ export default function MedicalNew() {
   }, [dispatch]);
 
   useEffect(() => {
+    dispatch(configData());
+  }, [dispatch]);
+
+  useEffect(() => {
     if (isSuccess) {
       openSnackbar('Patient Medical Record Added Successfully', 'success');
     } else if (error?.message || error?.error || error) {
@@ -246,7 +250,7 @@ export default function MedicalNew() {
     };
   }, [isSuccess, error, router, openSnackbar, dispatch]);
 
-  console.log(patientProfile);
+  console.log(feesData);
   return (
     <DashboardContent>
       <Box display="flex" alignItems="center" mb={5}>
@@ -311,7 +315,7 @@ export default function MedicalNew() {
                   · Full Fees: Rs. {feesData.amount} Rs.
                 </Typography>
                 <Typography variant="caption" gutterBottom>
-                  · Visted Within 5 Day : - {feesData.visitedOn5D} Rs.
+                  · Visted Within 5 Day Discount : {feesData.visitedOn5D} Rs.
                 </Typography>
                 <Typography variant="caption" gutterBottom>
                   · Furthur Discount: {feesData.discount} Rs.
@@ -345,8 +349,8 @@ export default function MedicalNew() {
                   >
                     {todayAppointments?.slots.map((option) => (
                       <MenuItem
-                        key={option?.time}
-                        value={option?.time}
+                        key={option?.time?.timeRange}
+                        value={option?.time?.timeRange}
                         sx={{
                           display: 'flex',
                           justifyContent: 'space-between',
@@ -357,7 +361,7 @@ export default function MedicalNew() {
                             fontWeight: 'bold',
                           }}
                         >
-                          {option?.time}
+                          {option?.time?.timeRange}
                         </Typography>
                         <Typography color={option?.available === true ? 'green' : 'red'}>
                           {option?.available === true ? 'Available' : 'Booked'}

@@ -1,41 +1,48 @@
-// Define clinic hours and slots
-const clinicHours = [
-  { start: 10, end: 14 }, // 10:00 am to 2:00 pm
-  { start: 17, end: 21 }, // 5:00 pm to 9:00 pm
-];
-const slotsPerHour = 6; // Total slots per hour (3 online + 3 offline)
-
-// Helper function to format time in 12-hour format
-function formatTime12Hour(hour, minutes) {
-  const period = hour >= 12 ? "PM" : "AM";
-  const formattedHour = hour % 12 || 12; // Convert 0 to 12 for 12-hour format
-  return `${formattedHour}:${minutes} ${period}`;
-}
-
-// Function to generate time slots and filter out past times
-function generateTimeSlots() {
+function generateTimeSlots(appointmentConfig) {
   const slots = [];
   const now = new Date();
   const currentHour = now.getHours();
   const currentMinute = now.getMinutes();
 
-  clinicHours.forEach(({ start, end }) => {
-    for (let hour = start; hour < end; hour++) {
-      for (let i = 0; i < slotsPerHour; i++) {
-        const minutes = (i * 10).toString().padStart(2, "0"); // 6 slots per hour, every 10 minutes
+  const { morning, evening } = appointmentConfig.clinicHours;
 
-        // Check if the slot has passed
+  function formatTime12Hour(hour, minutes) {
+    const period = hour >= 12 ? "PM" : "AM";
+    const formattedHour = hour % 12 || 12;
+    return `${formattedHour}:${minutes.toString().padStart(2, "0")} ${period}`;
+  }
+
+  function generateSessionSlots(start, end) {
+    const sessionSlots = [];
+    for (let hour = start; hour < end; hour++) {
+      for (let half = 0; half < 2; half++) {
+        const startMinute = half * 30;
+        const endMinute = startMinute + 29;
+
         if (
           hour < currentHour ||
-          (hour === currentHour && parseInt(minutes) <= currentMinute)
+          (hour === currentHour && startMinute <= currentMinute)
         ) {
           continue; // Skip past slots
         }
 
-        slots.push(formatTime12Hour(hour, minutes));
+        const slotStart = formatTime12Hour(hour, startMinute);
+        const slotEnd = formatTime12Hour(hour, endMinute);
+
+        sessionSlots.push({
+          timeRange: `${slotStart} - ${slotEnd}`,
+          counter: 0,
+          maxSlots: appointmentConfig.maxSlots, // Use the config maxSlots
+        });
       }
     }
-  });
+    return sessionSlots;
+  }
+
+  const morningSlots = generateSessionSlots(morning.start, morning.end);
+  const eveningSlots = generateSessionSlots(evening.start, evening.end);
+
+  slots.push(...morningSlots, ...eveningSlots);
   return slots;
 }
 

@@ -1,40 +1,66 @@
 const express = require("express");
 const router = express.Router();
 const Appointment = require("../models/appointmentSchema");
+const Config = require("../models/configSchema");
 const generateTimeSlots = require("../utils/slots");
 
 // API to get today's appointment slots and availability
 router.get("/today-appointments", async (req, res) => {
   try {
-    // Get today's date range (start and end of the current day)
+    // Get today's date range
     const todayStart = new Date();
-    todayStart.setHours(0, 0, 0, 0); // Set to start of day
+    todayStart.setHours(0, 0, 0, 0);
     const todayEnd = new Date();
-    todayEnd.setHours(23, 59, 59, 999); // Set to end of day
+    todayEnd.setHours(23, 59, 59, 999);
 
-    // Query for today's appointments with status 'scheduled' or 'completed'
+    // Query for today's appointments
     const appointments = await Appointment.find({
-      createdAt: { $gte: todayStart, $lte: todayEnd }, // Check for today's date range
-      status: { $in: ["scheduled", "completed"] }, // Include both statuses
+      createdAt: { $gte: todayStart, $lte: todayEnd },
+      status: { $in: ["scheduled", "completed"] },
     }).select("appointmentTime");
 
+    // Get Appointment Config
+    const appointmentConfig = await Config.findOne({});
+    if (!appointmentConfig) {
+      return res
+        .status(500)
+        .json({ message: "Appointment configuration not found" });
+    }
+
     // Generate all possible slots for today
-    const allSlots = generateTimeSlots();
+    const allSlots = generateTimeSlots(appointmentConfig);
 
-    // Convert appointment times from the database into a set
-    const bookedSlots = new Set(
-      appointments.map((appt) => appt.appointmentTime.trim()) // Match exact time string
-    );
+    // Create a Map to track counters for each slot
+    const slotCounters = new Map();
 
-    // Mark slots as available or occupied
-    const slotsWithAvailability = allSlots.map((slot) => ({
-      time: slot,
-      available: !bookedSlots.has(slot), // If the slot is in the bookedSlots set, mark it as unavailable
-    }));
+    // Initialize the Map with all slot time ranges and default counter
+    allSlots.forEach((slot) => {
+      slotCounters.set(slot.timeRange, 0); // Default counter
+    });
+
+    // Increment counters in the Map based on appointments
+    appointments.forEach((appt) => {
+      const timeRange = appt.appointmentTime.trim();
+      if (slotCounters.has(timeRange)) {
+        slotCounters.set(timeRange, slotCounters.get(timeRange) + 1);
+      }
+    });
+
+    // Build the response with accurate counters
+    const slotsWithAvailability = allSlots.map((slot) => {
+      const currentCounter = slotCounters.get(slot.timeRange) || 0;
+      return {
+        time: {
+          ...slot,
+          counter: currentCounter, // Include the accurate counter
+        },
+        available: currentCounter < slot.maxSlots, // Availability based on counter
+      };
+    });
 
     res.status(200).json({
       date: new Date().toLocaleDateString(),
-      slots: slotsWithAvailability, // Return the slots with availability status
+      slots: slotsWithAvailability,
     });
   } catch (error) {
     console.error("Error generating today's appointments:", error);

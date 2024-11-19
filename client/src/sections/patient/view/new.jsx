@@ -23,20 +23,21 @@ import { useSnackbar } from '../../../components/snackbar/snackbar';
 import { newPatientProfile, reset } from '../../../redux/patientSlice';
 import { appointmentSlots } from '../../../redux/appointmentSlice';
 import formatTime12Hour from '../../../utils/12HoursFormater';
+import { configData } from '../../../redux/configSlice';
 
 export default function PatientNew() {
-  const router = useRouter();
-  const { openSnackbar } = useSnackbar();
   const theme = useTheme();
+  const router = useRouter();
+  const dispatch = useDispatch();
+  const { openSnackbar } = useSnackbar();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-  const dispatch = useDispatch();
+  const { userData } = useSelector((state) => state.auth);
+  const { configDetails } = useSelector((state) => state.config);
   const { loading, isSuccess, isFailed } = useSelector((state) => state.patient);
   const { todayAppointments } = useSelector((state) => state.appointment);
-  const { userData } = useSelector((state) => state.auth);
 
   const genderOptions = ['male', 'female'];
-
   const [data, setData] = useState({
     // Personal Information
     name: '',
@@ -64,11 +65,6 @@ export default function PatientNew() {
     status: 'scheduled',
   });
 
-  // Appoinment
-
-  const appointmentType = ['online', 'offline'];
-  const appoinmentStatus = ['scheduled', 'completed', 'cancelled'];
-
   // Define fee options with string keys for compatibility
   const feeOptions = {
     full: 600,
@@ -76,34 +72,45 @@ export default function PatientNew() {
   };
 
   // Initialize state variables for fee type and fees data
-  const [feesType, setFeesType] = useState(''); // full/discount
+  const [feesType, setFeesType] = useState('');
   const [feesData, setFeesData] = useState({
-    amount: 600,
+    amount: 0,
     discount: 0,
-    final: 600,
-    visitedOn5D: false,
+    final: 0,
   });
   const [discounted, setDiscounted] = useState(0); // Discount amount entered by the user
+
+  useEffect(() => {
+    if (configDetails?.Data) {
+      const fullFee = configDetails?.Data?.appointmentFees;
+      setFeesData({
+        amount: fullFee,
+        discount: 0,
+        final: fullFee,
+      });
+    }
+  }, [configDetails]);
 
   // Handle fees type selection
   const handleFeesType = (e) => {
     const selectedFeeType = e.target.value;
-    setFeesType(selectedFeeType); // Update selected fee type
+    setFeesType(selectedFeeType);
 
     if (selectedFeeType === 'full') {
+      // Reset to full fee when 'full' is selected
       setFeesData({
-        amount: feeOptions.full,
+        amount: configDetails?.Data?.appointmentFees,
         discount: 0,
-        final: feeOptions.full,
+        final: configDetails?.Data?.appointmentFees,
         visitedOn5D: false,
       });
     } else {
-      // When discount is selected, calculate based on discounted amount
+      // When discount is selected, apply the discount logic
       const discountAmount = discounted;
       setFeesData({
-        amount: feeOptions.full,
+        amount: configDetails?.Data?.appointmentFees,
         discount: discountAmount,
-        final: feeOptions.full - discountAmount,
+        final: (configDetails?.Data?.appointmentFees ?? 0) - discounted,
         visitedOn5D: false,
       });
     }
@@ -111,26 +118,27 @@ export default function PatientNew() {
 
   // Handle discount input change
   const handleFeesDiscount = (e) => {
-    let discountValue = parseInt(e.target.value, 10) || 0; // Convert input to integer
+    let discountValue = parseInt(e.target.value, 10) || 0;
 
     // Ensure discount does not exceed the full fee
-    if (discountValue > feeOptions.full) {
-      discountValue = feeOptions.full; // Set discount to maximum allowable value
+    if (discountValue > configDetails?.Data?.appointmentFees) {
+      discountValue = configDetails?.Data?.appointmentFees; // Set discount to maximum allowable value
     }
 
-    setDiscounted(discountValue); // Update discounted amount
+    setDiscounted(discountValue);
   };
 
-  // Update feesData when discount changes and discount option is selected
   useEffect(() => {
     if (feesType === 'discount') {
+      // Update the final fee whenever the discount changes
       setFeesData((prevData) => ({
         ...prevData,
         discount: discounted,
-        final: feeOptions.full - discounted,
+        final: (configDetails?.Data?.appointmentFees ?? 0) - discounted,
+        visitedOn5D: false,
       }));
     }
-  }, [discounted, feesType, feeOptions.full]);
+  }, [discounted, feesType, configDetails?.Data?.appointmentFees]);
 
   const [extendSlots, setExtentSlots] = useState(false);
 
@@ -204,6 +212,10 @@ export default function PatientNew() {
   }, [dispatch]);
 
   useEffect(() => {
+    dispatch(configData());
+  }, [dispatch]);
+
+  useEffect(() => {
     if (isSuccess) {
       openSnackbar('Patient Added Successfully', 'success');
     } else if (isFailed?.message || isFailed?.error || isFailed) {
@@ -213,6 +225,8 @@ export default function PatientNew() {
       dispatch(reset());
     };
   }, [isSuccess, isFailed, router, openSnackbar, dispatch]);
+
+  console.log(todayAppointments);
 
   return (
     <DashboardContent>
@@ -340,13 +354,13 @@ export default function PatientNew() {
             <Grid item xs={12} sm={6} md={4}>
               <Stack>
                 <Typography variant="caption" gutterBottom>
-                  - Full Fees: Rs. {feesData.amount}
+                  · Full Fees: Rs. {feesData.amount} Rs.
                 </Typography>
                 <Typography variant="caption" gutterBottom>
-                  - Discount: Rs. {feesData.discount}
+                  · Furthur Discount: {feesData.discount} Rs.
                 </Typography>
                 <Typography variant="caption" gutterBottom>
-                  - Final Amount: Rs. {feesData.final}
+                  · Final Amount: {feesData.final} Rs.
                 </Typography>
               </Stack>
             </Grid>
@@ -372,8 +386,8 @@ export default function PatientNew() {
               >
                 {todayAppointments?.slots.map((option) => (
                   <MenuItem
-                    key={option?.time}
-                    value={option?.time}
+                    key={option?.time?.timeRange}
+                    value={option?.time?.timeRange}
                     sx={{
                       display: 'flex',
                       justifyContent: 'space-between',
@@ -384,7 +398,7 @@ export default function PatientNew() {
                         fontWeight: 'bold',
                       }}
                     >
-                      {option?.time}
+                      {option?.time?.timeRange}
                     </Typography>
                     <Typography color={option?.available === true ? 'green' : 'red'}>
                       {option?.available === true ? 'Available' : 'Booked'}

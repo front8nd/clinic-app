@@ -37,4 +37,9 @@ export const navData = [
     path: '/visits',
     icon: icon('ic-visit'),
   },
+  {
+    title: 'Settings',
+    path: '/settings',
+    icon: icon('ic-settings'),
+  },
 ];

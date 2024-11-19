@@ -146,13 +146,14 @@ function NewPatientForm() {
           onChange={changeHandler}
           displayEmpty
           fullWidth
-          required
-          renderValue={(selected) => selected?.toUpperCase() || <em>Select Appointment Time </em>}
+          renderValue={(selected) =>
+            selected?.toUpperCase() || <em>Select Appointment Date Time </em>
+          }
         >
           {todayAppointments?.slots.map((option) => (
             <MenuItem
-              key={option?.time}
-              value={option?.time}
+              key={option?.time?.timeRange}
+              value={option?.time?.timeRange}
               sx={{
                 display: 'flex',
                 justifyContent: 'space-between',
@@ -163,7 +164,7 @@ function NewPatientForm() {
                   fontWeight: 'bold',
                 }}
               >
-                {option?.time}
+                {option?.time?.timeRange}
               </Typography>
               <Typography color={option?.available === true ? 'green' : 'red'}>
                 {option?.available === true ? 'Available' : 'Booked'}

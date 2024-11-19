@@ -33,6 +33,7 @@ export const NewMedicalRecord = lazy(() => import('../pages/patient/medical'));
 export const VisitPage = lazy(() => import('../pages/visit/view'));
 export const NewVisitPage = lazy(() => import('../pages/visit/new'));
 export const AppointmentsPage = lazy(() => import('../pages/appointment/view'));
+export const SettingsPage = lazy(() => import('../pages/config'));
 
 // ----------------------------------------------------------------------
 
@@ -131,6 +132,12 @@ export function Router() {
               allowedRoles={['admin', 'staff', 'doctor']}
               component={AppointmentsPage}
             />
+          ),
+        },
+        {
+          path: 'settings',
+          element: (
+            <ProtectedRoute allowedRoles={['admin', 'staff', 'doctor']} component={SettingsPage} />
           ),
         },
       ],

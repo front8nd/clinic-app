@@ -3,6 +3,8 @@ const router = express.Router();
 const mongoose = require("mongoose");
 const Patient = require("../models/patientSchema");
 const Appointment = require("../models/appointmentSchema");
+const Config = require("../models/configSchema");
+const generateTimeSlots = require("../utils/slots");
 
 router.post(
   "/appointmentByOldPatient/:patientId",
@@ -37,25 +39,42 @@ router.post(
 
       // Extract appointment info from request body
       const { appointmentTime, type } = appointmentInfo;
-      const todayStart = new Date();
-      todayStart.setHours(0, 0, 0, 0); // Start of the current day
-      const todayEnd = new Date();
-      todayEnd.setHours(23, 59, 59, 999); // End of the current day
 
-      // Check if the slot is already booked on the current day
-      const existingAppointment = await Appointment.findOne({
-        appointmentTime: appointmentTime.trim(), // Ensure comparison is precise
-        status: { $in: ["scheduled", "completed"] },
-        createdAt: { $gte: todayStart, $lte: todayEnd },
-      }).session(session);
+      // Fetch today's slots dynamically
+      const appointmentConfig = await Config.findOne({});
+      if (!appointmentConfig) {
+        throw new Error("Appointment configuration not found.");
+      }
+      const allSlots = generateTimeSlots(appointmentConfig);
 
-      if (existingAppointment) {
+      // Validate appointmentTime against the slots
+      const matchingSlot = allSlots.find(
+        (slot) => slot.timeRange === appointmentTime
+      );
+
+      if (!matchingSlot) {
         await session.abortTransaction();
-        return res.status(409).json({
-          message: "The selected appointment slot is already booked for today.",
+        return res.status(400).json({
+          message: "Invalid appointment time. Please select a valid slot.",
         });
       }
 
+      // Check if the slot is already fully booked
+      const existingAppointments = await Appointment.countDocuments({
+        appointmentTime,
+        status: { $in: ["scheduled", "completed"] },
+        createdAt: {
+          $gte: new Date().setHours(0, 0, 0, 0),
+          $lte: new Date().setHours(23, 59, 59, 999),
+        },
+      }).session(session);
+
+      if (existingAppointments >= matchingSlot.maxSlots) {
+        await session.abortTransaction();
+        return res.status(409).json({
+          message: `The selected slot '${appointmentTime}' is fully booked. Please choose another time.`,
+        });
+      }
       // Create a new appointment for the patient
       const newAppointment = new Appointment({
         patientId,

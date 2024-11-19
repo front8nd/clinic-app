@@ -29,6 +29,7 @@ const todayAppointments = require("./routes/todayAppointments"); // for all the 
 const appointments = require("./routes/appointments"); // Appointments list
 const appointmentByOldPatient = require("./routes/appointmentByOldPatient"); // Appointment booking by old patient
 const appointmentByNewPatient = require("./routes/appointmentByNewPatient"); // Appointment booking by old patient
+const config = require("./routes/config");
 
 // Endpoints
 app.use(register);
@@ -44,6 +45,7 @@ app.use(todayAppointments);
 app.use(appointments);
 app.use(appointmentByOldPatient);
 app.use(appointmentByNewPatient);
+app.use(config);
 
 // Root route to show a message
 app.get("/", (req, res) => {

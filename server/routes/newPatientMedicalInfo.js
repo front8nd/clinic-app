@@ -5,6 +5,8 @@ const Patient = require("../models/patientSchema");
 const PatientMedicalInfo = require("../models/patientMedicalInfoSchema");
 const authMiddleware = require("../middleware/auth");
 const Appointment = require("../models/appointmentSchema");
+const Config = require("../models/configSchema");
+const generateTimeSlots = require("../utils/slots");
 
 router.post(
   "/newPatientMedicalInfo/:patientId",
@@ -49,23 +51,40 @@ router.post(
 
         // Extract appointment info from request body
         const { appointmentTime, type } = appointmentInfo;
-        const todayStart = new Date();
-        todayStart.setHours(0, 0, 0, 0); // Start of the current day
-        const todayEnd = new Date();
-        todayEnd.setHours(23, 59, 59, 999); // End of the current day
 
-        // Check if the slot is already booked on the current day
-        const existingAppointment = await Appointment.findOne({
-          appointmentTime: appointmentTime.trim(),
+        // Fetch today's slots dynamically
+        const appointmentConfig = await Config.findOne({});
+        if (!appointmentConfig) {
+          throw new Error("Appointment configuration not found.");
+        }
+        const allSlots = generateTimeSlots(appointmentConfig);
+
+        // Validate appointmentTime against the slots
+        const matchingSlot = allSlots.find(
+          (slot) => slot.timeRange === appointmentTime
+        );
+
+        if (!matchingSlot) {
+          await session.abortTransaction();
+          return res.status(400).json({
+            message: "Invalid appointment time. Please select a valid slot.",
+          });
+        }
+
+        // Check if the slot is already fully booked
+        const existingAppointments = await Appointment.countDocuments({
+          appointmentTime,
           status: { $in: ["scheduled", "completed"] },
-          createdAt: { $gte: todayStart, $lte: todayEnd },
+          createdAt: {
+            $gte: new Date().setHours(0, 0, 0, 0),
+            $lte: new Date().setHours(23, 59, 59, 999),
+          },
         }).session(session);
 
-        if (existingAppointment) {
+        if (existingAppointments >= matchingSlot.maxSlots) {
           await session.abortTransaction();
           return res.status(409).json({
-            message:
-              "The selected appointment slot is already booked for today.",
+            message: `The selected slot '${appointmentTime}' is fully booked. Please choose another time.`,
           });
         }
 
@@ -84,6 +103,18 @@ router.post(
         appointmentNumber = lastAppointment
           ? lastAppointment.appointmentNumber
           : 1;
+
+        // Check if a medical record already exists for the current visit
+        const duplicateMedicalRecord = await PatientMedicalInfo.findOne({
+          patientId,
+          appointmentNumber,
+        }).session(session);
+
+        if (duplicateMedicalRecord) {
+          throw new Error(
+            `Medical record already exists for Appointment Number ${appointmentNumber}. Cancel old Appointment to create New`
+          );
+        }
         savedAppointment = lastAppointment; // Simply use the last appointment for online patients
       }
 
