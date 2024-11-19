@@ -45,7 +45,7 @@ export function CustomTableRow({ row, selected }) {
             textWrap: 'nowrap',
           }}
         >
-          {row?.appointmentDateTime || ' - '}
+          {row?.appointmentTime || ' - '}
         </TableCell>
         <TableCell
           sx={{

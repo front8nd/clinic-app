@@ -305,15 +305,14 @@ export default function Profile() {
                         <Divider sx={{ marginBottom: 2 }} />
                         <Typography variant="subtitle1" sx={{ marginBottom: 1 }}>
                           <strong>Visit Date:</strong>{' '}
-                          {new Date(info.visitDate).toLocaleDateString()}
+                          {new Date(info.createdAt).toLocaleDateString()}
                         </Typography>
                         <Typography variant="subtitle1" sx={{ marginBottom: 1 }}>
                           <strong>Assisted By:</strong> {info.assistedBy.name} (
                           {info.assistedBy.role.toUpperCase()})
                         </Typography>
                         <Typography variant="subtitle1" sx={{ marginBottom: 1 }}>
-                          <strong>Fees Charged:</strong> {info.fees.final} Rs (Discount:{' '}
-                          {info.fees.discount})
+                          <strong>Fees Charged:</strong> {info.fees.final} -/Rs
                         </Typography>
                       </Grid>
 
@@ -480,7 +479,7 @@ export default function Profile() {
                               <strong>Date:</strong>{' '}
                               {new Date(follow.followUpDate).toLocaleDateString()}
                               <br />
-                              <strong>Consultation:</strong> {follow.consultationVia}
+                              <strong>Consultation:</strong> {follow.consultationVia?.toUpperCase()}
                               <br />
                               <strong>Plan:</strong> {follow.plan}
                             </Typography>
