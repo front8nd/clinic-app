@@ -379,7 +379,7 @@ export default function Profile() {
                           <Divider sx={{ marginBottom: 2 }} />
                           <Typography variant="subtitle1" sx={{ marginBottom: 1 }}>
                             <strong>Date:</strong>{' '}
-                            {new Date(correspondingVisit.visitDate).toLocaleDateString()}
+                            {new Date(correspondingVisit.createdAt).toLocaleDateString()}
                           </Typography>
                           <Typography variant="subtitle1" sx={{ marginBottom: 1 }}>
                             <strong>Doctor:</strong> {correspondingVisit.doctor.name} (
