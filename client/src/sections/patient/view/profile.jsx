@@ -377,10 +377,10 @@ export default function Profile() {
                             {/* Visit Record #{correspondingVisit.AppointmentNumber} */}
                           </Typography>
                           <Divider sx={{ marginBottom: 2 }} />
-                          <Typography variant="subtitle1" sx={{ marginBottom: 1 }}>
+                          {/* <Typography variant="subtitle1" sx={{ marginBottom: 1 }}>
                             <strong>Date:</strong>{' '}
                             {new Date(correspondingVisit.createdAt).toLocaleDateString()}
-                          </Typography>
+                          </Typography> */}
                           <Typography variant="subtitle1" sx={{ marginBottom: 1 }}>
                             <strong>Doctor:</strong> {correspondingVisit.doctor.name} (
                             {correspondingVisit.doctor.role.toUpperCase()})
