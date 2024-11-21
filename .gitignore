@@ -11,6 +11,7 @@ server/dist
 # Environment variables
 client/.env*
 server/.env*
+server/.env
 
 # Miscellaneous
 client/.DS_Store
