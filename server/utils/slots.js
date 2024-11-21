@@ -1,6 +1,9 @@
 function generateTimeSlots(appointmentConfig) {
   const slots = [];
-  const now = new Date();
+  // Convert the current time to Pakistan timezone
+  const now = new Date(
+    now.toLocaleString("en-US", { timeZone: "Asia/Karachi" })
+  );
   const currentHour = now.getHours();
   const currentMinute = now.getMinutes();
 
