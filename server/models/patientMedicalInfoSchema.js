@@ -28,12 +28,6 @@ const patientMedicalInfoSchema = new mongoose.Schema({
     sys: { type: String, required: true },
     dia: { type: String, required: true },
   },
-  fees: {
-    amount: { type: Number, required: true },
-    discount: { type: Number, required: true },
-    visitedOn5D: { type: Number, required: true },
-    final: { type: Number, required: true },
-  },
 });
 
 const patientMedicalInfoModel = mongoose.model(

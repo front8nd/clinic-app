@@ -1,3 +1,4 @@
+import { jsPDF } from 'jspdf';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Box from '@mui/material/Box';
@@ -18,7 +19,6 @@ import {
   TableRow,
   useMediaQuery,
   useTheme,
-  Container,
   TableHead,
 } from '@mui/material';
 
@@ -69,6 +69,70 @@ export default function Profile() {
   const getVisitByAppointmentNumber = (appointmentNumber) =>
     patientProfile.visits.find((e) => e.appointmentNumber === appointmentNumber);
 
+  // Helper function to find the fees record based on AppointmentNumber
+  const getFeesByAppointmentNumber = (appointmentNumber) =>
+    patientProfile.feesInfo.find((e) => e.appointmentNumber === appointmentNumber);
+
+  const createPdf = () => {
+    // eslint-disable-next-line new-cap
+    const doc = new jsPDF();
+
+    const patient = patientProfile.patient;
+    const firstMedicalInfo = patientProfile.medicalInfo[0];
+    const firstVisit = patientProfile.visits[0];
+
+    // Add Patient Profile to the PDF
+    doc.setFont('Helvetica', 'bold');
+    doc.setFontSize(14);
+    doc.text('Patient Profile', 10, 10);
+
+    doc.setFont('Helvetica', 'normal');
+    doc.setFontSize(12);
+    doc.text(`Name: ${patient.name}`, 10, 20);
+    doc.text(`Patient ID: ${patient.patientId}`, 10, 30);
+    doc.text(`Birth Year: ${patient.birthYear}`, 10, 40);
+    doc.text(`Gender: ${patient.gender}`, 10, 50);
+    doc.text(`Contact: ${patient.contact}`, 10, 60);
+    doc.text(`Address: ${patient.address}`, 10, 70);
+    doc.text(`Allergies: ${patient.allergies}`, 10, 80);
+    doc.text(`Chronic Conditions: ${patient.chronicConditions}`, 10, 90);
+
+    // Add Medical Information
+    doc.setFont('Helvetica', 'bold');
+    doc.text('Medical Information', 10, 110);
+
+    doc.setFont('Helvetica', 'normal');
+    doc.text(
+      `Blood Pressure: ${firstMedicalInfo.blood_pressure.sys}/${firstMedicalInfo.blood_pressure.dia}`,
+      10,
+      120
+    );
+    doc.text(`Weight: ${firstMedicalInfo.weight} kg`, 10, 130);
+    doc.text(`Height: ${firstMedicalInfo.height} cm`, 10, 140);
+    doc.text(`Pulse Rate: ${firstMedicalInfo.pulse_rate} bpm`, 10, 150);
+    doc.text(`Respiratory Rate: ${firstMedicalInfo.resp_rate} bpm`, 10, 160);
+    doc.text(`SpO2: ${firstMedicalInfo.spo2} %`, 10, 170);
+    doc.text(`Temperature: ${firstMedicalInfo.temp} °C`, 10, 180);
+    doc.text(`RBS: ${firstMedicalInfo.rbs} mg/dL`, 10, 190);
+    doc.text(`Fees: $${firstMedicalInfo.fees.final}`, 10, 200);
+
+    // Add First Visit Information
+    doc.setFont('Helvetica', 'bold');
+    doc.text('First Visit Information', 10, 220);
+
+    if (firstVisit) {
+      doc.setFont('Helvetica', 'normal');
+      doc.text(`Appointment Time: ${firstVisit.appointmentTime}`, 10, 230);
+      doc.text(`Type: ${firstVisit.type}`, 10, 240);
+      doc.text(`Status: ${firstVisit.status}`, 10, 250);
+    } else {
+      doc.text('No visit records available', 10, 230);
+    }
+
+    // Save the PDF
+    doc.save('Patient_Profile.pdf');
+  };
+
   return (
     <DashboardContent>
       <Box display="flex" alignItems="center" mb={5}>
@@ -117,6 +181,13 @@ export default function Profile() {
               >
                 Get Patient Details
               </LoadingButton>
+              <Button
+                onClick={() => {
+                  createPdf();
+                }}
+              >
+                PDF
+              </Button>
             </Grid>
             {patientProfile && (
               <Grid item xs={12} sm={8} md={5}>
@@ -264,6 +335,8 @@ export default function Profile() {
             patientProfile.medicalInfo.map((info) => {
               const correspondingVisit = getVisitByAppointmentNumber(info.appointmentNumber);
 
+              const correspondingFees = getFeesByAppointmentNumber(info.appointmentNumber);
+
               return (
                 <Card
                   key={info._id}
@@ -312,7 +385,7 @@ export default function Profile() {
                           {info.assistedBy.role.toUpperCase()})
                         </Typography>
                         <Typography variant="subtitle1" sx={{ marginBottom: 1 }}>
-                          <strong>Fees Charged:</strong> {info.fees.final} -/Rs
+                          <strong>Fees Charged:</strong> {correspondingFees?.final} -/Rs
                         </Typography>
                       </Grid>
 

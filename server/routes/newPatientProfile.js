@@ -8,6 +8,7 @@ const authMiddleware = require("../middleware/auth");
 const getNextPatientID = require("../utils/patientID");
 const Config = require("../models/configSchema");
 const generateTimeSlots = require("../utils/slots");
+const Fees = require("../models/feesSchema");
 
 // POST /patients/newPatientProfile - Create a new patient profile and book an appointment
 router.post("/newPatientProfile", authMiddleware, async (req, res) => {
@@ -91,11 +92,18 @@ router.post("/newPatientProfile", authMiddleware, async (req, res) => {
     // Create new medical information using the generated patient ID
     const newMedicalInfo = new PatientMedicalInfo({
       patientId,
-      visitDate: new Date(),
       appointmentNumber: 1,
       ...req.body.medicalInfo,
     });
     const savedMedicalInfo = await newMedicalInfo.save({ session });
+
+    // Create new fees information using the generated patient ID
+    const newFeesInfo = new Fees({
+      patientId,
+      appointmentNumber: 1,
+      ...req.body.feesInfo,
+    });
+    const savedFeesInfo = await newFeesInfo.save({ session });
 
     // Commit the transaction
     await session.commitTransaction();
@@ -105,8 +113,9 @@ router.post("/newPatientProfile", authMiddleware, async (req, res) => {
       patient: savedPatient,
       medicalInfo: savedMedicalInfo,
       appointment: savedAppointment,
+      feesInfo: savedFeesInfo,
       message:
-        "Patient profile and initial medical info added successfully, and appointment booked.",
+        "Patient profile and initial medical info with fees info added successfully, and appointment booked.",
     });
   } catch (error) {
     await session.abortTransaction(); // Roll back the transaction on error

@@ -213,7 +213,12 @@ export default function MedicalNew() {
         email: userData?.user?.email,
         role: userData?.user?.role,
       },
-      fees: feesData,
+    };
+
+    const feesInfo = {
+      ...feesData,
+      paymentStatus: 'paid',
+      paymentMethod: 'cash',
     };
 
     const currentHalfHour = getCurrentHalfHour();
@@ -229,6 +234,7 @@ export default function MedicalNew() {
     const additionalData = {
       medicalInfo,
       patientId,
+      feesInfo,
       ...(isOnlinePatient === false && { appointmentInfo }),
       ...(isOnlinePatient === true && { isOnlinePatient }),
     };

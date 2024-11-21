@@ -191,7 +191,12 @@ export default function PatientNew() {
         email: userData?.user?.email,
         role: userData?.user?.role,
       },
-      fees: feesData,
+    };
+
+    const feesInfo = {
+      ...feesData,
+      paymentStatus: 'paid',
+      paymentMethod: 'cash',
     };
 
     const currentHalfHour = getCurrentHalfHour();
@@ -207,6 +212,7 @@ export default function PatientNew() {
       personalInfo,
       medicalInfo,
       appointmentInfo,
+      feesInfo,
     };
     console.log(additionalData);
     await dispatch(newPatientProfile(additionalData));

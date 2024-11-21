@@ -5,6 +5,7 @@ const authMiddleware = require("../middleware/auth");
 const Visit = require("../models/visitSchema");
 const Appointment = require("../models/appointmentSchema");
 const PatientMedicalInfo = require("../models/patientMedicalInfoSchema");
+const Fees = require("../models/feesSchema");
 
 // Get a specific patient profile with all visits and medical info
 router.get(
@@ -33,12 +34,18 @@ router.get(
         appointmentNumber: -1,
       });
 
+      // Retrieve all fees information associated with the patient
+      const feesInfo = await Fees.find({ patientId }).sort({
+        appointmentNumber: -1,
+      });
+
       // Return the patient profile, visits, and medical info
       res.status(200).json({
         patient,
         visits,
         medicalInfo,
         appointments,
+        feesInfo,
       });
     } catch (error) {
       console.error(error); // Log the error for debugging

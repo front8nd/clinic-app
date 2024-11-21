@@ -7,13 +7,15 @@ const authMiddleware = require("../middleware/auth");
 const Appointment = require("../models/appointmentSchema");
 const Config = require("../models/configSchema");
 const generateTimeSlots = require("../utils/slots");
+const Fees = require("../models/feesSchema");
 
 router.post(
   "/newPatientMedicalInfo/:patientId",
   authMiddleware,
   async (req, res) => {
     const { patientId } = req.params;
-    const { appointmentInfo, medicalInfo, isOnlinePatient } = req.body;
+    const { appointmentInfo, medicalInfo, isOnlinePatient, feesInfo } =
+      req.body;
 
     // Start a session for the transaction
     const session = await mongoose.startSession();
@@ -121,10 +123,17 @@ router.post(
         savedAppointment = lastAppointment; // Simply use the last appointment for online patients
       }
 
+      // Create new fees information
+      const newFeesInfo = new Fees({
+        patientId,
+        appointmentNumber,
+        ...req.body.feesInfo,
+      });
+      const savedFeesInfo = await newFeesInfo.save({ session });
+
       // Create a new medical info record
       const newMedicalInfo = new PatientMedicalInfo({
         patientId,
-        visitDate: new Date(),
         appointmentNumber,
         ...medicalInfo,
       });
@@ -138,8 +147,9 @@ router.post(
       res.status(201).json({
         medicalInfo: savedMedicalInfo,
         appointment: savedAppointment,
+        feesInfo: savedFeesInfo,
         message:
-          "Patient medical info added successfully, and appointment booked.",
+          "Patient medical and fees info added successfully, and appointment booked.",
       });
     } catch (error) {
       // Rollback the transaction in case of any error
