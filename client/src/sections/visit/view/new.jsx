@@ -533,6 +533,7 @@ export default function VisitNew() {
                   key={index}
                   sx={{
                     marginBottom: '20px',
+                    marginTop: '0px',
                   }}
                 >
                   <Grid item xs={12} sm={4}>
