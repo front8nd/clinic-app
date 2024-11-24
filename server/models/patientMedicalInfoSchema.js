@@ -23,7 +23,7 @@ const patientMedicalInfoSchema = new mongoose.Schema({
   resp_rate: { type: String, required: true },
   spo2: { type: String, required: true },
   temp: { type: String, required: true },
-  rbs: { type: String, required: true },
+  rbs: { type: String },
   blood_pressure: {
     sys: { type: String, required: true },
     dia: { type: String, required: true },

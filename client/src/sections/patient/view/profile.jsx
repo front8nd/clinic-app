@@ -397,8 +397,8 @@ export default function Profile() {
                             {correspondingVisit.complaints.chiefComplaint}
                           </Typography>
                           <Typography variant="subtitle1" sx={{ marginBottom: 1 }}>
-                            <strong>Known Complaint:</strong>{' '}
-                            {correspondingVisit.complaints.knownComplaint}
+                            <strong>Active Complaint:</strong>{' '}
+                            {correspondingVisit.complaints.activeComplaint}
                           </Typography>
                           <Typography variant="subtitle1" sx={{ marginBottom: 1 }}>
                             <strong>Additional Complaint:</strong>{' '}

@@ -42,7 +42,7 @@ export default function VisitNew() {
       { medicationName: '', dosage: '', frequency: '', duration: '', additionalInstructions: '' },
     ],
     chiefComplaint: '',
-    knownComplaint: '',
+    activeComplaint: '',
     additionalComplaint: '',
     assessments: {
       heent: '',
@@ -58,6 +58,28 @@ export default function VisitNew() {
     referral: [{ specialty: '', doctor: '', hospital: '' }],
     notes: '',
   });
+  const freqMedicine = [
+    'Once daily (OD)',
+    'Twice daily (BID)',
+    'Three times daily (TID)',
+    'Four times per day (QID)',
+  ];
+
+  const durMedicine = [
+    '1 Day',
+    '2 Days',
+    '3 Days',
+    '4 Days',
+    '5 Days',
+    '6 Days',
+    '7 Days',
+    '8 Days',
+    '9 Days',
+    '10 Days',
+    '14 Days',
+    '21 Days',
+    '30 Days',
+  ];
 
   const changeHandler = (e) => {
     const { name, value } = e.target;
@@ -171,7 +193,7 @@ export default function VisitNew() {
       prescription: data.prescription,
       complaints: {
         chiefComplaint: data.chiefComplaint,
-        knownComplaint: data.knownComplaint,
+        activeComplaint: data.activeComplaint,
         additionalComplaint: data.additionalComplaint,
       },
       assessments: data.assessments,
@@ -306,24 +328,42 @@ export default function VisitNew() {
                     />
                   </Grid>
                   <Grid item xs={12} sm={3}>
-                    <TextField
+                    <Select
                       name="frequency"
-                      label="Frequency"
                       value={prescription.frequency}
                       onChange={(e) => handlePrescriptionChange(index, e)}
+                      displayEmpty
                       fullWidth
                       required
-                    />
+                      renderValue={(selected) =>
+                        selected?.toUpperCase() || <em>Select Frequency</em>
+                      }
+                    >
+                      {freqMedicine.map((option) => (
+                        <MenuItem key={option} value={option}>
+                          {option.toUpperCase()}
+                        </MenuItem>
+                      ))}
+                    </Select>
                   </Grid>
                   <Grid item xs={12} sm={3}>
-                    <TextField
+                    <Select
                       name="duration"
-                      label="Duration"
                       value={prescription.duration}
                       onChange={(e) => handlePrescriptionChange(index, e)}
+                      displayEmpty
                       fullWidth
                       required
-                    />
+                      renderValue={(selected) =>
+                        selected?.toUpperCase() || <em>Select Duration</em>
+                      }
+                    >
+                      {durMedicine.map((option) => (
+                        <MenuItem key={option} value={option}>
+                          {option.toUpperCase()}
+                        </MenuItem>
+                      ))}
+                    </Select>
                   </Grid>
                   <Grid item xs={12}>
                     <TextField
@@ -370,9 +410,9 @@ export default function VisitNew() {
             </Grid>
             <Grid item xs={12}>
               <TextField
-                name="knownComplaint"
-                label="Known Complaint"
-                value={data.knownComplaint}
+                name="activeComplaint"
+                label="Active Complaint"
+                value={data.activeComplaint}
                 onChange={changeHandler}
                 fullWidth
               />

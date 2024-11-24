@@ -45,11 +45,11 @@ const VisitSchema = new mongoose.Schema({
   // Complaints
   complaints: {
     chiefComplaint: { type: String }, // cc
-    knownComplaint: { type: String }, // kc
+    activeComplaint: { type: String }, // ac
     additionalComplaint: { type: String }, // ac
   },
 
-  // Assessments - can expand to add specific validations if needed
+  // Assessments
   assessments: {
     heent: { type: String },
     respiratory: { type: String },
@@ -62,7 +62,7 @@ const VisitSchema = new mongoose.Schema({
   // Investigations
   investigations: [
     {
-      reportPicture: { type: String }, // Array of picture URLs or paths
+      reportPicture: { type: String },
       notes: { type: String },
     },
   ],
@@ -84,9 +84,9 @@ const VisitSchema = new mongoose.Schema({
   // Referrals
   referral: [
     {
-      specialty: { type: String, required: true },
-      doctor: { type: String, required: true },
-      hospital: { type: String, required: true },
+      specialty: { type: String },
+      doctor: { type: String },
+      hospital: { type: String },
     },
   ],
 
