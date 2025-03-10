@@ -11,6 +11,7 @@ import ProtectedRoute from './Protected';
 import { varAlpha } from '../theme/styles';
 import { AuthLayout } from '../layouts/auth/index';
 import { DashboardLayout } from '../layouts/dashboard/index';
+import ProtectedLayout from './Protected-Layout';
 
 // ----------------------------------------------------------------------
 
@@ -54,11 +55,13 @@ export function Router() {
   return useRoutes([
     {
       element: (
-        <DashboardLayout>
-          <Suspense fallback={renderFallback}>
-            <Outlet />
-          </Suspense>
-        </DashboardLayout>
+        <Suspense fallback={renderFallback}>
+          <ProtectedLayout allowedRoles={['admin', 'staff', 'doctor']}>
+            <DashboardLayout>
+              <Outlet />
+            </DashboardLayout>
+          </ProtectedLayout>
+        </Suspense>
       ),
       children: [
         {
@@ -150,25 +153,24 @@ export function Router() {
       element: <HomePage />,
     },
 
-    // can wrap in protected routes as well but we will use below method here
-    // {
-    //   path: 'login',
-    //   element: <ProtectedRoute noAuthReq component={LoginPage} />,
-    // },
     {
       path: 'login',
       element: (
-        <AuthLayout>
-          <LoginPage />
-        </AuthLayout>
+        <ProtectedLayout noAuthReq>
+          <AuthLayout>
+            <LoginPage />
+          </AuthLayout>
+        </ProtectedLayout>
       ),
     },
     {
       path: 'register',
       element: (
-        <AuthLayout>
-          <RegisterPage />
-        </AuthLayout>
+        <ProtectedLayout noAuthReq>
+          <AuthLayout>
+            <RegisterPage />
+          </AuthLayout>
+        </ProtectedLayout>
       ),
     },
     {
