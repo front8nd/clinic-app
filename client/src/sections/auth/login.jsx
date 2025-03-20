@@ -84,7 +84,14 @@ export default function Login() {
         />
       </Stack>
 
-      <LoadingButton fullWidth size="large" type="submit" variant="contained" color="inherit">
+      <LoadingButton
+        disabled={loading}
+        fullWidth
+        size="large"
+        type="submit"
+        variant="contained"
+        color="inherit"
+      >
         {loading === false ? (
           'Login'
         ) : (
