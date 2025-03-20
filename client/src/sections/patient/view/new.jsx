@@ -422,7 +422,8 @@ export default function PatientNew() {
             <Grid item xs={12} sm={6} md={4}>
               <Checkbox color="secondary" value={extendSlots} onChange={slotsHandler} />
               <Typography variant="caption">
-                In Case of Non Workings or Slots Limit Reached, Check this Box.
+                In Case of Non Working Hours or Slots Limit Reached, Check this Box to Extend The
+                Slots.
               </Typography>
             </Grid>
 

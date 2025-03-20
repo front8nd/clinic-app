@@ -8,16 +8,22 @@ import { ThemeProvider } from './theme/theme-provider';
 
 import { SnackbarProvider } from './components/snackbar/snackbar';
 
+import { ErrorBoundary } from 'react-error-boundary';
+
+import FallBackRender from './components/fallback-render';
+
 // ----------------------------------------------------------------------
 
 export default function App() {
   useScrollToTop();
 
   return (
-    <ThemeProvider>
-      <SnackbarProvider>
-        <Router />
-      </SnackbarProvider>
-    </ThemeProvider>
+    <ErrorBoundary fallbackRender={<FallBackRender />}>
+      <ThemeProvider>
+        <SnackbarProvider>
+          <Router />
+        </SnackbarProvider>
+      </ThemeProvider>
+    </ErrorBoundary>
   );
 }

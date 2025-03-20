@@ -9,6 +9,8 @@ import {
   PDFDownloadLink,
 } from '@react-pdf/renderer';
 import { calculateAge } from '../../../utils/calculateAge';
+import { Button } from '@mui/material';
+import { Iconify } from '../../../components/iconify';
 
 export const PatientProfilePDF = ({ patientData }) => {
   const age = calculateAge(patientData?.patient?.birthYear);
@@ -481,7 +483,15 @@ const PatientProfile = ({ patientData }) => {
         document={<PatientProfilePDF patientData={patientData} />}
         fileName="Patient_Medical_Profile.pdf"
       >
-        Download PDF
+        <Button
+          startIcon={<Iconify icon="fa-solid:notes-medical" />}
+          size="large"
+          variant="outlined"
+          color="error"
+          fullWidth
+        >
+          Download PDF
+        </Button>
       </PDFDownloadLink>
     </div>
   );

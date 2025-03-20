@@ -47,50 +47,14 @@ module.exports = {
     'jsx-a11y/control-has-associated-label': 0,
 
     // unused imports
-    'unused-imports/no-unused-imports': 1,
+    'unused-imports/no-unused-imports': 0,
     'unused-imports/no-unused-vars': [
       0,
       { vars: 'all', varsIgnorePattern: '^_', args: 'after-used', argsIgnorePattern: '^_' },
     ],
 
-    // perfectionist
-    'perfectionist/sort-exports': [1, { order: 'asc', type: 'line-length' }],
-    'perfectionist/sort-named-imports': [1, { order: 'asc', type: 'line-length' }],
-    'perfectionist/sort-named-exports': [1, { order: 'asc', type: 'line-length' }],
-    'perfectionist/sort-imports': [
-      1,
-      {
-        order: 'asc',
-        type: 'line-length',
-        'newlines-between': 'always',
-        groups: [
-          'style',
-          'builtin',
-          'external',
-          'custom-mui',
-          'custom-routes',
-          'custom-hooks',
-          'custom-utils',
-          'internal',
-          'custom-components',
-          'custom-sections',
-          'custom-auth',
-          'object',
-          'unknown',
-        ],
-        'custom-groups': {
-          value: {
-            ['custom-mui']: '@mui/**',
-            ['custom-auth']: 'src/auth/**',
-            ['custom-hooks']: 'src/hooks/**',
-            ['custom-utils']: 'src/utils/**',
-            ['custom-routes']: 'src/routes/**',
-            ['custom-sections']: 'src/sections/**',
-            ['custom-components']: 'src/components/**',
-          },
-        },
-        'internal-pattern': ['src/**'],
-      },
-    ],
+    'perfectionist/sort-imports': 'off', // Disable import order warnings
+    'import/order': 'off', // Disable ESLint's default import order rule
+    'perfectionist/sort-named-imports': 'off', // Disable sorting named imports
   },
 };

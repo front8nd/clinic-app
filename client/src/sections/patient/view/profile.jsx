@@ -93,7 +93,7 @@ export default function Profile() {
 
       <Card sx={{ padding: 3, marginBottom: 4 }}>
         <form onSubmit={handleClick}>
-          <Grid container spacing={4}>
+          <Grid container spacing={4} justifyContent="center">
             <Grid item xs={12}>
               <Typography variant="h5" gutterBottom>
                 Retrieve Patient Data
@@ -122,10 +122,10 @@ export default function Profile() {
                 Get Patient Details
               </LoadingButton>
             </Grid>
-            <div>{patientProfile && <PatientProfile patientData={patientProfile} />}</div>
+
             {patientProfile && (
-              <Grid item xs={12} sm={8} md={5}>
-                <Stack spacing={3}>
+              <Grid item xs={12} sm={8} md={5} justifyContent="center">
+                <Stack spacing={1}>
                   <Button
                     variant="outlined"
                     size="large"
@@ -148,6 +148,7 @@ export default function Profile() {
                   >
                     New Visit Record (for Doctor)
                   </Button>
+                  <div>{patientProfile && <PatientProfile patientData={patientProfile} />}</div>
                 </Stack>
               </Grid>
             )}
