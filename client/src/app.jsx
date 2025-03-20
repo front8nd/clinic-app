@@ -10,7 +10,7 @@ import { SnackbarProvider } from './components/snackbar/snackbar';
 
 import { ErrorBoundary } from 'react-error-boundary';
 
-import FallBackRender from './components/fallback-render';
+import { PageCrashView } from './sections/error/page-crash-view';
 
 // ----------------------------------------------------------------------
 
@@ -18,12 +18,12 @@ export default function App() {
   useScrollToTop();
 
   return (
-    <ErrorBoundary fallbackRender={<FallBackRender />}>
-      <ThemeProvider>
+    <ThemeProvider>
+      <ErrorBoundary fallbackRender={PageCrashView}>
         <SnackbarProvider>
           <Router />
         </SnackbarProvider>
-      </ThemeProvider>
-    </ErrorBoundary>
+      </ErrorBoundary>
+    </ThemeProvider>
   );
 }
