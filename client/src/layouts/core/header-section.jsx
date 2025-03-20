@@ -9,7 +9,7 @@ import { bgBlur, varAlpha } from '../../theme/styles';
 
 import { layoutClasses } from '../classes';
 import { Iconify } from '../../components/iconify';
-
+import { CONFIG } from '../../config-global';
 // ----------------------------------------------------------------------
 
 export function HeaderSection({ sx, slots, slotProps, layoutQuery = 'md', ...other }) {
@@ -68,7 +68,10 @@ export function HeaderSection({ sx, slots, slotProps, layoutQuery = 'md', ...oth
           <Button
             sx={{
               color: 'black',
-              fontSize: '1.2rem',
+              fontSize: '1rem',
+              display: 'flex',
+
+              alignItems: 'center',
             }}
           >
             <Iconify
@@ -77,7 +80,7 @@ export function HeaderSection({ sx, slots, slotProps, layoutQuery = 'md', ...oth
                 marginRight: '10px',
               }}
             />
-            Al Farooq Dar-us Shifa
+            {CONFIG.appName}
           </Button>
           <Box sx={{ display: 'flex', flex: '1 1 auto', justifyContent: 'center' }}>
             {slots?.centerArea}
