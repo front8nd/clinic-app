@@ -3,6 +3,6 @@ import packageJson from '../package.json';
 // ----------------------------------------------------------------------
 
 export const CONFIG = {
-  appName: 'Clinic Appointment',
+  appName: 'Clinic App',
   appVersion: packageJson.version,
 };
