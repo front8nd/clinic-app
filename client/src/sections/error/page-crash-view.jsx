@@ -27,7 +27,7 @@ export function PageCrashView({ error }) {
           {error?.message || 'An unexpected error occurred.'}
         </Typography>
 
-        <Typography variant="body1" sx={{ mb: 2, color: 'text.secondary' }}>
+        <Typography variant="body1" sx={{ mb: 2, color: 'text.secondary', wordWrap: 'break-word' }}>
           Please refresh the page. If the error persists, please contact support.
         </Typography>
       </Container>

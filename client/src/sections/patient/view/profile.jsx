@@ -183,7 +183,7 @@ export default function Profile() {
                 </Avatar>
                 <Box flex={1}>
                   <Typography variant="h5" gutterBottom>
-                    {patientProfile}
+                    {patientProfile?.patient?.name}
                   </Typography>
                   <Typography variant="subtitle1" color="inherit">
                     Age: {age} | Gender: {patientProfile?.patient?.gender?.toUpperCase()}
